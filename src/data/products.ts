@@ -1,4 +1,4 @@
-export type FishShape = "torpedo" | "standard" | "deep" | "disc" | "prawn";
+import type { ImageKey } from "@/lib/images";
 
 export type Product = {
   slug: string;
@@ -16,7 +16,12 @@ export type Product = {
   rating: number;
   reviews: number;
   badge?: string;
-  shape: FishShape;
+  /** Primary shot — the product photograph. */
+  image: ImageKey;
+  /** Detail-page gallery: the fish alive, and the fish cooked. */
+  wild: ImageKey;
+  cooked: ImageKey;
+  /** Accent tint used for washes and gradients. */
   palette: [string, string, string];
   tagline: string;
   description: string;
@@ -46,7 +51,9 @@ export const products: Product[] = [
     rating: 4.9,
     reviews: 214,
     badge: "Best seller",
-    shape: "deep",
+    image: "greyWholeFish",
+    wild: "wildGrouper",
+    cooked: "grilledPlate",
     palette: ["#0E6BA8", "#1E9BD7", "#8FD9E8"],
     tagline: "The undisputed king of the Saudi table.",
     description:
@@ -83,7 +90,9 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: 176,
     badge: "Chef's pick",
-    shape: "torpedo",
+    image: "mackerelBlue",
+    wild: "wildSpotted",
+    cooked: "charcoalGrill",
     palette: ["#0A4A73", "#127FB8", "#6FD0DE"],
     tagline: "Thick steaks built for the grill.",
     description:
@@ -120,7 +129,9 @@ export const products: Product[] = [
     rating: 5,
     reviews: 98,
     badge: "Premium",
-    shape: "standard",
+    image: "marketBream",
+    wild: "wildReef",
+    cooked: "grilledLeaf",
     palette: ["#B23A48", "#E4685C", "#F7B39B"],
     tagline: "Coral-red, delicate, and quietly expensive.",
     description:
@@ -157,7 +168,9 @@ export const products: Product[] = [
     method: "Trap & line",
     rating: 4.7,
     reviews: 143,
-    shape: "deep",
+    image: "fishOnIceRow",
+    wild: "wildGrouper",
+    cooked: "charcoalGrill",
     palette: ["#1F6F8B", "#42A5C4", "#A8DCE6"],
     tagline: "The everyday fish that never disappoints.",
     description:
@@ -193,7 +206,9 @@ export const products: Product[] = [
     method: "Traditional trap (gargoor)",
     rating: 4.6,
     reviews: 121,
-    shape: "disc",
+    image: "blueTableFish",
+    wild: "wildReef",
+    cooked: "grilledLeaf",
     palette: ["#2E7D6F", "#4FB3A0", "#A9E3D6"],
     tagline: "The taste of the Eastern Province coast.",
     description:
@@ -229,7 +244,9 @@ export const products: Product[] = [
     method: "Hand line",
     rating: 4.8,
     reviews: 167,
-    shape: "standard",
+    image: "colourfulCatch",
+    wild: "wildSpotted",
+    cooked: "grilledPlate",
     palette: ["#A32E3B", "#DC5A55", "#F4A896"],
     tagline: "Deep red skin, snow-white meat.",
     description:
@@ -265,7 +282,9 @@ export const products: Product[] = [
     method: "Small-mesh net",
     rating: 4.7,
     reviews: 88,
-    shape: "torpedo",
+    image: "friedSmallFish",
+    wild: "wildReef",
+    cooked: "friedSmallFish",
     palette: ["#C2562F", "#EE8B4F", "#FAC79A"],
     tagline: "Small fish, enormous flavour.",
     description:
@@ -303,7 +322,9 @@ export const products: Product[] = [
     rating: 4.9,
     reviews: 74,
     badge: "Limited",
-    shape: "disc",
+    image: "silverPile",
+    wild: "wildSpotted",
+    cooked: "grilledLeaf",
     palette: ["#5B6C86", "#93A6BE", "#D7E2ED"],
     tagline: "The most prized fish in the Gulf.",
     description:
@@ -340,7 +361,9 @@ export const products: Product[] = [
     rating: 4.8,
     reviews: 192,
     badge: "Fresh daily",
-    shape: "prawn",
+    image: "prawnsOnIce",
+    wild: "wildReef",
+    cooked: "charcoalGrill",
     palette: ["#C1443C", "#F0785C", "#FBC0A4"],
     tagline: "Jumbo Gulf prawns, still snapping.",
     description:
@@ -376,7 +399,9 @@ export const products: Product[] = [
     method: "Pole & line",
     rating: 4.7,
     reviews: 109,
-    shape: "torpedo",
+    image: "tunaPile",
+    wild: "wildSpotted",
+    cooked: "cuttingLoin",
     palette: ["#123C63", "#2A6E9E", "#7FC5D9"],
     tagline: "Loins cut to order, ruby red.",
     description:

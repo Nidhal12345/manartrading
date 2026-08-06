@@ -1,0 +1,94 @@
+{
+  "Metadata": {
+    "title": "Manar Trading — Fresh Red Sea & Gulf Seafood in Saudi Arabia",
+    "titleTemplate": "%s · Manar Trading",
+    "description": "Manar Trading supplies fresh Red Sea and Arabian Gulf fish to homes, restaurants and hotels across Saudi Arabia. Landed daily, iced within minutes, delivered same day.",
+    "ogTitle": "Manar Trading — Fresh Seafood, Saudi Arabia",
+    "ogDescription": "Red Sea and Arabian Gulf fish, landed daily and delivered same day across the Kingdom.",
+    "siteName": "Manar Trading"
+  },
+  "SkipLink": {
+    "skipToContent": "Skip to content"
+  },
+  "Logo": {
+    "ariaLabel": "Manar Trading — home"
+  },
+  "Nav": {
+    "home": "Home",
+    "shop": "Shop",
+    "about": "About",
+    "contact": "Contact",
+    "orderNow": "Order now",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "switchLanguage": "Change language",
+    "switchLanguageEn": "English",
+    "addressLine1": "Central Fish Market, Al Bawadi",
+    "addressLine2": "Jeddah 23443, Saudi Arabia"
+  },
+  "Hero": {
+    "titleLine1": "Manar Trading.",
+    "titleLine2": "A name you trust.",
+    "subtitle": "With Manar Trading, you get fresh seafood to start your day right, fuel your business, and bring your family together at the table — every single day.",
+    "ctaCatch": "See today's catch",
+    "ctaHow": "How we buy",
+    "scroll": "Scroll"
+  },
+  "Offerings": {
+    "fish": {
+      "kicker": "The counter",
+      "title": "Reef, coastal & pelagic fish",
+      "arabic": "سمك طازج",
+      "copy": "Hamour, Najil, Shaari, Safi, Kanad and Yellowfin — landed on the Red Sea and Gulf coasts and priced by the kilo every morning at 06:30.",
+      "countLabel": "On the counter",
+      "countUnit": "species",
+      "cta": "Shop the fish"
+    },
+    "shellfish": {
+      "kicker": "Same day only",
+      "title": "Prawns & shellfish",
+      "arabic": "روبيان الخليج",
+      "copy": "Gulf tiger prawns, head-on and still snapping, bought each morning of the licensed season and sold only on the day they land.",
+      "gradeLabel": "Grades",
+      "grade": "U/15 – 21/25",
+      "cta": "Shop robyan"
+    },
+    "orders": {
+      "kicker": "For kitchens",
+      "title": "Standing kitchen orders",
+      "arabic": "طلبات المطاعم",
+      "copy": "A fixed list, the same delivery window every morning, and one contact who knows your kitchen. Restaurants, hotels and caterers across the Kingdom.",
+      "minLabel": "Tiered from",
+      "minUnit": "kg",
+      "slotLabel": "Delivery",
+      "slot": "Every morning",
+      "cta": "Talk to our team"
+    }
+  },
+  "Footer": {
+    "newsletterLabel": "The daily list",
+    "newsletterTitle": "What came off the boats, in your inbox at 6:30",
+    "emailPlaceholder": "you@company.sa",
+    "emailAria": "Email address",
+    "subscribeAria": "Subscribe",
+    "companyTagline": "A family seafood house supplying homes, restaurants and hotels across Saudi Arabia with Red Sea and Arabian Gulf fish since 2009.",
+    "companyColumn": "Company",
+    "popularColumn": "Popular",
+    "visitColumn": "Visit us",
+    "socialAria": "Manar Trading on {network}",
+    "links": {
+      "home": "Home",
+      "shop": "Shop",
+      "about": "About us",
+      "contact": "Contact"
+    },
+    "addressLine1": "Central Fish Market, Al Bawadi",
+    "addressLine2": "Jeddah 23443, Saudi Arabia",
+    "hours": "Sat – Thu 6:00 – 23:00 · Fri 14:00 – 23:00",
+    "rights": "© {year} Manar Trading Est. All rights reserved. CR 4030XXXXXX",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "shipping": "Shipping",
+    "wordmark": "Manar Trading"
+  }
+}

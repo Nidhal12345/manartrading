@@ -1,26 +1,432 @@
 @import "tailwindcss";
 
+@theme {
+  /* ---- brand ---- */
+  --color-abyss: #04141f;
+  --color-ink: #06202f;
+  --color-deep: #0a2e47;
+  --color-ocean: #0e6ba8;
+  --color-azure: #1e9bd7;
+  --color-aqua: #38cfe0;
+  --color-sand: #e8c39e;
+  --color-shell: #f7fbfd;
+  --color-bone: #f4f1ec;
+
+  --color-sea-50: #f2f9fd;
+  --color-sea-100: #e2f1f9;
+  --color-sea-200: #c0e2f2;
+  --color-sea-300: #8ecce8;
+  --color-sea-400: #55b0d9;
+  --color-sea-500: #2e93c4;
+  --color-sea-600: #1e76a6;
+  --color-sea-700: #1a5f87;
+  --color-sea-800: #16455f;
+  --color-sea-900: #0d3149;
+
+  --font-display: var(--font-roboto-slab), Georgia, serif;
+  --font-sans: var(--font-montserrat), system-ui, sans-serif;
+
+  /* Arabic fallback — applied via html[dir="rtl"] overrides below.
+     Roboto Slab and Montserrat ship no Arabic subset, so Amiri still carries
+     every RTL glyph and must stay first in the stack. */
+  --font-arabic-stack: var(--font-arabic), var(--font-montserrat), system-ui,
+    sans-serif;
+
+
+  --shadow-soft:
+    0 1px 2px rgba(10, 46, 71, 0.04), 0 8px 24px rgba(10, 46, 71, 0.06);
+  --shadow-lift:
+    0 2px 4px rgba(10, 46, 71, 0.05), 0 18px 40px rgba(10, 46, 71, 0.12);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #06202f;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Lenis drives scrolling; native smooth-scroll would fight it. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-display,
+.title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  /* Roboto Slab's serifs are square and full-width; the -0.03em Fraunces was
+     tuned for would butt the slabs of adjacent letters together. */
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: #0e6ba8;
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #eaf4fa;
+}
+::-webkit-scrollbar-thumb {
+  background: #9dc9de;
+  border-radius: 999px;
+  border: 3px solid #eaf4fa;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6badcb;
+}
+
+/* ---------- layout ---------- */
+
+@utility container-x {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 84rem;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .container-x {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* ---------- editorial type ---------- */
+
+.display-xl {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 9.2vw, 8.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+.display-lg {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5.6vw, 4.6rem);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+
+.display-md {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.2vw, 2.6rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+/* ---------- hero headline ---------- */
+
+/* The hero needs its own scale. `.display-xl` is tuned for very short lines
+   ("Eat it tonight.") — its 3rem floor and 0.92 leading make a longer line like
+   "A name you trust." wrap mid-phrase and collide on a phone. This curve keeps
+   both hero lines intact down to ~360px and gives descenders room to breathe.
+   Roboto Slab 700 sets noticeably wider than the Fraunces 500 this was sized
+   for, so the cap and vw factor came down to hold the same line breaks. */
+.hero-display {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 6.8vw, 6.25rem);
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+/* Amiri sets on a larger body with taller ascenders and diacritics above the
+   line, so Arabic needs a smaller cap and noticeably looser leading. */
+html[dir="rtl"] .hero-display {
+  font-family: var(--font-arabic), Georgia, serif;
+  font-size: clamp(2.1rem, 6.8vw, 6rem);
+  line-height: 1.42;
+  letter-spacing: 0;
+}
+
+/* Holds contrast when the copy sits over a bright frame of the video. */
+.hero-legible {
+  text-shadow: 0 1px 28px rgba(4, 20, 31, 0.5);
+}
+
+.label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.numeral {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+/* Roboto Slab has no italic, but the color (text-sea-300) already separates
+   the hero's second line from the first. Drop the italic request and keep the
+   same slab voice; the line break and hue hold the visual hierarchy. */
+.italic-serif {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- surfaces ---------- */
+
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: saturate(160%) blur(18px);
+  -webkit-backdrop-filter: saturate(160%) blur(18px);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+}
+
+.rule {
+  height: 1px;
+  background: currentColor;
+  opacity: 0.14;
+}
+
+.dot-grid {
+  background-image: radial-gradient(
+    rgba(14, 107, 168, 0.14) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+}
+
+/* film grain over the whole page */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* soft moving light, used over dark photography */
+.caustics {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  opacity: 0.5;
+  background:
+    radial-gradient(
+      45% 30% at 20% 10%,
+      rgba(120, 220, 240, 0.22),
+      transparent 70%
+    ),
+    radial-gradient(
+      35% 25% at 75% 25%,
+      rgba(80, 190, 230, 0.16),
+      transparent 70%
+    ),
+    radial-gradient(
+      40% 30% at 50% 80%,
+      rgba(30, 155, 215, 0.14),
+      transparent 70%
+    );
+  animation: caustics-drift 22s ease-in-out infinite alternate;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ---------- animation ---------- */
+
+@keyframes caustics-drift {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(3%, 2%, 0) scale(1.08);
+  }
+}
+
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes wave-shift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scroll-hint {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes sheen {
+  from {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+
+.animate-float {
+  animation: float-y 7s ease-in-out infinite;
+}
+.animate-marquee {
+  animation: marquee 46s linear infinite;
+}
+.animate-marquee-fast {
+  animation: marquee 26s linear infinite;
+}
+.animate-wave {
+  animation: wave-shift 20s linear infinite;
+}
+.animate-scroll-hint {
+  animation: scroll-hint 2.2s ease-in-out infinite;
+}
+.group:hover .animate-sheen {
+  animation: sheen 0.9s ease-out;
+}
+
+.marquee-pause:hover .animate-marquee,
+.marquee-pause:hover .animate-marquee-fast {
+  animation-play-state: paused;
+}
+
+/* ---------- arabic / rtl ---------- */
+
+/* When Arabic is active the rigid italic serif headings don't translate well.
+   We swap the display face for Amiri, still an elegant serif with strong
+   calligraphic weight, and drop the tight negative tracking which breaks
+   Arabic letterforms. */
+html[dir="rtl"] body {
+  font-family: var(--font-arabic-stack);
+  /* Amiri ships 400/700 only — 300 would be synthesised and look washed out. */
+  font-weight: 400;
+}
+
+html[dir="rtl"] h1,
+html[dir="rtl"] h2,
+html[dir="rtl"] h3,
+html[dir="rtl"] h4,
+html[dir="rtl"] h5,
+html[dir="rtl"] h6,
+html[dir="rtl"] .font-display,
+html[dir="rtl"] .title,
+html[dir="rtl"] .display-xl,
+html[dir="rtl"] .display-lg,
+html[dir="rtl"] .display-md,
+html[dir="rtl"] .italic-serif,
+html[dir="rtl"] .numeral {
+  font-family: var(--font-arabic), Georgia, serif;
+  letter-spacing: 0;
+}
+
+/* Amiri's lighter body needs the loose tracking dropped but keeps 700 to match
+   the weight jump Roboto Slab gives the Latin headings. */
+html[dir="rtl"] .label {
+  font-weight: 400;
+}
+
+/* Marquee/ticker run the opposite way in RTL so content reads right-to-left.
+   The `wave-shift` and `marquee` keyframes translateX(-50%); this flips them. */
+html[dir="rtl"] .animate-marquee,
+html[dir="rtl"] .animate-marquee-fast,
+html[dir="rtl"] .animate-wave {
+  animation-direction: reverse;
+}
+
+/* Wish the .label style (wide letter-spacing + uppercase) didn't apply to
+   connected Arabic script — it splits characters apart. Re-spaces them for RTL. */
+html[dir="rtl"] .label {
+  letter-spacing: 0.06em;
+  text-transform: none;
+}
+
+/* Diagonal arrow icons read naturally pointing the opposite way in RTL. */
+html[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

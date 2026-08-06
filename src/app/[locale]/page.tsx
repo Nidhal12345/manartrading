@@ -4,7 +4,9 @@ import { ArrowUpRight, Quote } from "lucide-react";
 
 import HeroCinematic from "@/components/HeroCinematic";
 import Offerings, { type OfferingStats } from "@/components/Offerings";
-import CategoryList from "@/components/CategoryList";
+import CategoryShowcase, {
+  type ShowcaseCard,
+} from "@/components/CategoryShowcase";
 import HowItWorks from "@/components/HowItWorks";
 import ProcessSticky from "@/components/ProcessSticky";
 import Reveal, { StaggerGroup, StaggerItem } from "@/components/Reveal";
@@ -13,7 +15,7 @@ import SplitText from "@/components/ui/SplitText";
 import CountUp from "@/components/ui/CountUp";
 import Magnetic from "@/components/ui/Magnetic";
 import { productCategories } from "@/data/categories";
-import { products } from "@/data/products";
+import { categoryStats, products, type Category } from "@/data/products";
 
 const testimonials = [
   {
@@ -37,13 +39,53 @@ const testimonials = [
 ];
 
 /**
+ * The figure is billed as "species", so it counts whole fish only. The
+ * shellfish categories are a different row of the section, and Fillets, Steaks
+ * and Smoked Products are cuts of species already on this list — Salmon is in
+ * all four — so counting them would inflate the number rather than describe it.
+ */
+const wholeFish = new Set([
+  "Fishes (Sea Water)",
+  "Fishes (Fresh Water)",
+  "European Fishes",
+]);
+
+/**
  * Derived here, on the server, so the whole product array is never serialised
  * into the client bundle just for one number.
  */
 function offeringStats(): OfferingStats {
   return {
-    fishCount: products.filter((p) => p.category !== "Shellfish").length,
+    fishCount: products.filter((p) => wholeFish.has(p.category)).length,
   };
+}
+
+/**
+ * The home page indexes the trading range from `@/data/categories`; the
+ * ratings on those cards are rolled up from the lines the counter actually
+ * sells. The two files share their category names, which is what joins them.
+ *
+ * Assembled here, on the server, for the same reason as the count above: the
+ * cards need a handful of numbers, not the whole catalogue in the client
+ * bundle.
+ *
+ * Four of the ten, in spec-sheet order, so the section is one clean row on a
+ * desktop grid. "View all" carries the reader to the other six.
+ */
+function showcaseCards(): ShowcaseCard[] {
+  return productCategories.slice(0, 4).map((c) => {
+    const s = categoryStats[c.name as Category];
+    return {
+      slug: c.slug,
+      name: c.name,
+      arabic: c.arabic,
+      href: c.href,
+      image: c.image,
+      count: s.count,
+      rating: s.rating,
+      reviews: s.reviews,
+    };
+  });
 }
 
 export default function HomePage() {
@@ -54,31 +96,7 @@ export default function HomePage() {
       <Offerings stats={offeringStats()} />
 
       {/* ---------- product categories ---------- */}
-      <section className="bg-white py-20 lg:py-28">
-        <div className="container-x">
-          <Reveal>
-            <h2 className="display-lg mb-10 text-ink">Our categories</h2>
-          </Reveal>
-
-          <CategoryList categories={productCategories} />
-
-          <Reveal delay={0.1}>
-            <div className="mt-12 flex justify-start">
-              <Magnetic strength={0.2}>
-                <Link
-                  href="/shop"
-                  className="group inline-flex items-center gap-3 rounded-full border border-ink/15 py-3.5 pl-6 pr-3 text-[14.5px] font-semibold text-ink transition-colors hover:border-ink"
-                >
-                  Shop the full range
-                  <span className="grid h-9 w-9 place-items-center rounded-full bg-ink text-bone transition-transform duration-500 group-hover:rotate-45">
-                    <ArrowUpRight className="h-4 w-4" />
-                  </span>
-                </Link>
-              </Magnetic>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      <CategoryShowcase title="Our categories" cards={showcaseCards()} />
 
       {/* ---------- how it works ---------- */}
       <HowItWorks />
@@ -258,7 +276,7 @@ export default function HomePage() {
           <Reveal delay={0.2}>
             <p className="mx-auto mt-7 max-w-md text-[16px] leading-relaxed text-bone/65">
               Tell us what you need and how you want it cut. We confirm the
-              price by the kilo and the delivery window within minutes.
+              quote and the delivery window on WhatsApp within minutes.
             </p>
           </Reveal>
           <Reveal delay={0.28}>

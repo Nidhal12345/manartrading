@@ -75,17 +75,12 @@ export default function ProductCard({
           </div>
         </div>
 
-        <div className="flex items-baseline justify-between border-t border-ink/10 pt-4">
+        {/* The price used to sit on the right of this rule. Prices are quoted
+            on WhatsApp at the time of the order, so the origin takes the slot —
+            it keeps the two-column footer and is the next thing a buyer asks. */}
+        <div className="flex items-baseline justify-between gap-4 border-t border-ink/10 pt-4">
           <p className="text-[13.5px] text-ink/55">{p.category}</p>
-          <p className="flex items-baseline gap-1.5">
-            {p.compareAt && (
-              <span className="text-[12.5px] text-ink/30 line-through">
-                {p.compareAt}
-              </span>
-            )}
-            <span className="numeral text-[19px] text-ink">{p.price}</span>
-            <span className="text-[12px] text-ink/50">SAR/{p.unit}</span>
-          </p>
+          <p className="truncate text-[13px] text-ink/40">{p.origin}</p>
         </div>
       </Link>
     </motion.article>

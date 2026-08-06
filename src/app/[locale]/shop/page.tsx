@@ -8,15 +8,8 @@ import { products } from "@/data/products";
 export const metadata: Metadata = {
   title: "Shop the catch",
   description:
-    "Browse ten species of fresh Red Sea and Arabian Gulf fish — Hamour, Kanad, Najil, Zubaidi, Robyan and more. Priced by the kilo, cut to order, delivered same day.",
+    "Browse sixty-three lines across ten categories — lobster, shellfish, shrimp, cephalopods, whole fish, fillets, steaks and smoked. King Fish, Hamour, Salmon, Sea Bass and more. Cut to order, delivered same day.",
 };
-
-const perks = [
-  { t: "Ordered by 2 PM", s: "Delivered the same evening" },
-  { t: "0 – 2 °C", s: "Cold chain, door to door" },
-  { t: "Free over 300 SAR", s: "Across Jeddah & Riyadh" },
-  { t: "Pay on delivery", s: "Mada, Apple Pay or cash" },
-];
 
 const faqs = [
   {
@@ -25,11 +18,11 @@ const faqs = [
   },
   {
     q: "What if the size I want is gone?",
-    a: "We call you before dispatch with the nearest grade available and adjust the invoice by weight. You are never charged for a size we could not supply.",
+    a: "We call you before dispatch with the nearest grade available and adjust the order by weight. You are never sent a size we could not supply.",
   },
   {
     q: "Do you supply restaurants?",
-    a: "Around 60% of our volume goes to kitchens. Standing orders, tiered pricing from 20 kg and a fixed delivery slot every morning.",
+    a: "Around 60% of our volume goes to kitchens. Standing orders, quotes on WhatsApp from 20 kg and a fixed delivery slot.",
   },
 ];
 
@@ -39,21 +32,10 @@ export default function ShopPage() {
       <PageHero
         image="fishRows"
         eyebrow="The counter"
-        title="Everything we landed this morning"
-        copy="Ten species, priced by the kilo and prepared however your kitchen needs them. Availability moves with the boats — this list is rebuilt every day at 06:30."
+        title="Everything on the ice today"
+        copy="Ten categories, prepared however your kitchen needs them. Availability moves with the boats, so the list is rebuilt as the fish lands."
         crumbs={[{ href: "/", label: "Home" }, { label: "Shop" }]}
       />
-
-      <section className="border-b border-ink/10 bg-white">
-        <div className="container-x grid gap-px bg-ink/12 sm:grid-cols-2 lg:grid-cols-4">
-          {perks.map((p) => (
-            <div key={p.t} className="bg-white px-6 py-7">
-              <p className="font-display text-[16px] text-ink">{p.t}</p>
-              <p className="mt-1 text-[13px] text-ink/50">{p.s}</p>
-            </div>
-          ))}
-        </div>
-      </section>
 
       <ShopClient products={products} />
 

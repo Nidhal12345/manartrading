@@ -3,11 +3,12 @@
 import { useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { CheckCircle2, Loader2, Send } from "lucide-react";
+import { PHONE } from "@/lib/contact";
 
 const subjects = [
   "Place an order",
   "Restaurant / hotel supply",
-  "Bulk & wholesale pricing",
+  "Wholesale & standing orders",
   "Delivery question",
   "Something else",
 ];
@@ -76,7 +77,8 @@ export default function ContactForm() {
             </h3>
             <p className="mx-auto mt-4 max-w-sm text-[15px] leading-relaxed text-ink/60">
               Someone from the counter will call you on {form.phone} within the
-              hour. If it is urgent, ring us directly on +966 50 000 0000.
+              hour. If it is urgent, ring us directly on{" "}
+              <span dir="ltr">{PHONE}</span>.
             </p>
             <button
               onClick={() => {

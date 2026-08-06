@@ -9,17 +9,19 @@ import {
   Fish,
   Heart,
   Info,
+  MessageCircle,
   Minus,
+  Phone,
   Plus,
   Share2,
   ShieldCheck,
-  ShoppingBag,
   Snowflake,
   Star,
   Truck,
 } from "lucide-react";
 import Magnetic from "./ui/Magnetic";
 import { type ImageKey } from "@/lib/images";
+import { PHONE, PHONE_HREF, whatsappHref } from "@/lib/contact";
 import type { Product } from "@/data/products";
 
 type Tab = "story" | "nutrition" | "cooking";
@@ -36,10 +38,15 @@ export default function ProductDetail({ product: p }: { product: Product }) {
   const [qty, setQty] = useState(2);
   const [tab, setTab] = useState<Tab>("story");
   const [saved, setSaved] = useState(false);
-  const [added, setAdded] = useState(false);
 
-  const unitPrice = Math.round(p.price * p.sizes[size].multiplier);
-  const total = unitPrice * qty;
+  /**
+   * The order goes to WhatsApp pre-written, so the buyer does not have to
+   * retype what they were just looking at and the counter has everything it
+   * needs to quote: the line, the grade and the weight.
+   */
+  const orderHref = whatsappHref(
+    `Hello Manar Trading, I would like to order ${qty} kg of ${p.name} (${p.sizes[size].label}). Could you confirm the price and delivery?`,
+  );
 
   return (
     <div className="container-x py-14 lg:py-20">
@@ -176,22 +183,18 @@ export default function ProductDetail({ product: p }: { product: Product }) {
             {p.tagline}
           </p>
 
-          {/* price */}
-          <div className="mt-8 flex flex-wrap items-end gap-3 border-y border-ink/12 py-6">
-            <span className="numeral text-[46px] leading-none text-ink">
-              {unitPrice}
-            </span>
-            <span className="pb-1.5 text-[15px] text-ink/55">
-              SAR / {p.unit}
-            </span>
-            {p.compareAt && (
-              <span className="pb-2 text-[14px] text-ink/30 line-through">
-                {p.compareAt}
-              </span>
-            )}
-            <span className="ml-auto pb-2 text-[13px] text-ink/45">
-              Invoiced on actual weight
-            </span>
+          {/* Where the price stood. The counter quotes by the kilo on WhatsApp
+              at the time of the order, because the rate moves with the boats —
+              so this says how the figure is reached rather than naming one. */}
+          <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 border-y border-ink/12 py-6">
+            <MessageCircle className="h-5 w-5 shrink-0 text-ocean" />
+            <p className="font-display text-[18px] text-ink">
+              Priced on WhatsApp
+            </p>
+            <p className="w-full text-[13.5px] leading-relaxed text-ink/50 sm:ms-9 sm:w-auto sm:flex-1">
+              Send us the grade and the weight — we confirm today&rsquo;s rate
+              by the kilo and the delivery window in minutes.
+            </p>
           </div>
 
           {/* grade */}
@@ -224,7 +227,7 @@ export default function ProductDetail({ product: p }: { product: Product }) {
             </div>
           </div>
 
-          {/* quantity + cart */}
+          {/* quantity + order */}
           <div className="mt-7 flex flex-wrap items-center gap-3">
             <div className="flex items-center border border-ink/15">
               <button
@@ -248,48 +251,28 @@ export default function ProductDetail({ product: p }: { product: Product }) {
               </button>
             </div>
 
+            {/* There is no basket and no checkout — the order leaves the site
+                here, with the line, grade and weight already written into the
+                message. `rel="noreferrer"` because it is a third-party host. */}
             <Magnetic strength={0.14} className="flex-1">
-              <button
-                onClick={() => {
-                  setAdded(true);
-                  setTimeout(() => setAdded(false), 2200);
-                }}
-                className="group flex h-[54px] w-full items-center justify-center gap-3 rounded-full bg-ink px-7 text-[15px] font-semibold text-bone transition-colors hover:bg-ocean"
+              <a
+                href={orderHref}
+                target="_blank"
+                rel="noreferrer"
+                className="flex h-[54px] w-full items-center justify-center gap-3 rounded-full bg-ink px-7 text-[15px] font-semibold text-bone transition-colors hover:bg-ocean"
               >
-                <AnimatePresence mode="wait" initial={false}>
-                  {added ? (
-                    <motion.span
-                      key="added"
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      className="flex items-center gap-2.5"
-                    >
-                      <Check className="h-5 w-5" />
-                      Added — {total} SAR
-                    </motion.span>
-                  ) : (
-                    <motion.span
-                      key="add"
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      className="flex items-center gap-2.5"
-                    >
-                      <ShoppingBag className="h-4.5 w-4.5" />
-                      Add {qty} kg · {total} SAR
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </button>
+                <MessageCircle className="h-4.5 w-4.5" />
+                Order {qty} kg on WhatsApp
+              </a>
             </Magnetic>
           </div>
 
           <a
-            href="tel:+966500000000"
-            className="mt-3 flex h-[54px] items-center justify-center border border-ink/15 text-[14.5px] font-medium text-ink transition-colors hover:border-ink"
+            href={PHONE_HREF}
+            className="mt-3 flex h-[54px] items-center justify-center gap-2.5 border border-ink/15 text-[14.5px] font-medium text-ink transition-colors hover:border-ink"
           >
-            Or order by phone · +966 50 000 0000
+            <Phone className="h-4 w-4 text-ink/50" />
+            Or order by phone · <span dir="ltr">{PHONE}</span>
           </a>
 
           {/* assurances */}

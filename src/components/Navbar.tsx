@@ -7,6 +7,7 @@ import { AnimatePresence, motion, useScroll, useSpring } from "motion/react";
 import { Menu, Phone, X } from "lucide-react";
 import Logo from "./Logo";
 import LangSwitch from "./LangSwitch";
+import { PHONE, PHONE_HREF } from "@/lib/contact";
 
 export default function Navbar() {
   const t = useTranslations("Nav");
@@ -95,7 +96,7 @@ export default function Navbar() {
             </div>
 
             <a
-              href="tel:+966500000000"
+              href={PHONE_HREF}
               className={`hidden items-center gap-2 text-[14px] font-medium transition-colors sm:flex ${
                 light
                   ? "text-bone/75 hover:text-white"
@@ -103,7 +104,7 @@ export default function Navbar() {
               }`}
             >
               <Phone className="h-3.5 w-3.5" />
-              <span dir="ltr">+966 50 000 0000</span>
+              <span dir="ltr">{PHONE}</span>
             </a>
 
             <Link
@@ -201,10 +202,10 @@ export default function Navbar() {
                 <p>{t("addressLine1")}</p>
                 <p>{t("addressLine2")}</p>
                 <a
-                  href="tel:+966500000000"
+                  href={PHONE_HREF}
                   className="mt-4 inline-block text-bone underline underline-offset-4"
                 >
-                  <span dir="ltr">+966 50 000 0000</span>
+                  <span dir="ltr">{PHONE}</span>
                 </a>
               </motion.div>
             </div>

@@ -6,23 +6,20 @@ import { Search, X } from "lucide-react";
 import ProductCard from "./ProductCard";
 import { categories, type Product } from "@/data/products";
 
-type Sort = "featured" | "price-asc" | "price-desc" | "rating";
+type Sort = "featured" | "rating";
 
 const sorts: { value: Sort; label: string }[] = [
   { value: "featured", label: "Featured" },
-  { value: "price-asc", label: "Price: low to high" },
-  { value: "price-desc", label: "Price: high to low" },
   { value: "rating", label: "Top rated" },
 ];
 
-const waters = ["All waters", "Red Sea", "Arabian Gulf"] as const;
+const waters = ["All waters", "Red Sea", "Arabian Gulf", "Imported"] as const;
 
 export default function ShopClient({ products }: { products: Product[] }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>("All");
   const [water, setWater] = useState<string>("All waters");
   const [sort, setSort] = useState<Sort>("featured");
-  const [maxPrice, setMaxPrice] = useState(120);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -36,67 +33,43 @@ export default function ShopClient({ products }: { products: Product[] }) {
         p.tagline.toLowerCase().includes(q);
       const matchesCategory = category === "All" || p.category === category;
       const matchesWater = water === "All waters" || p.waters === water;
-      return (
-        matchesQuery && matchesCategory && matchesWater && p.price <= maxPrice
-      );
+      return matchesQuery && matchesCategory && matchesWater;
     });
 
     switch (sort) {
-      case "price-asc":
-        return [...list].sort((a, b) => a.price - b.price);
-      case "price-desc":
-        return [...list].sort((a, b) => b.price - a.price);
       case "rating":
         return [...list].sort((a, b) => b.rating - a.rating);
       default:
         return list;
     }
-  }, [products, query, category, water, sort, maxPrice]);
+  }, [products, query, category, water, sort]);
 
-  const dirty =
-    query !== "" ||
-    category !== "All" ||
-    water !== "All waters" ||
-    maxPrice < 120;
+  const dirty = query !== "" || category !== "All" || water !== "All waters";
 
   const reset = () => {
     setQuery("");
     setCategory("All");
     setWater("All waters");
-    setMaxPrice(120);
     setSort("featured");
   };
 
   return (
     <div className="container-x py-16 lg:py-20">
       {/* ---------- filter rail ---------- */}
-      <div className="sticky top-[78px] z-30 -mx-5 mb-12 border-b border-ink/12 bg-white/90 px-5 py-4 backdrop-blur-xl md:-mx-10 md:px-10">
+      {/* Fixed to the top of the list rather than pinned to the viewport: the
+          rail is three rows tall, and following the scroll cost the grid a
+          third of its height on every page down. */}
+      <div className="-mx-5 mb-12 border-b border-ink/12 bg-white px-5 pb-5 md:-mx-10 md:px-10">
         <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
           <div className="relative min-w-[180px] flex-1">
             <Search className="pointer-events-none absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/35" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search Hamour, Kanad, prawns…"
+              placeholder="Search King Fish, Salmon, shrimp…"
               aria-label="Search products"
               className="w-full border-b border-transparent bg-transparent py-2 pl-7 text-[15px] text-ink outline-none transition placeholder:text-ink/35 focus:border-ink"
             />
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            {categories.map((c) => (
-              <button
-                key={c}
-                onClick={() => setCategory(c)}
-                className={`rounded-full px-4 py-2 text-[13px] font-medium transition-all ${
-                  category === c
-                    ? "bg-ink text-bone"
-                    : "border border-ink/15 text-ink/60 hover:border-ink/45 hover:text-ink"
-                }`}
-              >
-                {c}
-              </button>
-            ))}
           </div>
 
           <label className="flex items-center gap-2.5 text-[13px] text-ink/55">
@@ -115,8 +88,30 @@ export default function ShopClient({ products }: { products: Product[] }) {
           </label>
         </div>
 
+        {/* Eleven categories will not sit on one line much below 1500px, and
+            letting them wrap grew this rail to a third of the viewport. They
+            scroll sideways on their own row instead, so the rail keeps roughly
+            the same height at every width. The strip bleeds to the rail's edges
+            and restores the inset with its own padding, so a pill cut off at
+            the edge reads as "there is more this way". */}
+        <div className="hide-scrollbar -mx-5 mt-4 flex gap-2 overflow-x-auto px-5 py-1 md:-mx-10 md:px-10">
+          {categories.map((c) => (
+            <button
+              key={c}
+              onClick={() => setCategory(c)}
+              className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-[13px] font-medium transition-all ${
+                category === c
+                  ? "bg-ink text-bone"
+                  : "border border-ink/15 text-ink/60 hover:border-ink/45 hover:text-ink"
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+
         <div className="mt-4 flex flex-wrap items-center gap-x-8 gap-y-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             {waters.map((w) => (
               <button
                 key={w}
@@ -132,28 +127,6 @@ export default function ShopClient({ products }: { products: Product[] }) {
             ))}
           </div>
 
-          <label className="flex flex-1 items-center gap-3 text-[13px] text-ink/55 sm:max-w-xs">
-            <span className="whitespace-nowrap">Under</span>
-            <input
-              type="range"
-              min={30}
-              max={120}
-              step={5}
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(Number(e.target.value))}
-              aria-label="Maximum price per kilo"
-              className="flex-1 accent-[#0e6ba8]"
-            />
-            <span className="numeral whitespace-nowrap text-ink">
-              {maxPrice} SAR
-            </span>
-          </label>
-
-          <p className="ml-auto text-[13px] text-ink/50">
-            <span className="numeral text-ink">{filtered.length}</span> of{" "}
-            {products.length} species available
-          </p>
-
           {dirty && (
             <button
               onClick={reset}
@@ -163,6 +136,11 @@ export default function ShopClient({ products }: { products: Product[] }) {
               Clear
             </button>
           )}
+
+          <p className="ms-auto text-[13px] text-ink/50">
+            <span className="numeral text-ink">{filtered.length}</span> of{" "}
+            {products.length} products available
+          </p>
         </div>
       </div>
 
@@ -184,8 +162,8 @@ export default function ShopClient({ products }: { products: Product[] }) {
         >
           <h3 className="display-md text-ink">Nothing matches that</h3>
           <p className="mx-auto mt-3 max-w-sm text-[14.5px] text-ink/55">
-            Try widening the price range or clearing the filters — we land
-            something different most days.
+            Try another category or clear the filters — we land something
+            different most days.
           </p>
           <button
             onClick={reset}

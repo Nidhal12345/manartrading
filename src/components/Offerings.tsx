@@ -15,7 +15,7 @@ import type { ImageKey } from "@/lib/images";
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
 export type OfferingStats = {
-  /** Species on the counter — everything landed that is not shellfish. */
+  /** Whole fish species on the counter — not shellfish, and not cuts. */
   fishCount: number;
 };
 
@@ -83,7 +83,9 @@ export default function Offerings({ stats }: { stats: OfferingStats }) {
     {
       key: "shellfish",
       image: "prawnsOnIce",
-      href: "/shop/robyan-tiger-prawns",
+      // A real slug from `@/data/products` — the head-on shrimp line, which is
+      // what the photograph above shows.
+      href: "/shop/shrimps-head-on",
       kicker: t("shellfish.kicker"),
       title: t("shellfish.title"),
       arabic: t("shellfish.arabic"),

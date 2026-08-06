@@ -14,7 +14,7 @@ const steps: { n: string; title: string; copy: string; image: ImageKey }[] = [
   {
     n: "01",
     title: "The boats come in",
-    copy: "Crews we have worked with for years radio ahead with what they have. Our buyers are on the quay at four, and we buy on the spot — no auction house, no middleman, no second day.",
+    copy: "Crews we have worked with for years radio ahead with what they have, and we buy on the spot — no auction house, no middleman, no second day.",
     image: "boatDawn",
   },
   {
@@ -32,7 +32,7 @@ const steps: { n: string; title: string; copy: string; image: ImageKey }[] = [
   {
     n: "04",
     title: "At your door the same day",
-    copy: "Sealed in an insulated box with gel ice and tracked to your kitchen. Order before 2 PM in Jeddah or Riyadh and it is on your counter for dinner.",
+    copy: "Sealed in an insulated box with gel ice and tracked to your kitchen, so it is on your counter in time for dinner.",
     image: "fishmonger",
   },
 ];

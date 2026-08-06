@@ -223,14 +223,6 @@ html[dir="rtl"] .hero-display {
   opacity: 0.14;
 }
 
-.dot-grid {
-  background-image: radial-gradient(
-    rgba(14, 107, 168, 0.14) 1px,
-    transparent 1px
-  );
-  background-size: 22px 22px;
-}
-
 /* film grain over the whole page */
 .grain {
   position: fixed;

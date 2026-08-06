@@ -2,6 +2,7 @@ import Photo from "./ui/Photo";
 import { Link } from "@/i18n/navigation";
 import { ArrowUpRight, Clock, Mail, MapPin, Phone, Send } from "lucide-react";
 import Logo from "./Logo";
+import { PHONE, PHONE_HREF } from "@/lib/contact";
 import { products } from "@/data/products";
 import { getTranslations } from "next-intl/server";
 
@@ -147,8 +148,8 @@ export default async function Footer() {
             </li>
             <li className="flex gap-3">
               <Phone className="mt-0.5 h-4 w-4 shrink-0 text-aqua" />
-              <a href="tel:+966500000000" className="hover:text-aqua">
-                <span dir="ltr">+966 50 000 0000</span>
+              <a href={PHONE_HREF} className="hover:text-aqua">
+                <span dir="ltr">{PHONE}</span>
               </a>
             </li>
             <li className="flex gap-3">

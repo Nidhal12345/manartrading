@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${product.name} (${product.arabic})`,
-    description: `${product.tagline} ${product.name} from the ${product.waters}, ${product.price} SAR per kg. Cut to order and delivered same day by Manar Trading.`,
+    description: `${product.tagline} ${product.name} from the ${product.waters}. Cut to order and delivered same day by Manar Trading.`,
     openGraph: {
       title: `${product.name} · Manar Trading`,
       description: product.tagline,

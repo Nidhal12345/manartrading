@@ -13,41 +13,49 @@ import ContactForm from "@/components/ContactForm";
 import Faq from "@/components/Faq";
 import Reveal from "@/components/Reveal";
 import { SectionIntro } from "@/components/Decor";
+import {
+  ADDRESS_LINE_1,
+  ADDRESS_LINE_2,
+  MAPS_HREF,
+  PHONE,
+  PHONE_HREF,
+  whatsappHref,
+} from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Call, message or visit Manar Trading at the Jeddah central fish market. Same-day seafood delivery across Saudi Arabia, and bulk pricing for restaurants and hotels.",
+    "Call, message or visit Manar Trading on Hijrah Road in Medina. Same-day seafood delivery across Saudi Arabia, and quotes on WhatsApp for restaurants and hotels.",
 };
 
 const channels = [
   {
     icon: Phone,
     label: "Call the counter",
-    value: "+966 50 000 0000",
-    href: "tel:+966500000000",
-    note: "Fastest answer, 6 AM – 11 PM",
+    value: PHONE,
+    href: PHONE_HREF,
+    note: "Fastest answer during opening hours",
   },
   {
     icon: MessageCircle,
     label: "WhatsApp orders",
-    value: "+966 55 000 0000",
-    href: "https://wa.me/966550000000",
-    note: "Send a photo of your list",
+    value: PHONE,
+    href: whatsappHref(),
+    note: "Send your list — we quote by the kilo",
   },
   {
     icon: Mail,
     label: "Email us",
     value: "hello@manartrading.sa",
     href: "mailto:hello@manartrading.sa",
-    note: "Quotes and invoices",
+    note: "Quotes and paperwork",
   },
   {
     icon: MapPin,
     label: "Visit the shop",
-    value: "Al Bawadi, Jeddah",
+    value: ADDRESS_LINE_1,
     href: "#map",
-    note: "Central Fish Market, Gate 3",
+    note: ADDRESS_LINE_2,
   },
 ];
 
@@ -141,14 +149,14 @@ export default function ContactPage() {
                   <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6">
                     <div>
                       <p className="font-display text-[17px] text-bone">
-                        Central Fish Market, Gate 3
+                        {ADDRESS_LINE_1}
                       </p>
                       <p className="mt-1 text-[13.5px] text-bone/65">
-                        Al Bawadi District, Jeddah 23443
+                        {ADDRESS_LINE_2}
                       </p>
                     </div>
                     <a
-                      href="https://maps.google.com/?q=Jeddah+Central+Fish+Market"
+                      href={MAPS_HREF}
                       target="_blank"
                       rel="noreferrer noopener"
                       className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/30 text-bone transition-colors hover:bg-bone hover:text-abyss"

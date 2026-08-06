@@ -23,8 +23,8 @@
     "closeMenu": "Close menu",
     "switchLanguage": "Change language",
     "switchLanguageEn": "English",
-    "addressLine1": "Central Fish Market, Al Bawadi",
-    "addressLine2": "Jeddah 23443, Saudi Arabia"
+    "addressLine1": "Hijrah Road, Medina",
+    "addressLine2": "Saudi Arabia"
   },
   "Hero": {
     "titleLine1": "Manar Trading.",
@@ -37,9 +37,9 @@
   "Offerings": {
     "fish": {
       "kicker": "The counter",
-      "title": "Reef, coastal & pelagic fish",
+      "title": "Sea, river & European fish",
       "arabic": "سمك طازج",
-      "copy": "Hamour, Najil, Shaari, Safi, Kanad and Yellowfin — landed on the Red Sea and Gulf coasts and priced by the kilo every morning at 06:30.",
+      "copy": "King Fish, Emperor, White Pomfret, Sea Bass and Sea Bream — landed on the Red Sea and Gulf coasts or flown in overnight, and graded before anything reaches the counter.",
       "countLabel": "On the counter",
       "countUnit": "species",
       "cta": "Shop the fish"
@@ -48,7 +48,7 @@
       "kicker": "Same day only",
       "title": "Prawns & shellfish",
       "arabic": "روبيان الخليج",
-      "copy": "Gulf tiger prawns, head-on and still snapping, bought each morning of the licensed season and sold only on the day they land.",
+      "copy": "Gulf tiger prawns, head-on and still snapping, bought through the licensed season and sold only on the day they land.",
       "gradeLabel": "Grades",
       "grade": "U/15 – 21/25",
       "cta": "Shop robyan"
@@ -57,21 +57,21 @@
       "kicker": "For kitchens",
       "title": "Standing kitchen orders",
       "arabic": "طلبات المطاعم",
-      "copy": "A fixed list, the same delivery window every morning, and one contact who knows your kitchen. Restaurants, hotels and caterers across the Kingdom.",
-      "minLabel": "Tiered from",
+      "copy": "A fixed list, the same delivery window every day, and one contact who knows your kitchen. Restaurants, hotels and caterers across the Kingdom.",
+      "minLabel": "Minimum order",
       "minUnit": "kg",
       "slotLabel": "Delivery",
-      "slot": "Every morning",
+      "slot": "Same day",
       "cta": "Talk to our team"
     }
   },
   "Footer": {
     "newsletterLabel": "The daily list",
-    "newsletterTitle": "What came off the boats, in your inbox at 6:30",
+    "newsletterTitle": "What came off the boats, straight to your inbox",
     "emailPlaceholder": "you@company.sa",
     "emailAria": "Email address",
     "subscribeAria": "Subscribe",
-    "companyTagline": "A family seafood house supplying homes, restaurants and hotels across Saudi Arabia with Red Sea and Arabian Gulf fish since 2009.",
+    "companyTagline": "A Saudi seafood company importing and supplying Red Sea, Arabian Gulf and international fish to homes, restaurants and hotels across the Kingdom.",
     "companyColumn": "Company",
     "popularColumn": "Popular",
     "visitColumn": "Visit us",
@@ -82,8 +82,8 @@
       "about": "About us",
       "contact": "Contact"
     },
-    "addressLine1": "Central Fish Market, Al Bawadi",
-    "addressLine2": "Jeddah 23443, Saudi Arabia",
+    "addressLine1": "Hijrah Road, Medina",
+    "addressLine2": "Saudi Arabia",
     "hours": "Sat – Thu 6:00 – 23:00 · Fri 14:00 – 23:00",
     "rights": "© {year} Manar Trading Est. All rights reserved. CR 4030XXXXXX",
     "privacy": "Privacy",

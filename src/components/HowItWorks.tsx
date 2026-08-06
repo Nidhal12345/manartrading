@@ -7,7 +7,7 @@ import { ArrowUpRight, PackageOpen, Ship, Truck } from "lucide-react";
 import Reveal, { StaggerGroup, StaggerItem } from "./Reveal";
 import SplitText from "./ui/SplitText";
 import Magnetic from "./ui/Magnetic";
-import waterSurface from "../../public/2.png";
+import waterSurface from "../../public/back3.png";
 
 /**
  * Three-step overview of the order journey, threaded on a single rule so it
@@ -24,7 +24,7 @@ const steps = [
   {
     n: "01",
     title: "We source",
-    copy: "Our own buyers are on the quay at 4 AM in Jeddah and Dammam, buying straight off the hull — never through a wholesaler, never a second day.",
+    copy: "Our own buyers take the fish straight off the boats on the Red Sea and Gulf coasts, and we import the rest ourselves — never through a wholesaler, never a second day.",
     Icon: Ship,
   },
   {
@@ -36,7 +36,7 @@ const steps = [
   {
     n: "03",
     title: "We deliver",
-    copy: "Buried in flake ice minutes after landing and held at 0 – 2 °C to your door. Order by 2 PM for Jeddah, Makkah, Riyadh and the Eastern Province.",
+    copy: "Buried in flake ice minutes after landing and held at 0 – 2 °C to your door, with same-day delivery across the Kingdom.",
     Icon: Truck,
   },
 ];

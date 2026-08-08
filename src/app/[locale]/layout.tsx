@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import MotionProvider from "@/components/MotionProvider";
 import SmoothScroll from "@/components/providers/SmoothScroll";
 import Preloader from "@/components/Preloader";
+import { Analytics } from "@vercel/analytics/next";
 import "../globals.css";
 
 export function generateStaticParams() {
@@ -102,6 +103,7 @@ export default async function LocaleLayout({
         </NextIntlClientProvider>
 
         <div className="grain" aria-hidden="true" />
+        <Analytics />
       </body>
     </html>
   );

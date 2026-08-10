@@ -1,63 +1,112 @@
 "use client";
 
-import Photo from "./ui/Photo";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   Check,
-  ChefHat,
-  Fish,
-  Heart,
-  Info,
   MessageCircle,
   Minus,
   Phone,
   Plus,
-  Share2,
   ShieldCheck,
   Snowflake,
-  Star,
-  Truck,
+  Utensils,
 } from "lucide-react";
-import Magnetic from "./ui/Magnetic";
+import { useLocale, useTranslations } from "next-intl";
+
+import Photo from "./ui/Photo";
+import { CutDiagram } from "./ui/CutDiagram";
 import { type ImageKey } from "@/lib/images";
 import { PHONE, PHONE_HREF, whatsappHref } from "@/lib/contact";
 import type { Product } from "@/data/products";
 
+/**
+ * The spec sheet.
+ *
+ * `PRODUCT.md` says every product page should terminate in a WhatsApp handoff,
+ * and the page now does exactly that: the buyer picks a grade, a cut and a
+ * weight, and all three are written into the message before it leaves the site.
+ * There is no basket and no checkout, so nothing on this page pretends to be one.
+ *
+ * Removed from the old panel, all for the same reason — it displayed state that
+ * did not exist:
+ *
+ *   - **Save to favourites.** A heart that set local state and forgot it on
+ *     navigation. There is no account system to save into.
+ *   - **Share.** A button with no handler at all.
+ *   - **Star rating and review count.** Both derived from a hash of the slug in
+ *     `products.ts`. Printing "4.8 · 173 reviews" over invented numbers is the
+ *     exact failure `PRODUCT.md` names.
+ *   - **"In stock today".** A pulsing green dot driven by a hardcoded `true`.
+ *   - **"Order before 2 PM".** No cut-off is confirmed, so none is printed.
+ *
+ * The nutrition panel stays, behind a marked block: the figures are placeholder
+ * and the copy says so rather than presenting them as measured.
+ */
+
 type Tab = "story" | "nutrition" | "cooking";
 
+const TABS: Tab[] = ["story", "nutrition", "cooking"];
+
+const HANDLING = [
+  { key: "chilled", icon: Snowflake },
+  { key: "cutToOrder", icon: Utensils },
+  { key: "guarantee", icon: ShieldCheck },
+] as const;
+
 export default function ProductDetail({ product: p }: { product: Product }) {
+  const t = useTranslations("Product");
+  const tc = useTranslations("Cuts");
+  const ts = useTranslations("Shop");
+  const isRtl = useLocale() === "ar";
+
   const views: { key: ImageKey; label: string }[] = [
-    { key: p.image, label: "On ice" },
-    { key: p.wild, label: "In the water" },
-    { key: p.cooked, label: "On the plate" },
+    { key: p.image, label: t("views.onIce") },
+    { key: p.wild, label: t("views.inWater") },
+    { key: p.cooked, label: t("views.onPlate") },
   ];
 
   const [view, setView] = useState(0);
   const [size, setSize] = useState(0);
+  const [cut, setCut] = useState(p.preparation[0]);
   const [qty, setQty] = useState(2);
   const [tab, setTab] = useState<Tab>("story");
-  const [saved, setSaved] = useState(false);
 
   /**
-   * The order goes to WhatsApp pre-written, so the buyer does not have to
-   * retype what they were just looking at and the counter has everything it
-   * needs to quote: the line, the grade and the weight.
+   * Everything the counter needs to quote, already written: the line, the
+   * grade, the weight and the cut. The buyer retypes nothing.
    */
   const orderHref = whatsappHref(
-    `Hello Manar Trading, I would like to order ${qty} kg of ${p.name} (${p.sizes[size].label}). Could you confirm the price and delivery?`,
+    t("message", {
+      qty,
+      name: p.name,
+      arabic: p.arabic,
+      grade: p.sizes[size].label,
+      weight: p.sizes[size].weight,
+      cut: tc(`${cut}.title`),
+    }),
   );
+
+  const spec: [string, string][] = [
+    [t("spec.scientific"), p.scientific],
+    [t("spec.origin"), p.origin],
+    [t("spec.waters"), ts(`waters.${p.waters}`)],
+    [t("spec.method"), p.method],
+    [t("spec.season"), p.season],
+    [t("spec.texture"), p.texture],
+    [t("spec.flavour"), p.flavour],
+  ];
 
   return (
     <div className="container-x py-14 lg:py-20">
       <div className="grid gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
         {/* ---------------- gallery ---------------- */}
-        <div className="lg:sticky lg:top-24 lg:h-fit">
-          <div className="relative aspect-[4/5] overflow-hidden bg-abyss">
+        <div className="lg:sticky lg:top-32 lg:h-fit">
+          <div className="relative aspect-[4/5] overflow-hidden bg-tar">
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.div
                 key={view}
-                initial={{ opacity: 0, scale: 1.06 }}
+                initial={{ opacity: 0, scale: 1.04 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -73,59 +122,42 @@ export default function ProductDetail({ product: p }: { product: Product }) {
               </motion.div>
             </AnimatePresence>
 
-            <span className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,20,31,0.35),transparent_28%,transparent_70%,rgba(4,20,31,0.5))]" />
+            {p.badge && (
+              <span className="label absolute end-0 top-5 bg-oxide px-3.5 py-2 text-limewash">
+                {p.badge}
+              </span>
+            )}
 
-            <span className="label absolute left-5 top-5 text-bone/75">
-              {p.waters}
-            </span>
-
-            <div className="absolute right-5 top-5 flex flex-col gap-2">
-              <button
-                onClick={() => setSaved((v) => !v)}
-                aria-pressed={saved}
-                aria-label="Save to favourites"
-                className="grid h-11 w-11 place-items-center rounded-full border border-white/25 text-bone backdrop-blur-md transition-all hover:bg-white/15"
-              >
-                <Heart
-                  className={`h-4 w-4 transition-colors ${
-                    saved ? "fill-red-400 text-red-400" : ""
-                  }`}
-                />
-              </button>
-              <button
-                aria-label="Share this product"
-                className="grid h-11 w-11 place-items-center rounded-full border border-white/25 text-bone backdrop-blur-md transition-all hover:bg-white/15"
-              >
-                <Share2 className="h-4 w-4" />
-              </button>
-            </div>
+            <div
+              aria-hidden="true"
+              className="waterline absolute inset-x-0 bottom-0"
+            />
           </div>
 
-          <div className="mt-3 grid grid-cols-3 gap-3">
+          <div className="mt-3 grid grid-cols-3 gap-2">
             {views.map((v, i) => (
               <button
                 key={v.label}
+                type="button"
                 onClick={() => setView(i)}
-                className="group relative aspect-[4/3] overflow-hidden bg-sea-100"
-                aria-label={`Show ${v.label}`}
+                aria-label={t("showView", { label: v.label })}
                 aria-pressed={view === i}
+                className="group relative aspect-[4/3] overflow-hidden bg-tar focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide"
               >
                 <Photo
                   image={v.key}
                   res={400}
                   sizes="180px"
                   className={`object-cover transition-all duration-700 ${
-                    view === i
-                      ? "scale-105"
-                      : "opacity-55 group-hover:opacity-90"
+                    view === i ? "opacity-100" : "opacity-50 group-hover:opacity-85"
                   }`}
                 />
                 <span
-                  className={`absolute inset-0 border-2 transition-colors ${
-                    view === i ? "border-ink" : "border-transparent"
+                  className={`pointer-events-none absolute inset-0 border-2 transition-colors ${
+                    view === i ? "border-tar" : "border-transparent"
                   }`}
                 />
-                <span className="label absolute bottom-2 left-2 text-[9px] text-bone drop-shadow">
+                <span className="label absolute bottom-2 start-2 text-[9px] text-limewash drop-shadow">
                   {v.label}
                 </span>
               </button>
@@ -133,91 +165,75 @@ export default function ProductDetail({ product: p }: { product: Product }) {
           </div>
         </div>
 
-        {/* ---------------- purchase panel ---------------- */}
+        {/* ---------------- the order ---------------- */}
         <div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <span className="label text-ink/45">{p.category}</span>
-            {p.badge && (
-              <span className="label rounded-full bg-ink px-3 py-1.5 text-[9.5px] text-bone">
-                {p.badge}
-              </span>
-            )}
-            {p.inStock && (
-              <span className="flex items-center gap-2 text-[13px] font-medium text-emerald-700">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-                In stock today
-              </span>
-            )}
-          </div>
+          <span className="label text-rope">
+            {ts(`categories.${p.category}`)}
+          </span>
 
-          <div className="mt-6 flex flex-wrap items-baseline gap-x-5 gap-y-1">
-            <h1 className="display-lg text-ink">{p.name}</h1>
-            <span className="font-display text-[24px] text-ink/40" dir="rtl">
-              {p.arabic}
-            </span>
-          </div>
-          <p className="italic-serif mt-3 text-[15px] text-ink/50">
-            {p.scientific}
+          <h1
+            className={`mt-5 text-tar ${
+              isRtl
+                ? "font-arabic-display text-[clamp(2.1rem,5vw,3.2rem)] font-bold leading-[1.3]"
+                : "display-lg"
+            }`}
+          >
+            {isRtl ? p.arabic : p.name}
+          </h1>
+          <p
+            className={`mt-3 leading-none text-oxide ${
+              isRtl
+                ? "latin-plate text-[22px]"
+                : "font-arabic-display text-[26px]"
+            }`}
+            dir={isRtl ? "ltr" : "rtl"}
+          >
+            {isRtl ? p.name : p.arabic}
           </p>
 
-          <div className="mt-5 flex items-center gap-3">
-            <span className="flex items-center gap-0.5">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star
-                  key={i}
-                  className={`h-3.5 w-3.5 ${
-                    i < Math.round(p.rating)
-                      ? "fill-sand text-sand"
-                      : "text-ink/15"
-                  }`}
-                />
-              ))}
-            </span>
-            <span className="text-[13.5px] text-ink/55">
-              <span className="font-semibold text-ink">{p.rating}</span> ·{" "}
-              {p.reviews} reviews
-            </span>
-          </div>
-
-          <p className="mt-7 max-w-md text-[16.5px] leading-relaxed text-ink/70">
+          <p className="mt-7 max-w-md text-[16.5px] leading-relaxed text-tar/75">
             {p.tagline}
           </p>
 
-          {/* Where the price stood. The counter quotes by the kilo on WhatsApp
-              at the time of the order, because the rate moves with the boats —
-              so this says how the figure is reached rather than naming one. */}
-          <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 border-y border-ink/12 py-6">
-            <MessageCircle className="h-5 w-5 shrink-0 text-ocean" />
-            <p className="font-display text-[18px] text-ink">
-              Priced on WhatsApp
+          {/* Where the price stood. The rate moves with the boats, so this says
+              how the figure is reached rather than naming one. */}
+          <div className="mt-9 border-2 border-tar bg-chalk p-6">
+            <p className="flex items-center gap-3 font-display text-[20px] uppercase text-tar">
+              <MessageCircle aria-hidden="true" className="h-5 w-5 text-oxide" />
+              {t("priced.title")}
             </p>
-            <p className="w-full text-[13.5px] leading-relaxed text-ink/50 sm:ms-9 sm:w-auto sm:flex-1">
-              Send us the grade and the weight — we confirm today&rsquo;s rate
-              by the kilo and the delivery window in minutes.
+            <p className="mt-3 text-[14px] leading-[1.75] text-tar/65 rtl:leading-[1.95]">
+              {t("priced.copy")}
             </p>
           </div>
 
           {/* grade */}
-          <div className="mt-8">
-            <p className="label text-ink/45">Grade / cut</p>
+          <fieldset className="mt-9">
+            <legend className="label text-rope">{t("gradeLabel")}</legend>
             <div className="mt-4 grid gap-2 sm:grid-cols-3">
               {p.sizes.map((s, i) => (
                 <button
                   key={s.label}
+                  type="button"
                   onClick={() => setSize(i)}
-                  className={`border p-4 text-left transition-all ${
+                  aria-pressed={size === i}
+                  className={`border-2 p-4 text-start transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide ${
                     size === i
-                      ? "border-ink bg-ink text-bone"
-                      : "border-ink/15 hover:border-ink/50"
+                      ? "border-tar bg-tar text-limewash"
+                      : "border-tar/15 text-tar hover:border-tar"
                   }`}
                 >
-                  <span className="flex items-center justify-between">
-                    <span className="font-display text-[15px]">{s.label}</span>
-                    {size === i && <Check className="h-4 w-4" />}
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="font-display text-[16px] uppercase">
+                      {s.label}
+                    </span>
+                    {size === i && (
+                      <Check aria-hidden="true" className="h-4 w-4 shrink-0" />
+                    )}
                   </span>
                   <span
-                    className={`mt-1 block text-[12.5px] ${
-                      size === i ? "text-bone/60" : "text-ink/50"
+                    className={`draft-mark mt-1.5 block text-[12.5px] ${
+                      size === i ? "" : "text-rope"
                     }`}
                   >
                     {s.weight}
@@ -225,113 +241,154 @@ export default function ProductDetail({ product: p }: { product: Product }) {
                 </button>
               ))}
             </div>
-          </div>
+          </fieldset>
 
-          {/* quantity + order */}
-          <div className="mt-7 flex flex-wrap items-center gap-3">
-            <div className="flex items-center border border-ink/15">
+          {/* cut — only the ones this line actually takes */}
+          <fieldset className="mt-8">
+            <legend className="label text-rope">{t("cutLabel")}</legend>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {p.preparation.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setCut(c)}
+                  aria-pressed={cut === c}
+                  className={`inline-flex items-center gap-2.5 border-2 px-4 py-2.5 text-[13.5px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide ${
+                    cut === c
+                      ? "border-tar bg-tar text-limewash"
+                      : "border-tar/15 text-tar/70 hover:border-tar hover:text-tar"
+                  }`}
+                >
+                  <CutDiagram cut={c} className="h-4 w-9 shrink-0" />
+                  {tc(`${c}.title`)}
+                </button>
+              ))}
+            </div>
+            <p className="mt-3.5 text-[13px] leading-relaxed text-rope">
+              {tc(`${cut}.copy`)}
+            </p>
+          </fieldset>
+
+          {/* weight + handoff */}
+          <div className="mt-9 flex flex-wrap items-center gap-3">
+            <div
+              role="group"
+              aria-label={t("qtyLabel")}
+              className="flex items-center border-2 border-tar"
+            >
               <button
+                type="button"
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
-                aria-label="Decrease quantity"
-                className="grid h-[54px] w-12 place-items-center text-ink transition-colors hover:bg-ink/5 disabled:opacity-25"
+                aria-label={t("decrease")}
                 disabled={qty <= 1}
+                className="grid h-[54px] w-12 place-items-center text-tar transition-colors hover:bg-tar hover:text-limewash disabled:pointer-events-none disabled:opacity-25"
               >
-                <Minus className="h-4 w-4" />
+                <Minus aria-hidden="true" className="h-4 w-4" />
               </button>
-              <span className="numeral w-16 text-center text-[16px] text-ink">
+              <span className="numeral w-16 text-center text-[18px] text-tar">
                 {qty}
-                <span className="ml-1 text-[12px] text-ink/50">kg</span>
+                <span className="ms-1 text-[12px] text-rope">
+                  {t("qtyUnit")}
+                </span>
               </span>
               <button
+                type="button"
                 onClick={() => setQty((q) => Math.min(50, q + 1))}
-                aria-label="Increase quantity"
-                className="grid h-[54px] w-12 place-items-center text-ink transition-colors hover:bg-ink/5"
+                aria-label={t("increase")}
+                className="grid h-[54px] w-12 place-items-center text-tar transition-colors hover:bg-tar hover:text-limewash"
               >
-                <Plus className="h-4 w-4" />
+                <Plus aria-hidden="true" className="h-4 w-4" />
               </button>
             </div>
 
-            {/* There is no basket and no checkout — the order leaves the site
-                here, with the line, grade and weight already written into the
-                message. `rel="noreferrer"` because it is a third-party host. */}
-            <Magnetic strength={0.14} className="flex-1">
-              <a
-                href={orderHref}
-                target="_blank"
-                rel="noreferrer"
-                className="flex h-[54px] w-full items-center justify-center gap-3 rounded-full bg-ink px-7 text-[15px] font-semibold text-bone transition-colors hover:bg-ocean"
-              >
-                <MessageCircle className="h-4.5 w-4.5" />
-                Order {qty} kg on WhatsApp
-              </a>
-            </Magnetic>
+            {/* The order leaves the site here. `rel` carries noopener because
+                the link opens a third-party host in a new tab. */}
+            <a
+              href={orderHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-[54px] flex-1 items-center justify-center gap-3 bg-oxide px-7 text-[15px] font-semibold text-limewash transition-colors hover:bg-oxide-lit focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tar"
+            >
+              <MessageCircle aria-hidden="true" className="h-4 w-4 shrink-0" />
+              {t("order", { qty })}
+            </a>
           </div>
 
           <a
             href={PHONE_HREF}
-            className="mt-3 flex h-[54px] items-center justify-center gap-2.5 border border-ink/15 text-[14.5px] font-medium text-ink transition-colors hover:border-ink"
+            className="mt-3 flex h-[54px] items-center justify-center gap-2.5 border-2 border-tar/15 text-[14.5px] font-semibold text-tar transition-colors hover:border-tar focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide"
           >
-            <Phone className="h-4 w-4 text-ink/50" />
-            Or order by phone · <span dir="ltr">{PHONE}</span>
+            <Phone aria-hidden="true" className="h-4 w-4 text-rope" />
+            {t("orderPhone")} · <span dir="ltr">{PHONE}</span>
           </a>
 
-          {/* assurances */}
-          <div className="mt-9 grid gap-px border-y border-ink/12 bg-ink/12 sm:grid-cols-3">
-            {[
-              { icon: Truck, t: "Same-day", s: "Order before 2 PM" },
-              { icon: Snowflake, t: "0 – 2 °C", s: "Iced in transit" },
-              { icon: ShieldCheck, t: "Guaranteed", s: "Not fresh? Refunded" },
-            ].map((x) => (
-              <div key={x.t} className="bg-white px-4 py-6 text-center">
-                <x.icon className="mx-auto h-4.5 w-4.5 text-ocean" />
-                <p className="mt-3 font-display text-[14px] text-ink">{x.t}</p>
-                <p className="mt-0.5 text-[11.5px] text-ink/45">{x.s}</p>
+          {/* handling — three things that are true of every line */}
+          <div className="mt-9 grid gap-px bg-tar/12 sm:grid-cols-3">
+            {HANDLING.map((h) => (
+              <div key={h.key} className="bg-limewash px-4 py-6 text-center">
+                <h.icon
+                  aria-hidden="true"
+                  className="mx-auto h-4.5 w-4.5 text-oxide"
+                />
+                <p className="mt-3 font-display text-[15px] uppercase text-tar">
+                  {t(`handling.${h.key}.title`)}
+                </p>
+                <p className="mt-1 text-[12px] leading-snug text-rope">
+                  {t(`handling.${h.key}.copy`)}
+                </p>
               </div>
             ))}
           </div>
 
-          {/* spec grid */}
-          <dl className="mt-8 grid grid-cols-2 gap-x-8 gap-y-5">
-            {[
-              ["Origin", p.origin],
-              ["Waters", p.waters],
-              ["Catch method", p.method],
-              ["Season", p.season],
-              ["Texture", p.texture],
-              ["Flavour", p.flavour],
-            ].map(([k, v]) => (
-              <div key={k} className="border-t border-ink/12 pt-3">
-                <dt className="label text-ink/40">{k}</dt>
-                <dd className="mt-1.5 text-[14.5px] text-ink">{v}</dd>
+          {/* ---- the spec sheet proper ---- */}
+          <div className="mt-10">
+            <h2 className="label text-rope">{t("spec.title")}</h2>
+            <dl className="mt-5 grid grid-cols-2 gap-x-8 gap-y-5">
+              {spec.map(([k, v]) => (
+                <div key={k} className="border-t-2 border-tar/12 pt-3">
+                  <dt className="label text-rope">{k}</dt>
+                  <dd className="mt-1.5 text-[14.5px] text-tar">{v}</dd>
+                </div>
+              ))}
+
+              <div className="col-span-2 border-t-2 border-tar/12 pt-3">
+                <dt className="label text-rope">{t("spec.cuts")}</dt>
+                <dd className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-2">
+                  {p.preparation.map((c) => (
+                    <span
+                      key={c}
+                      className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-tar/70"
+                    >
+                      <CutDiagram cut={c} className="h-4 w-8 shrink-0" />
+                      {tc(`${c}.title`)}
+                    </span>
+                  ))}
+                </dd>
               </div>
-            ))}
-          </dl>
+            </dl>
+          </div>
         </div>
       </div>
 
       {/* ---------------- tabs ---------------- */}
-      <div className="mt-24 border-t border-ink/12 pt-10">
+      <div className="mt-24 border-t-2 border-tar pt-10">
         <div className="flex flex-wrap gap-8">
-          {(
-            [
-              { key: "story", label: "About this fish", icon: Fish },
-              { key: "nutrition", label: "Nutrition", icon: Info },
-              { key: "cooking", label: "How to cook it", icon: ChefHat },
-            ] as const
-          ).map((t) => (
+          {TABS.map((key) => (
             <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`group relative flex items-center gap-2.5 pb-3 text-[15px] font-medium transition-colors ${
-                tab === t.key ? "text-ink" : "text-ink/40 hover:text-ink/70"
+              key={key}
+              type="button"
+              onClick={() => setTab(key)}
+              aria-pressed={tab === key}
+              className={`relative pb-3 font-display text-[18px] uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide ${
+                tab === key ? "text-tar" : "text-rope hover:text-tar"
               }`}
             >
-              <t.icon className="h-4 w-4" />
-              {t.label}
-              {tab === t.key && (
+              {t(`tabs.${key}`)}
+              {tab === key && (
                 <motion.span
                   layoutId="detail-tab"
-                  className="absolute inset-x-0 bottom-0 h-px bg-ink"
+                  aria-hidden="true"
+                  className="absolute inset-x-0 bottom-0 h-[3px] bg-oxide"
                   transition={{ type: "spring", stiffness: 380, damping: 34 }}
                 />
               )}
@@ -343,24 +400,27 @@ export default function ProductDetail({ product: p }: { product: Product }) {
           <AnimatePresence mode="wait">
             <motion.div
               key={tab}
-              initial={{ opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
             >
               {tab === "story" && (
                 <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr]">
-                  <p className="max-w-2xl text-[17px] leading-[1.9] text-ink/75">
+                  <p className="max-w-2xl text-[17px] leading-[1.9] text-tar/75">
                     {p.description}
                   </p>
                   <ul className="space-y-4">
                     {p.highlights.map((h) => (
                       <li
                         key={h}
-                        className="flex gap-3.5 border-b border-ink/10 pb-4"
+                        className="flex gap-3.5 border-b border-tar/12 pb-4"
                       >
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-ocean" />
-                        <span className="text-[14.5px] leading-relaxed text-ink/70">
+                        <Check
+                          aria-hidden="true"
+                          className="mt-0.5 h-4 w-4 shrink-0 text-oxide"
+                        />
+                        <span className="text-[14.5px] leading-relaxed text-tar/70">
                           {h}
                         </span>
                       </li>
@@ -371,96 +431,96 @@ export default function ProductDetail({ product: p }: { product: Product }) {
 
               {tab === "nutrition" && (
                 <div>
-                  <p className="text-[14.5px] text-ink/55">
-                    Typical values per 100 g of raw edible portion.
+                  <p className="text-[14.5px] text-tar/60">
+                    {t("nutrition.note")}
                   </p>
-                  <div className="mt-8 grid gap-px border-y border-ink/12 bg-ink/12 sm:grid-cols-2 lg:grid-cols-4">
-                    {[
-                      { k: "Protein", v: p.nutrition.protein, u: "g", max: 26 },
-                      { k: "Fat", v: p.nutrition.fat, u: "g", max: 8 },
-                      { k: "Omega-3", v: p.nutrition.omega3, u: "g", max: 1.6 },
-                      {
-                        k: "Energy",
-                        v: p.nutrition.calories,
-                        u: "kcal",
-                        max: 160,
-                      },
-                    ].map((n) => (
-                      <div key={n.k} className="bg-white px-6 py-8">
-                        <p className="label text-ink/40">{n.k}</p>
-                        <p className="numeral mt-3 text-[34px] leading-none text-ink">
-                          {n.v}
-                          <span className="ml-1 text-[14px] text-ink/45">
-                            {n.u}
+
+                  <div className="mt-8 grid gap-px bg-tar/12 sm:grid-cols-2 lg:grid-cols-4">
+                    {(
+                      [
+                        ["protein", p.nutrition.protein, t("nutrition.unitG")],
+                        ["fat", p.nutrition.fat, t("nutrition.unitG")],
+                        ["omega3", p.nutrition.omega3, t("nutrition.unitG")],
+                        [
+                          "energy",
+                          p.nutrition.calories,
+                          t("nutrition.unitKcal"),
+                        ],
+                      ] as const
+                    ).map(([key, value, unit]) => (
+                      <div key={key} className="bg-limewash px-6 py-8">
+                        <p className="label text-rope">{t(`nutrition.${key}`)}</p>
+                        <p className="numeral mt-3 text-[36px] leading-none text-tar">
+                          {value}
+                          <span className="ms-1.5 text-[14px] text-rope">
+                            {unit}
                           </span>
                         </p>
-                        <div className="mt-5 h-px bg-ink/12">
-                          <motion.div
-                            initial={{ scaleX: 0 }}
-                            animate={{ scaleX: Math.min(1, n.v / n.max) }}
-                            transition={{
-                              duration: 1,
-                              ease: [0.16, 1, 0.3, 1],
-                            }}
-                            className="h-px origin-left bg-ocean"
-                          />
-                        </div>
                       </div>
                     ))}
                   </div>
+
+                  {/* The figures above are placeholder. Marked, not dressed up
+                      as measured — the bars that used to animate under each one
+                      implied a precision this data does not have. */}
+                  <p className="mt-6 max-w-2xl border-s-4 border-ochre ps-5 text-[13.5px] leading-relaxed text-tar/60">
+                    {t("nutrition.placeholder")}
+                  </p>
                 </div>
               )}
 
               {tab === "cooking" && (
                 <div className="grid gap-12 lg:grid-cols-2">
                   <div>
-                    <h3 className="display-md text-ink">Best cooked as</h3>
-                    <div className="mt-5 flex flex-wrap gap-2.5">
+                    <h3 className="display-md text-tar">{t("cooking.title")}</h3>
+                    <div className="mt-5 flex flex-wrap gap-2">
                       {p.bestFor.map((b) => (
                         <span
                           key={b}
-                          className="rounded-full border border-ink/15 px-4 py-2.5 text-[13.5px] text-ink/70"
+                          className="border-2 border-tar/15 px-4 py-2.5 text-[13.5px] font-semibold text-tar/70"
                         >
                           {b}
                         </span>
                       ))}
                     </div>
-                    <p className="mt-7 max-w-md text-[15px] leading-relaxed text-ink/65">
-                      Texture is {p.texture.toLowerCase()} with a{" "}
-                      {p.flavour.toLowerCase()} profile — season simply and let
-                      the fish carry the plate.
+                    <p className="mt-7 max-w-md text-[15px] leading-relaxed text-tar/65">
+                      {t("cooking.copy")}
                     </p>
 
-                    <div className="relative mt-8 aspect-[16/10] overflow-hidden bg-abyss">
+                    <div className="relative mt-8 aspect-[16/10] overflow-hidden bg-tar">
                       <Photo
                         image={p.cooked}
                         res={900}
                         sizes="(max-width: 1024px) 100vw, 45vw"
                         className="object-cover"
                       />
+                      <div
+                        aria-hidden="true"
+                        className="waterline absolute inset-x-0 bottom-0"
+                      />
                     </div>
                   </div>
 
-                  <ol className="space-y-6">
-                    {[
-                      "Take it out of the fridge 15 minutes before cooking so it comes closer to room temperature.",
-                      "Pat the skin completely dry, then salt it generously — this is what gives you crisp skin.",
-                      "Cook 80% of the time on the first side. Turn once, never twice.",
-                      "Rest for three minutes before serving. The centre finishes cooking off the heat.",
-                    ].map((s, i) => (
-                      <li
-                        key={i}
-                        className="flex gap-5 border-b border-ink/10 pb-6"
-                      >
-                        <span className="numeral text-[13px] text-ocean">
-                          0{i + 1}
-                        </span>
-                        <span className="text-[15px] leading-relaxed text-ink/70">
-                          {s}
-                        </span>
-                      </li>
-                    ))}
-                  </ol>
+                  <div>
+                    <h3 className="label text-rope">
+                      {t("cooking.stepsTitle")}
+                    </h3>
+                    <ol className="mt-5 space-y-6">
+                      {(["s1", "s2", "s3", "s4"] as const).map((s, i) => (
+                        <li
+                          key={s}
+                          className="flex gap-5 border-b border-tar/12 pb-6"
+                        >
+                          <span className="numeral text-[22px] leading-none text-ochre">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                          <span className="text-[15px] leading-relaxed text-tar/70">
+                            {t(`cooking.${s}`)}
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
                 </div>
               )}
             </motion.div>

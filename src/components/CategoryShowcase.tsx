@@ -1,15 +1,14 @@
-"use client";
-
 import Photo from "./ui/Photo";
 import { Link } from "@/i18n/navigation";
-import { motion } from "motion/react";
-import { ArrowRight, Star } from "lucide-react";
+import { getLocale, getTranslations } from "next-intl/server";
+import { ArrowUpRight } from "lucide-react";
+import Reveal from "./Reveal";
+import { SectionIntro } from "./Decor";
 import type { ImageKey } from "@/lib/images";
 
 /**
- * One card's worth of a category, assembled on the server so the whole
- * 63-line catalogue never has to be serialised into the client bundle just to
- * print four ratings.
+ * One heading's worth of the range. Assembled on the server so the catalogue is
+ * never serialised into the client bundle just to print two cards.
  */
 export type ShowcaseCard = {
   slug: string;
@@ -17,160 +16,136 @@ export type ShowcaseCard = {
   arabic: string;
   href: string;
   image: ImageKey;
-  /** Lines carried, shown on the image as a pill. */
+  /** Lines carried under this heading. */
   count: number;
-  rating: number;
-  reviews: number;
+  /** The lines themselves, named — this is what a buyer is actually scanning for. */
+  lines: string[];
 };
 
 /**
- * The category index as a shop shelf: a heading with one "view all" action,
- * then a grid of cards that each carry a photograph, a rating and a single
- * unmissable button.
+ * The range, as painted transom name boards.
  *
- * It replaces the editorial hover-preview list that stood here. That list was
- * a nice object but it asked the reader to hover ten rows to learn anything;
- * this reads as a counter, which is what the client asked for.
+ * A boat carries its name lettered across the transom in both scripts, and that
+ * is the object this section borrows: a heading plate, the name in Latin and
+ * Arabic, and the lines carried underneath it as a stencilled list.
  *
- * No prices: the counter quotes by the kilo on WhatsApp at the time of the
- * order, so the card carries no figure that could go stale.
+ * Two things came off this section deliberately. The five-star rating and the
+ * "1,240 reviews" figure were both generated from a hash of the slug — invented
+ * proof, which PRODUCT.md forbids — so they are gone rather than restyled. And
+ * the decorative `back3.png` water photograph behind the grid went with them: it
+ * belonged to the underwater world this redesign is refusing.
  *
- * Every figure on a card is rolled up from the products in that category —
- * see `categoryStats` in `@/data/products` — so nothing here can drift out of
- * step with the catalogue.
+ * The lines are named on the card rather than hidden behind a hover, because the
+ * question a buyer arrives with is "do you carry Hamour", and no amount of
+ * photography answers it.
+ *
+ * The board is lettered in both scripts, but the reader's own script takes the
+ * display size — an Arabic visitor should be reading Arabic at scale, not
+ * skimming Latin for a transliteration. The second script stays beside it as the
+ * trade name, which the counter quotes in both directions anyway.
  */
-export default function CategoryShowcase({
-  title,
+export default async function CategoryShowcase({
   cards,
-  viewAllHref = "/shop",
-  viewAllLabel = "View all",
 }: {
-  title: string;
   cards: ShowcaseCard[];
-  viewAllHref?: string;
-  viewAllLabel?: string;
 }) {
+  const t = await getTranslations("Range");
+  const isRtl = (await getLocale()) === "ar";
+
   return (
-    <section className="bg-white py-20 lg:py-28">
+    <section className="bg-chalk py-24 md:py-32">
       <div className="container-x">
-        <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-5">
-          <h2 className="display-lg text-ink">{title}</h2>
+        <SectionIntro
+          index="04"
+          eyebrow={t("eyebrow")}
+          title={t("title")}
+          copy={t("copy")}
+        />
 
-          <Link
-            href={viewAllHref}
-            className="rounded-full border border-ink/25 px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink transition-colors duration-300 hover:border-ocean hover:bg-ocean hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ocean"
-          >
-            {viewAllLabel}
-          </Link>
-        </div>
-
-        {/* Two-up then four-up, with no three-up step: the section carries four
-            cards, and a 3-column tablet layout would leave one stranded on a
-            row of its own. */}
-        <div className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4">
+        <div className="mt-14 grid gap-7 lg:mt-16 lg:grid-cols-2 lg:gap-8">
           {cards.map((c, i) => (
-            <ShelfCard key={c.slug} card={c} index={i} />
+            <Reveal key={c.slug} blur={false} delay={i * 0.1}>
+              <article className="group relative flex h-full flex-col bg-limewash">
+                {/* The name board. Tar ground, ochre lettering — a signwriter's
+                    plate, not a photo caption. */}
+                <div className="relative bg-tar px-6 py-7 md:px-8">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-2">
+                    <h3 className="display-md text-limewash">
+                      {isRtl ? c.arabic : c.name}
+                    </h3>
+                    <span
+                      className={`leading-none text-ochre ${
+                        isRtl
+                          ? "latin-plate text-[17px]"
+                          : "font-arabic-display text-[15px]"
+                      }`}
+                      dir={isRtl ? "ltr" : "rtl"}
+                      lang={isRtl ? "en" : "ar"}
+                    >
+                      {isRtl ? c.name : c.arabic}
+                    </span>
+                  </div>
+                  <div
+                    aria-hidden="true"
+                    className="waterline absolute inset-x-0 bottom-0"
+                  />
+                </div>
+
+                <div className="relative aspect-[16/9] overflow-hidden bg-tar">
+                  <Photo
+                    image={c.image}
+                    res={1200}
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+                  />
+                </div>
+
+                <div className="flex flex-1 flex-col p-6 md:p-8">
+                  <div className="flex items-baseline gap-3">
+                    <span className="numeral text-[22px] leading-none text-tar">
+                      {c.count}
+                    </span>
+                    <span className="label text-rope">{t("linesLabel")}</span>
+                  </div>
+
+                  {/* The lines, stencilled. Ochre draft-mark rules between them
+                      rather than commas, so the list reads as a painted index. */}
+                  <ul className="mt-6 flex flex-wrap gap-x-3 gap-y-2.5 text-[14px] text-tar/75">
+                    {c.lines.map((line, li) => (
+                      <li key={line} className="flex items-baseline gap-3">
+                        {li > 0 && (
+                          <span aria-hidden="true" className="text-ochre">
+                            ·
+                          </span>
+                        )}
+                        <span>{line}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-auto pt-9">
+                    <Link
+                      href={c.href}
+                      className="inline-flex items-center gap-3 bg-tar py-3.5 pe-4 ps-6 text-[14.5px] font-semibold text-limewash transition-colors hover:bg-oxide focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide"
+                    >
+                      {t("cta")}
+                      {/* The category is named for assistive tech without
+                          repeating it visually on every card. It has to be the
+                          reader's own script: a screen reader set to Arabic
+                          announcing "Fish" mid-sentence is worse than silence. */}
+                      <span className="sr-only"> {isRtl ? c.arabic : c.name}</span>
+                      <ArrowUpRight
+                        aria-hidden="true"
+                        className="h-4 w-4 shrink-0 transition-transform duration-500 group-hover:rotate-45 rtl-flip"
+                      />
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>
     </section>
-  );
-}
-
-function ShelfCard({ card: c, index }: { card: ShowcaseCard; index: number }) {
-  return (
-    <motion.article
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{
-        duration: 0.7,
-        // Staggering by column rather than by index: on a four-up grid the
-        // fifth card sits under the first, and a running delay would leave the
-        // second row crawling in long after it is already on screen.
-        delay: (index % 4) * 0.08,
-        ease: [0.16, 1, 0.3, 1],
-      }}
-      className="group flex flex-col"
-    >
-      <Link
-        href={c.href}
-        tabIndex={-1}
-        aria-hidden="true"
-        className="block overflow-hidden bg-sea-100"
-      >
-        <div className="relative aspect-square">
-          <Photo
-            image={c.image}
-            res={900}
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 46vw, 23vw"
-            className="object-cover transition-transform duration-[1.1s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
-          />
-          <span className="label absolute start-3 top-3 rounded-full bg-bone/95 px-2.5 py-1 text-[9.5px] text-abyss">
-            {c.count} lines
-          </span>
-        </div>
-      </Link>
-
-      <div className="flex flex-1 flex-col pt-4">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-          <span className="flex items-center gap-0.5">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                aria-hidden="true"
-                className={`h-3.5 w-3.5 ${
-                  i < Math.round(c.rating)
-                    ? "fill-sand text-sand"
-                    : "text-ink/15"
-                }`}
-              />
-            ))}
-          </span>
-          {/* The stars are decorative; this is the line a screen reader gets. */}
-          <span className="text-[12.5px] text-ink/55">
-            <span className="sr-only">Rated {c.rating} out of 5 from </span>
-            {c.reviews.toLocaleString("en-US")} reviews
-          </span>
-        </div>
-
-        <h3 className="mt-2.5 text-[14.5px] font-semibold uppercase leading-snug tracking-[0.01em] text-ink sm:text-[15.5px]">
-          <Link
-            href={c.href}
-            className="transition-colors duration-300 group-hover:text-ocean focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean"
-          >
-            {c.name}
-          </Link>
-        </h3>
-
-        <p className="mt-1 text-[12.5px] text-ink/40" dir="rtl">
-          {c.arabic}
-        </p>
-
-        {/* The button is pinned to the bottom, so a two-line category name on
-            one card does not leave its neighbours' buttons sitting higher than
-            its own. `pt-5` is the floor on that gap for the tallest card, where
-            `mt-auto` has no slack left to give.
-
-            Three links on the card point at the same page, so only this one is
-            named for assistive tech — the image link is hidden from it and the
-            heading link already reads the category name. */}
-        <div className="mt-auto pt-5">
-          <Link
-            href={c.href}
-            className="flex items-center justify-center gap-2 bg-ocean px-3 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-white transition-colors duration-300 hover:bg-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ocean sm:gap-2.5 sm:px-4 sm:py-3.5 sm:text-[12.5px] sm:tracking-[0.12em]"
-          >
-            <span>Shop now</span>
-            {/* Leading space so the name is not run into the label when the two
-                spans are concatenated into one accessible name. */}
-            <span className="sr-only"> {c.name}</span>
-            <ArrowRight
-              aria-hidden="true"
-              className="h-4 w-4 rtl:-scale-x-100"
-            />
-          </Link>
-        </div>
-      </div>
-    </motion.article>
   );
 }

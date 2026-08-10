@@ -55,10 +55,10 @@ export default function LangSwitch({ light = false }: { light?: boolean }) {
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={t("switchLanguage")}
-        className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-[13px] font-semibold transition-colors ${
+        className={`inline-flex items-center gap-1.5 border px-3.5 py-2 text-[13px] font-semibold transition-colors ${
           light
-            ? "border-white/25 text-bone hover:border-white/60"
-            : "border-ink/15 text-ink hover:border-ink"
+            ? "border-limewash/25 text-limewash hover:border-limewash/60"
+            : "border-tar/20 text-tar hover:border-tar"
         }`}
       >
         <Globe className="h-3.5 w-3.5" />
@@ -81,10 +81,10 @@ export default function LangSwitch({ light = false }: { light?: boolean }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
-            className={`absolute end-0 top-full z-50 mt-2 min-w-[148px] overflow-hidden rounded-2xl border py-1.5 shadow-xl backdrop-blur-xl ${
+            className={`absolute end-0 top-full z-50 mt-2 min-w-[148px] overflow-hidden border py-1.5 shadow-lift ${
               light
-                ? "border-white/15 bg-[#06202f]/90 text-bone"
-                : "border-ink/10 bg-white/95 text-ink"
+                ? "border-limewash/15 bg-tar text-limewash"
+                : "border-tar/12 bg-chalk text-tar"
             }`}
           >
             {options.map((o) => (
@@ -94,12 +94,10 @@ export default function LangSwitch({ light = false }: { light?: boolean }) {
                   onClick={() => select(o.code)}
                   className={`flex w-full items-center justify-between gap-4 px-4 py-2 text-left text-[13.5px] transition-colors rtl:text-right ${
                     o.code === locale
-                      ? light
-                        ? "text-aqua"
-                        : "text-ocean"
+                      ? "text-oxide"
                       : light
-                        ? "text-bone/80 hover:bg-white/10 hover:text-white"
-                        : "text-ink/75 hover:bg-ink/5 hover:text-ink"
+                        ? "text-limewash/80 hover:bg-limewash/10 hover:text-limewash"
+                        : "text-tar/75 hover:bg-tar/5 hover:text-tar"
                   }`}
                 >
                   <span className="leading-none">{o.label}</span>

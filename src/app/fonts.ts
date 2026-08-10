@@ -1,39 +1,78 @@
-import { Roboto_Slab, Montserrat, Amiri } from "next/font/google";
+import { Big_Shoulders, Archivo, Reem_Kufi, Zain } from "next/font/google";
 
 /**
- * Shared font instances.
+ * Shared font instances — the boatyard's painted-signage voice.
  *
  * `app/[locale]/layout.tsx` and `app/not-found.tsx` each render their own
  * <html>, so both need the font variables. Defining the loaders once here keeps
  * a single Next.js font instance behind both — calling the loader separately in
  * each file would emit a second copy of the same @font-face set.
  *
- * Both Latin faces are loaded as variable fonts (wght 100–900) rather than
- * pinned to one weight: the base sizes are Montserrat 300 / Roboto Slab 700,
- * but the `font-medium`/`font-semibold` utilities used across the components
- * still need real weights to land on instead of synthesising them.
+ * Four faces, two per script. Latin and Arabic each get a display face and a
+ * text face, so Arabic is set properly rather than being forced through a Latin
+ * pairing that never had it in mind.
  */
 
-export const montserrat = Montserrat({
+/**
+ * Latin display. Condensed and industrial — the proportions of lettering
+ * painted straight onto a hull, which is why it reads as signage instead of as
+ * a magazine serif.
+ *
+ * `opsz` is requested because the display sizes span 1.75rem to 8.5rem. The
+ * optical-size axis thins the strokes and opens the counters as the size climbs,
+ * so the hero does not set like a scaled-up subhead. Driven from CSS via
+ * `font-variation-settings` in the display classes.
+ */
+export const bigShoulders = Big_Shoulders({
   subsets: ["latin"],
-  variable: "--font-montserrat",
+  variable: "--font-big-shoulders",
+  axes: ["opsz"],
   display: "swap",
 });
 
-export const robotoSlab = Roboto_Slab({
+/**
+ * Latin UI and body.
+ *
+ * `wdth` is the whole reason for this choice: one family covers both running
+ * text at normal width and genuinely condensed stencil labels, grade tables and
+ * draft marks. A separate condensed family would be a second download for the
+ * same job.
+ */
+export const archivo = Archivo({
   subsets: ["latin"],
-  variable: "--font-roboto-slab",
+  variable: "--font-archivo",
+  axes: ["wdth"],
   display: "swap",
 });
 
-// Neither Latin face ships an Arabic subset, so Amiri still carries every RTL
-// glyph. It is a static face — 400/700 only.
-export const amiri = Amiri({
+/**
+ * Arabic display. Geometric kufic, so it shares Big Shoulders' constructed,
+ * stencil-adjacent character — a calligraphic serif fights that voice.
+ *
+ * `preload: false` on both Arabic faces: all four variables are applied to
+ * <html> on every route, and preloading would make an English visitor pay for
+ * two Arabic glyph sets they never render. Declared but not preloaded, the
+ * browser fetches them only when RTL text actually matches the family.
+ */
+export const reemKufi = Reem_Kufi({
   subsets: ["arabic"],
-  variable: "--font-arabic",
+  variable: "--font-reem-kufi",
+  display: "swap",
+  preload: false,
+});
+
+/**
+ * Arabic body. Reem Kufi is deliberately stiff at paragraph length, so running
+ * Arabic text gets its own face. Zain has no variable build — the weights are
+ * listed explicitly, and only the two the design uses.
+ */
+export const zain = Zain({
+  subsets: ["arabic"],
+  variable: "--font-zain",
   weight: ["400", "700"],
   display: "swap",
+  preload: false,
 });
 
 /** Every font variable, for the <html> className. */
-export const fontVariables = `${montserrat.variable} ${robotoSlab.variable} ${amiri.variable}`;
+export const fontVariables = `${bigShoulders.variable} ${archivo.variable} ${reemKufi.variable} ${zain.variable}`;

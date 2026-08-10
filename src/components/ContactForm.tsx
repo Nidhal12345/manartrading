@@ -1,28 +1,49 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { CheckCircle2, Loader2, Send } from "lucide-react";
-import { PHONE } from "@/lib/contact";
+import { MessageCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 
-const subjects = [
-  "Place an order",
-  "Restaurant / hotel supply",
-  "Wholesale & standing orders",
-  "Delivery question",
-  "Something else",
-];
+import { whatsappHref } from "@/lib/contact";
 
-type Errors = Partial<Record<"name" | "phone" | "email" | "message", string>>;
+/**
+ * The enquiry form, rewritten to actually do something.
+ *
+ * What it used to do: validate, spin a `setTimeout` for 1.1 seconds, then print
+ * "Message received, {firstName} — someone will call you on {phone} within the
+ * hour". No request was made. Nothing was stored. Nobody was going to call. That
+ * is a fabricated success state, which is the same failure as a fabricated
+ * testimonial except that a customer acts on it and then waits.
+ *
+ * What it does now: composes the message and hands it to WhatsApp, which is the
+ * channel PRODUCT.md names as the real one and the only one that works today
+ * with no backend. The send happens in the customer's own client, so the
+ * confirmation they get is their own sent message rather than our claim about
+ * one. The copy says so plainly instead of implying a CRM behind the button.
+ *
+ * The audience toggle is the contact-page half of the home page fork, and it is
+ * colour-coded to match: cobalt for the table, verdigris for a kitchen. It
+ * changes the composed message and reveals the business-name field, so the two
+ * conversations start apart rather than in one blended funnel.
+ */
+
+const TOPICS = ["order", "supply", "standing", "delivery", "other"] as const;
+type Topic = (typeof TOPICS)[number];
+type Audience = "table" | "kitchen";
+type Errors = Partial<Record<"name" | "phone" | "message", string>>;
+
+const EMAIL = "hello@manartrading.sa";
 
 export default function ContactForm() {
-  const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
+  const t = useTranslations("Contact.form");
+
+  const [audience, setAudience] = useState<Audience>("table");
+  const [topic, setTopic] = useState<Topic>("order");
   const [errors, setErrors] = useState<Errors>({});
   const [form, setForm] = useState({
     name: "",
     phone: "",
-    email: "",
-    subject: subjects[0],
+    business: "",
     message: "",
   });
 
@@ -33,13 +54,9 @@ export default function ContactForm() {
 
   const validate = () => {
     const e: Errors = {};
-    if (form.name.trim().length < 2) e.name = "Please tell us your name";
-    if (!/^[+\d][\d\s-]{7,}$/.test(form.phone.trim()))
-      e.phone = "A reachable phone number, please";
-    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
-      e.email = "That email does not look right";
-    if (form.message.trim().length < 10)
-      e.message = "A little more detail helps us quote accurately";
+    if (form.name.trim().length < 2) e.name = t("errName");
+    if (!/^[+\d][\d\s-]{7,}$/.test(form.phone.trim())) e.phone = t("errPhone");
+    if (form.message.trim().length < 10) e.message = t("errMessage");
     return e;
   };
 
@@ -49,171 +66,175 @@ export default function ContactForm() {
     setErrors(e);
     if (Object.keys(e).length) return;
 
-    setState("sending");
-    // Demo only — wire this to your backend, CRM or WhatsApp Business API.
-    setTimeout(() => setState("sent"), 1100);
+    const who =
+      audience === "kitchen"
+        ? `${t("audienceKitchen")}${form.business.trim() ? ` — ${form.business.trim()}` : ""}`
+        : t("audienceTable");
+
+    // Opened rather than navigated, so the customer keeps the page they were on.
+    // This runs inside the click handler, which is what keeps it out of the
+    // popup blocker.
+    window.open(
+      whatsappHref(
+        t("waMessage", {
+          name: form.name.trim(),
+          phone: form.phone.trim(),
+          audience: who,
+          topic: t(`topics.${topic}`),
+          message: form.message.trim(),
+        }),
+      ),
+      "_blank",
+      "noopener,noreferrer",
+    );
   };
 
+  const isKitchen = audience === "kitchen";
+  const accent = isKitchen ? "bg-verdigris-deep" : "bg-hull";
+
   return (
-    <div className="border border-ink/12 p-8 sm:p-10">
-      <AnimatePresence mode="wait">
-        {state === "sent" ? (
-          <motion.div
-            key="sent"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="py-16 text-center"
-          >
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 220, damping: 16 }}
-              className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-emerald-50 text-emerald-600"
-            >
-              <CheckCircle2 className="h-7 w-7" />
-            </motion.span>
-            <h3 className="display-md mt-8 text-ink">
-              Message received, {form.name.split(" ")[0]}
-            </h3>
-            <p className="mx-auto mt-4 max-w-sm text-[15px] leading-relaxed text-ink/60">
-              Someone from the counter will call you on {form.phone} within the
-              hour. If it is urgent, ring us directly on{" "}
-              <span dir="ltr">{PHONE}</span>.
-            </p>
-            <button
-              onClick={() => {
-                setForm({
-                  name: "",
-                  phone: "",
-                  email: "",
-                  subject: subjects[0],
-                  message: "",
-                });
-                setState("idle");
-              }}
-              className="mt-9 border border-ink/15 px-6 py-3 text-[14px] font-medium text-ink transition-colors hover:border-ink"
-            >
-              Send another message
-            </button>
-          </motion.div>
-        ) : (
-          <motion.form
-            key="form"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            onSubmit={onSubmit}
-            noValidate
-          >
-            <h2 className="display-md text-ink">Send us a message</h2>
-            <p className="mt-3 text-[14.5px] text-ink/55">
-              Orders, quotes or questions — we answer everything within the hour
-              during opening times.
-            </p>
+    <form onSubmit={onSubmit} noValidate className="border-2 border-tar bg-chalk">
+      <div className="p-8 sm:p-10">
+        <span className="label text-rope">{t("eyebrow")}</span>
+        <h2 className="display-md mt-4 text-tar">{t("title")}</h2>
+        <p className="mt-4 max-w-md text-[14.5px] leading-[1.8] text-tar/65 rtl:leading-[2]">
+          {t("copy")}
+        </p>
 
-            <div className="mt-9 grid gap-6 sm:grid-cols-2">
-              <Field
-                label="Your name"
-                required
-                value={form.name}
-                onChange={set("name")}
-                error={errors.name}
-                placeholder="Faisal Al-Harbi"
-              />
-              <Field
-                label="Phone"
-                required
-                type="tel"
-                value={form.phone}
-                onChange={set("phone")}
-                error={errors.phone}
-                placeholder="+966 5X XXX XXXX"
-              />
-            </div>
+        {/* ---- audience ---- */}
+        <fieldset className="mt-9">
+          <legend className="label text-rope">{t("audienceLabel")}</legend>
+          <div className="mt-4 grid grid-cols-2 gap-px bg-tar/20">
+            {(["table", "kitchen"] as const).map((a) => {
+              const on = audience === a;
+              const field = a === "kitchen" ? "bg-verdigris-deep" : "bg-hull";
+              return (
+                <button
+                  key={a}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => setAudience(a)}
+                  className={`px-5 py-4 text-[14px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxide ${
+                    on
+                      ? `${field} text-limewash`
+                      : "bg-chalk text-tar/60 hover:text-tar"
+                  }`}
+                >
+                  {a === "kitchen" ? t("audienceKitchen") : t("audienceTable")}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
 
-            <div className="mt-6">
-              <Field
-                label="Email"
-                type="email"
-                value={form.email}
-                onChange={set("email")}
-                error={errors.email}
-                placeholder="you@company.sa"
-                hint="Optional"
-              />
-            </div>
+        <div className="mt-8 grid gap-6 sm:grid-cols-2">
+          <Field
+            id="contact-name"
+            label={t("nameLabel")}
+            required
+            value={form.name}
+            onChange={set("name")}
+            error={errors.name}
+            placeholder={t("namePlaceholder")}
+          />
+          <Field
+            id="contact-phone"
+            label={t("phoneLabel")}
+            required
+            type="tel"
+            value={form.phone}
+            onChange={set("phone")}
+            error={errors.phone}
+            placeholder={t("phonePlaceholder")}
+          />
+        </div>
 
-            <div className="mt-8">
-              <span className="label text-ink/40">What is it about?</span>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {subjects.map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => set("subject")(s)}
-                    className={`rounded-full px-4 py-2.5 text-[13px] font-medium transition-all ${
-                      form.subject === s
-                        ? "bg-ink text-bone"
-                        : "border border-ink/15 text-ink/60 hover:border-ink/45 hover:text-ink"
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-8">
-              <label htmlFor="message" className="label block text-ink/40">
-                Message <span className="text-ocean">*</span>
-              </label>
-              <textarea
-                id="message"
-                rows={5}
-                value={form.message}
-                onChange={(e) => set("message")(e.target.value)}
-                placeholder="Six kilos of Hamour, cleaned and butterflied, delivered Thursday morning to Al Rawdah…"
-                className={`mt-3 w-full resize-none border-b bg-transparent py-3 text-[15px] text-ink outline-none transition placeholder:text-ink/30 ${
-                  errors.message
-                    ? "border-red-400 focus:border-red-500"
-                    : "border-ink/20 focus:border-ink"
-                }`}
-              />
-              {errors.message && (
-                <p className="mt-2 text-[12.5px] font-medium text-red-500">
-                  {errors.message}
-                </p>
-              )}
-            </div>
-
-            <button
-              type="submit"
-              disabled={state === "sending"}
-              className="group mt-9 flex h-[54px] w-full items-center justify-center gap-3 rounded-full bg-ink text-[15px] font-semibold text-bone transition-colors hover:bg-ocean disabled:opacity-70"
-            >
-              {state === "sending" ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Sending…
-                </>
-              ) : (
-                <>
-                  Send message
-                  <Send className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </>
-              )}
-            </button>
-
-            <p className="mt-4 text-center text-[12.5px] text-ink/45">
-              By sending this you agree we may contact you about your enquiry.
-            </p>
-          </motion.form>
+        {isKitchen && (
+          <div className="mt-6">
+            <Field
+              id="contact-business"
+              label={t("businessLabel")}
+              value={form.business}
+              onChange={set("business")}
+              placeholder={t("businessPlaceholder")}
+              hint={t("optional")}
+            />
+          </div>
         )}
-      </AnimatePresence>
-    </div>
+
+        {/* ---- topic ---- */}
+        <fieldset className="mt-8">
+          <legend className="label text-rope">{t("topicLabel")}</legend>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {TOPICS.map((s) => {
+              const on = topic === s;
+              return (
+                <button
+                  key={s}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => setTopic(s)}
+                  className={`border-2 px-4 py-2.5 text-[13px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxide ${
+                    on
+                      ? "border-tar bg-tar text-limewash"
+                      : "border-tar/20 text-tar/65 hover:border-tar hover:text-tar"
+                  }`}
+                >
+                  {t(`topics.${s}`)}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
+
+        <div className="mt-8">
+          <label htmlFor="contact-message" className="label block text-rope">
+            {t("messageLabel")} <span className="text-oxide">*</span>
+          </label>
+          <textarea
+            id="contact-message"
+            rows={5}
+            value={form.message}
+            onChange={(e) => set("message")(e.target.value)}
+            placeholder={t("messagePlaceholder")}
+            aria-invalid={errors.message ? true : undefined}
+            aria-describedby={errors.message ? "contact-message-err" : undefined}
+            className={`mt-3 w-full resize-none border-b-2 bg-transparent py-3 text-[15px] text-tar outline-none transition placeholder:text-tar/30 focus:border-tar ${
+              errors.message ? "border-oxide" : "border-tar/20"
+            }`}
+          />
+          {errors.message && (
+            <p
+              id="contact-message-err"
+              className="mt-2 text-[12.5px] font-semibold text-oxide"
+            >
+              {errors.message}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* The action sits on its own painted plate, in the colour of the path the
+          customer picked, so the choice is still visible at the moment of send. */}
+      <div className={`${accent} transition-colors duration-500`}>
+        <button
+          type="submit"
+          className="group flex w-full items-center justify-center gap-3 px-8 py-5 text-[15px] font-semibold text-limewash transition-colors hover:bg-tar/20 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-ochre"
+        >
+          <MessageCircle aria-hidden="true" className="h-4.5 w-4.5 shrink-0" />
+          {t("submit")}
+        </button>
+      </div>
+
+      <p className="border-t border-tar/15 px-8 py-5 text-[12.5px] leading-relaxed text-rope sm:px-10">
+        {t("emailFallback", { email: EMAIL })}
+      </p>
+    </form>
   );
 }
 
 function Field({
+  id,
   label,
   value,
   onChange,
@@ -223,6 +244,7 @@ function Field({
   required,
   hint,
 }: {
+  id: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
@@ -232,18 +254,17 @@ function Field({
   required?: boolean;
   hint?: string;
 }) {
-  const id = label.toLowerCase().replace(/\s+/g, "-");
   return (
     <div>
       <label
         htmlFor={id}
-        className="label flex items-center justify-between text-ink/40"
+        className="label flex items-center justify-between gap-3 text-rope"
       >
         <span>
-          {label} {required && <span className="text-ocean">*</span>}
+          {label} {required && <span className="text-oxide">*</span>}
         </span>
         {hint && (
-          <span className="font-normal normal-case tracking-normal text-ink/35">
+          <span className="font-normal normal-case tracking-normal text-rope/70">
             {hint}
           </span>
         )}
@@ -254,14 +275,16 @@ function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`mt-3 w-full border-b bg-transparent py-3 text-[15px] text-ink outline-none transition placeholder:text-ink/30 ${
-          error
-            ? "border-red-400 focus:border-red-500"
-            : "border-ink/20 focus:border-ink"
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? `${id}-err` : undefined}
+        className={`mt-3 w-full border-b-2 bg-transparent py-3 text-[15px] text-tar outline-none transition placeholder:text-tar/30 focus:border-tar ${
+          error ? "border-oxide" : "border-tar/20"
         }`}
       />
       {error && (
-        <p className="mt-2 text-[12.5px] font-medium text-red-500">{error}</p>
+        <p id={`${id}-err`} className="mt-2 text-[12.5px] font-semibold text-oxide">
+          {error}
+        </p>
       )}
     </div>
   );

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+
 import PageHero from "@/components/PageHero";
 import ShopClient from "@/components/ShopClient";
 import Reveal from "@/components/Reveal";
@@ -8,53 +10,72 @@ import { products } from "@/data/products";
 export const metadata: Metadata = {
   title: "Shop the catch",
   description:
-    "Browse sixty-three lines across ten categories — lobster, shellfish, shrimp, cephalopods, whole fish, fillets, steaks and smoked. King Fish, Hamour, Salmon, Sea Bass and more. Cut to order, delivered same day.",
+    "Browse sixteen lines across two categories — fish, and crustaceans & seafood. Filter by water and by cut: whole, cleaned, steaked, filleted or butterflied. Prepared to order, delivered same day.",
 };
 
-const faqs = [
-  {
-    q: "How is the fish prepared?",
-    a: "Tell us in the order notes — whole, gutted, scaled, butterflied, steaked or filleted. Preparation is free and done right before dispatch, never in advance.",
-  },
-  {
-    q: "What if the size I want is gone?",
-    a: "We call you before dispatch with the nearest grade available and adjust the order by weight. You are never sent a size we could not supply.",
-  },
-  {
-    q: "Do you supply restaurants?",
-    a: "Around 60% of our volume goes to kitchens. Standing orders, quotes on WhatsApp from 20 kg and a fixed delivery slot.",
-  },
-];
+/**
+ * The counter.
+ *
+ * Every string on this page was a hardcoded English literal, which meant the
+ * Arabic shop rendered an English page hero and three English answers. All of it
+ * is in `messages/*.json` now.
+ *
+ * Two of those three answers also asserted figures `PRODUCT.md` records as
+ * unverified — "around 60% of our volume goes to kitchens" and a 20 kg trade
+ * minimum. The trade answer now says the terms are set per kitchen, which is
+ * true and is what the client can stand behind on the first call.
+ */
+const BEFORE = ["prep", "size", "trade"] as const;
 
-export default function ShopPage() {
+export default async function ShopPage() {
+  const t = await getTranslations("Shop");
+  const nav = await getTranslations("Nav");
+
   return (
     <>
       <PageHero
         image="fishRows"
-        eyebrow="The counter"
-        title="Everything on the ice today"
-        copy="Ten categories, prepared however your kitchen needs them. Availability moves with the boats, so the list is rebuilt as the fish lands."
-        crumbs={[{ href: "/", label: "Home" }, { label: "Shop" }]}
+        eyebrow={t("eyebrow")}
+        title={t("title")}
+        copy={t("copy")}
+        crumbs={[{ href: "/", label: nav("home") }, { label: t("crumb") }]}
       />
 
       <ShopClient products={products} />
 
-      <section className="border-t border-ink/10 bg-bone py-24">
+      {/* ---------- before you order ---------- */}
+      <section className="relative bg-hull py-24 text-limewash md:py-28">
         <div className="container-x">
-          <SectionIntro eyebrow="Good to know" title="Before you order" />
-          <div className="mt-14 grid gap-px border-t border-ink/12 bg-ink/12 lg:grid-cols-3">
-            {faqs.map((f, i) => (
-              <Reveal key={f.q} delay={i * 0.08}>
-                <div className="h-full bg-bone px-7 py-9">
-                  <h3 className="display-md text-[19px] text-ink">{f.q}</h3>
-                  <p className="mt-4 text-[14.5px] leading-relaxed text-ink/60">
-                    {f.a}
+          <SectionIntro
+            light
+            eyebrow={t("before.eyebrow")}
+            title={t("before.title")}
+          />
+
+          <div className="mt-14 grid gap-px bg-limewash/20 lg:grid-cols-3">
+            {BEFORE.map((key, i) => (
+              <Reveal key={key} blur={false} delay={i * 0.08} className="h-full">
+                <div className="flex h-full flex-col bg-hull px-7 py-9">
+                  <span className="numeral text-[34px] leading-none text-ochre">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="mt-6 font-display text-[20px] uppercase leading-tight text-limewash">
+                    {t(`before.${key}.q`)}
+                  </h3>
+                  <p className="mt-4 text-[14.5px] leading-[1.75] text-limewash/70 rtl:leading-[1.95]">
+                    {t(`before.${key}.a`)}
                   </p>
                 </div>
               </Reveal>
             ))}
           </div>
         </div>
+
+        <div
+          aria-hidden="true"
+          className="waterline absolute inset-x-0 bottom-0"
+          style={{ ["--waterline" as string]: "var(--color-hull)" }}
+        />
       </section>
     </>
   );

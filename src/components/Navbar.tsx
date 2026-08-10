@@ -7,7 +7,7 @@ import { AnimatePresence, motion, useScroll, useSpring } from "motion/react";
 import { Menu, Phone, X } from "lucide-react";
 import Logo from "./Logo";
 import LangSwitch from "./LangSwitch";
-import { PHONE, PHONE_HREF } from "@/lib/contact";
+import { PHONE, PHONE_HREF, whatsappHref } from "@/lib/contact";
 
 export default function Navbar() {
   const t = useTranslations("Nav");
@@ -50,7 +50,7 @@ export default function Navbar() {
     };
   }, [open]);
 
-  // every page except a product detail opens on a dark photographic hero
+  // every page except a product detail opens on a dark painted hero
   const overHero = !pathname.startsWith("/shop/");
   const light = overHero && !scrolled;
 
@@ -59,83 +59,120 @@ export default function Navbar() {
 
   return (
     <>
-      <header
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "border-b border-ink/10 bg-white/85 backdrop-blur-xl"
-            : "border-b border-transparent"
-        }`}
-      >
-        <nav className="container-x flex h-[78px] items-center justify-between">
-          <Logo variant={light ? "light" : "dark"} />
+      <header className="fixed inset-x-0 top-0 z-50">
+        {/* ---------- cutoff strip ----------
+            Section 0. The single most useful thing a fish counter can say above
+            the fold, and the thing every competitor buries: when to order by to
+            eat it tonight.
 
-          <div className="hidden items-center gap-8 lg:flex">
-            {links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className={`group relative text-[14.5px] font-medium transition-colors ${
-                  light
-                    ? "text-bone/75 hover:text-white"
-                    : "text-ink/65 hover:text-ink"
-                }`}
-              >
-                {l.label}
-                <span
-                  className={`absolute -bottom-1.5 start-0 h-px w-full origin-left scale-x-0 bg-current transition-transform duration-500 group-hover:scale-x-100 rtl:origin-right ${
-                    isActive(l.href) ? "scale-x-100" : ""
-                  }`}
-                />
-              </Link>
-            ))}
+            Deliberately static. The rotating trust bars on the competitor sites
+            cycle the same claim three or four ways, which trains people to
+            ignore the strip entirely. One message, always readable. */}
+        <div className="bg-tar text-limewash">
+          <div className="container-x flex h-9 items-center justify-between gap-4">
+            <p className="flex min-w-0 items-center gap-2.5 text-[12px]">
+              <span
+                aria-hidden="true"
+                className="h-1.5 w-1.5 shrink-0 bg-oxide"
+              />
+              <span className="truncate">{t("cutoff")}</span>
+            </p>
+            <a
+              href={whatsappHref()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="label shrink-0 text-limewash/70 underline-offset-4 transition-colors hover:text-limewash hover:underline"
+            >
+              {t("whatsapp")}
+            </a>
           </div>
+        </div>
 
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:block">
-              <LangSwitch light={light} />
+        <div
+          className={`transition-colors duration-500 ${
+            scrolled
+              ? "border-b border-tar/12 bg-limewash/95 backdrop-blur-md"
+              : "border-b border-transparent"
+          }`}
+        >
+          <nav className="container-x flex h-[74px] items-center justify-between">
+            <Logo variant={light ? "light" : "dark"} />
+
+            <div className="hidden items-center gap-8 lg:flex">
+              {links.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className={`group label relative py-1 transition-colors ${
+                    light
+                      ? "text-limewash/75 hover:text-limewash"
+                      : "text-tar/70 hover:text-tar"
+                  }`}
+                >
+                  {l.label}
+                  {/* The active mark is a painted rule, 2px and hard-edged, so
+                      it belongs to the waterline family rather than being a
+                      generic underline. */}
+                  <span
+                    className={`absolute -bottom-1 start-0 h-[2px] w-full origin-left bg-oxide transition-transform duration-500 rtl:origin-right ${
+                      isActive(l.href)
+                        ? "scale-x-100"
+                        : "scale-x-0 group-hover:scale-x-100"
+                    }`}
+                  />
+                </Link>
+              ))}
             </div>
 
-            <a
-              href={PHONE_HREF}
-              className={`hidden items-center gap-2 text-[14px] font-medium transition-colors sm:flex ${
-                light
-                  ? "text-bone/75 hover:text-white"
-                  : "text-ink/65 hover:text-ink"
-              }`}
-            >
-              <Phone className="h-3.5 w-3.5" />
-              <span dir="ltr">{PHONE}</span>
-            </a>
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:block">
+                <LangSwitch light={light} />
+              </div>
 
-            <Link
-              href="/shop"
-              className={`hidden rounded-full px-5 py-2.5 text-[14px] font-semibold transition-all lg:inline-flex ${
-                light
-                  ? "bg-bone text-abyss hover:bg-white"
-                  : "bg-ink text-bone hover:bg-ocean"
-              }`}
-            >
-              {t("orderNow")}
-            </Link>
+              <a
+                href={PHONE_HREF}
+                className={`hidden items-center gap-2 text-[13.5px] font-medium transition-colors sm:flex ${
+                  light
+                    ? "text-limewash/75 hover:text-limewash"
+                    : "text-tar/70 hover:text-tar"
+                }`}
+              >
+                <Phone className="h-3.5 w-3.5" />
+                <span dir="ltr">{PHONE}</span>
+              </a>
 
-            <button
-              type="button"
-              onClick={() => setOpen((v) => !v)}
-              aria-label={open ? t("closeMenu") : t("openMenu")}
-              aria-expanded={open}
-              className={`grid h-11 w-11 place-items-center rounded-full border transition-colors lg:hidden ${
-                light ? "border-white/25 text-bone" : "border-ink/15 text-ink"
-              }`}
-            >
-              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
-          </div>
-        </nav>
+              <Link
+                href="/shop"
+                className="label hidden bg-oxide px-5 py-3 text-limewash transition-colors hover:bg-oxide-lit lg:inline-flex"
+              >
+                {t("orderNow")}
+              </Link>
 
-        <motion.div
-          style={{ scaleX: progress }}
-          className="h-px origin-left bg-ocean rtl:origin-right"
-        />
+              <button
+                type="button"
+                onClick={() => setOpen((v) => !v)}
+                aria-label={open ? t("closeMenu") : t("openMenu")}
+                aria-expanded={open}
+                className={`grid h-11 w-11 place-items-center border transition-colors lg:hidden ${
+                  light
+                    ? "border-limewash/25 text-limewash"
+                    : "border-tar/20 text-tar"
+                }`}
+              >
+                {open ? (
+                  <X className="h-5 w-5" />
+                ) : (
+                  <Menu className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+          </nav>
+
+          <motion.div
+            style={{ scaleX: progress }}
+            className="h-[2px] origin-left bg-oxide rtl:origin-right"
+          />
+        </div>
       </header>
 
       <AnimatePresence>
@@ -145,10 +182,9 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[55] bg-abyss lg:hidden"
+            className="fixed inset-0 z-[55] overflow-y-auto bg-tar lg:hidden"
           >
-            <div className="noise" />
-            <div className="container-x flex h-[78px] items-center justify-between">
+            <div className="container-x flex h-[74px] items-center justify-between pt-9">
               <Logo variant="light" />
               <div className="flex items-center gap-3">
                 <LangSwitch light />
@@ -156,14 +192,14 @@ export default function Navbar() {
                   type="button"
                   onClick={() => setOpen(false)}
                   aria-label={t("closeMenu")}
-                  className="grid h-11 w-11 place-items-center rounded-full border border-white/25 text-bone"
+                  className="grid h-11 w-11 place-items-center border border-limewash/25 text-limewash"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
             </div>
 
-            <div className="container-x mt-10">
+            <div className="container-x mt-8 pb-16">
               {links.map((l, i) => (
                 <motion.div
                   key={l.href}
@@ -177,16 +213,16 @@ export default function Navbar() {
                 >
                   <Link
                     href={l.href}
-                    className="flex items-baseline justify-between border-b border-white/12 py-6"
+                    className="flex items-baseline justify-between border-b border-limewash/12 py-6"
                   >
                     <span
                       className={`display-md ${
-                        isActive(l.href) ? "text-aqua" : "text-bone"
+                        isActive(l.href) ? "text-ochre" : "text-limewash"
                       }`}
                     >
                       {l.label}
                     </span>
-                    <span className="numeral text-[12px] text-bone/35" dir="ltr">
+                    <span className="draft-mark text-[12px]" dir="ltr">
                       0{i + 1}
                     </span>
                   </Link>
@@ -197,16 +233,27 @@ export default function Navbar() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.45 }}
-                className="mt-12 space-y-2 text-[14px] text-bone/55"
+                className="mt-10"
               >
-                <p>{t("addressLine1")}</p>
-                <p>{t("addressLine2")}</p>
                 <a
-                  href={PHONE_HREF}
-                  className="mt-4 inline-block text-bone underline underline-offset-4"
+                  href={whatsappHref()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="label flex w-full items-center justify-center bg-oxide px-6 py-4 text-limewash transition-colors hover:bg-oxide-lit"
                 >
-                  <span dir="ltr">{PHONE}</span>
+                  {t("whatsapp")}
                 </a>
+
+                <div className="mt-8 space-y-2 text-[14px] text-limewash/60">
+                  <p>{t("addressLine1")}</p>
+                  <p>{t("addressLine2")}</p>
+                  <a
+                    href={PHONE_HREF}
+                    className="mt-4 inline-block text-limewash underline underline-offset-4"
+                  >
+                    <span dir="ltr">{PHONE}</span>
+                  </a>
+                </div>
               </motion.div>
             </div>
           </motion.div>

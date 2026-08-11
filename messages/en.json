@@ -36,6 +36,39 @@
     "ctaHow": "How we buy",
     "scroll": "Scroll"
   },
+  "Best": {
+    "title": "What the counter sells most",
+    "copy": "The lines people walk in and ask for by name, and the ones the kitchens keep on a standing order. Every one of them is quoted by the kilo when you order.",
+    "cardCta": "See this line",
+    "carouselLabel": "Best-selling lines",
+    "slideLabel": "{index} of {total}",
+    "pageLabel": "Go to page {index}",
+    "prev": "Previous lines",
+    "next": "Next lines",
+    "allCta": "Shop all {total} lines",
+    "askCta": "Ask what is on ice today",
+    "whatsappMessage": "Hello — what do you have on ice today?",
+    "lines": {
+      "fish-grouper": {
+        "tagline": "The undisputed king of the Saudi table. Firm white flesh that holds together whole on the charcoal, and takes every cut the counter makes."
+      },
+      "fish-kingfish": {
+        "tagline": "Cross-cut into steaks, straight onto the grill."
+      },
+      "crustaceans-seafood-shrimp-prawn": {
+        "tagline": "Heads on, which is where the flavour is."
+      },
+      "crustaceans-seafood-crayfish": {
+        "tagline": "Whole out of the trap, split for the grill."
+      },
+      "fish-trevally": {
+        "tagline": "Off the Farasan Banks — the one the Jeddah counters sell out of first."
+      },
+      "crustaceans-seafood-squid": {
+        "tagline": "Whole, tubed or ringed — say the word."
+      }
+    }
+  },
   "Fork": {
     "eyebrow": "Two ways to buy",
     "title": "Buying for a table, or for a kitchen?",
@@ -248,6 +281,11 @@
     "categories": {
       "Fish": "Fish",
       "Crustaceans & Seafood": "Crustaceans & seafood"
+    },
+    "badges": {
+      "bestSeller": "Best seller",
+      "premium": "Premium",
+      "chefsPick": "Chef's pick"
     },
     "note": "Cut to order, free of charge, right before dispatch — never in advance. If a line will not take the cut you want, it does not appear under that filter.",
     "before": {

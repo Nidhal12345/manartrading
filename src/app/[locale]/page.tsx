@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { ArrowUpRight, MessageCircle, Phone } from "lucide-react";
 
 import HeroCinematic from "@/components/HeroCinematic";
+import BestSellers, { type BestSellerLine } from "@/components/BestSellers";
 import AudienceFork from "@/components/AudienceFork";
 import Offerings, { type OfferingStats } from "@/components/Offerings";
 import TwoSeas from "@/components/TwoSeas";
@@ -15,14 +16,23 @@ import Faq from "@/components/Faq";
 import Reveal from "@/components/Reveal";
 import { SectionIntro } from "@/components/Decor";
 import { productCategories } from "@/data/categories";
-import { products, type Category } from "@/data/products";
+import { bestSellers, products, type Category } from "@/data/products";
 import { PHONE, PHONE_HREF, whatsappHref } from "@/lib/contact";
 
 /**
  * The home page.
  *
- * Nine sections, in the order a buyer needs them: the world, then the fork, then
- * the range, then how it works, then the questions, then one conversation.
+ * Ten sections, in the order a buyer needs them: the world, then the shelf, then
+ * the fork, then the range, then how it works, then the questions, then one
+ * conversation.
+ *
+ * The best sellers sit second on purpose. The hero states the world and names no
+ * fish — its top band is empty cobalt — so the first concrete answer the page
+ * gives is the six lines the counter is asked for by name. Before it existed,
+ * the first species on the page was five viewports down.
+ *
+ * It carries no section index of its own: it is the shelf, not a numbered step
+ * in the argument, so the numbered run starts at the audience fork below it.
  *
  * Three blocks came off this page rather than being restyled, all for the same
  * reason — PRODUCT.md records them as invented, and a redesign that restyles
@@ -33,7 +43,7 @@ import { PHONE, PHONE_HREF, whatsappHref } from "@/lib/contact";
  *   - four counters: 17 years, 60+ partner boats, 2.4 t landed daily, 9 sites.
  *
  * The FAQ in their place is proof of a kind this business can actually give.
- * When real attributable quotes exist, they belong between sections 8 and 9.
+ * When real attributable quotes exist, they belong between sections 9 and 10.
  */
 
 /** Whole fish only — the shellfish lines are their own board on the counter. */
@@ -74,12 +84,36 @@ function showcaseCards(): ShowcaseCard[] {
   });
 }
 
+/**
+ * The six lines the counter is asked for by name, flattened for the client.
+ *
+ * Mapped here rather than in the component because the carousel is a client
+ * component: every field on this object crosses into the bundle, so it carries
+ * the six the cards print and nothing else. Passing the catalogue rows would
+ * ship every grade table and nutrition panel with them.
+ */
+function bestSellerLines(): BestSellerLine[] {
+  return bestSellers().map((p) => ({
+    slug: p.slug,
+    // Trimmed of the parenthetical alternates the catalogue carries for search,
+    // exactly as the showcase does — "Kingfish (Spanish Mackerel)" is one name
+    // on a painted board.
+    name: p.name.replace(/\s*\(.*?\)/g, ""),
+    arabic: p.arabic,
+    image: p.image,
+    waters: p.waters,
+    ...(p.badge ? { badge: p.badge } : {}),
+  }));
+}
+
 export default async function HomePage() {
   const t = await getTranslations("Home");
 
   return (
     <>
       <HeroCinematic />
+
+      <BestSellers lines={bestSellerLines()} total={products.length} />
 
       <AudienceFork />
 

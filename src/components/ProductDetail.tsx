@@ -124,7 +124,7 @@ export default function ProductDetail({ product: p }: { product: Product }) {
 
             {p.badge && (
               <span className="label absolute end-0 top-5 bg-oxide px-3.5 py-2 text-limewash">
-                {p.badge}
+                {ts(`badges.${p.badge}`)}
               </span>
             )}
 

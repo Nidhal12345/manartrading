@@ -3,7 +3,7 @@
 import Photo from "./ui/Photo";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   motion,
   useReducedMotion,
@@ -24,9 +24,16 @@ import { whatsappHref } from "@/lib/contact";
  * edge treatment on the site, and it is introduced here at full width before it
  * is used anywhere else.
  *
- * What stood here before: an underwater video loop, drifting caustics, film
- * grain and two magnetic pill buttons. All of it is gone rather than restyled —
- * it was the category default this redesign exists to refuse.
+ * The field below the waterline is a loop of the working water, under the same
+ * tar gradient the photograph carried. It is background, not content: muted,
+ * looping, no controls, no sound, and it states nothing the copy does not.
+ * `boatDawn` stays mounted beneath it as the first frame and as the whole of
+ * what a reduced-motion visitor sees.
+ *
+ * This is not the loop that stood here before the redesign. That one was
+ * underwater — drifting caustics and film grain over magnetic pill buttons —
+ * and it was the category default this site exists to refuse. The surface is
+ * the subject here, read from the quay, and the paint above it is unchanged.
  *
  * `pt-[112px]` clears the fixed header: a 36px cutoff strip, a 74px nav row and
  * the 2px scroll rule.
@@ -36,6 +43,14 @@ export default function HeroCinematic() {
   const nav = useTranslations("Nav");
   const ref = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
+
+  /**
+   * The still holds the frame until the loop is actually painting. Video decode
+   * is not instant even from cache, and without this the hero opens on flat tar
+   * for a beat — the one thing a hero cannot do. `onPlaying` rather than
+   * `onCanPlay`: the latter fires while the first frame is still nothing.
+   */
+  const [videoPlaying, setVideoPlaying] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -75,6 +90,11 @@ export default function HeroCinematic() {
           style={hullStyle}
           className="absolute inset-x-0 -inset-y-[10%] will-change-transform"
         >
+          {/* The still is the floor, not a fallback: it holds the frame while
+              the loop decodes, and it is what a reduced-motion visitor, a
+              blocked autoplay or a failed download is left with. It stays
+              mounted underneath rather than being swapped out, so there is
+              never a frame with nothing in it. */}
           <Photo
             image="boatDawn"
             res={2000}
@@ -82,6 +102,25 @@ export default function HeroCinematic() {
             sizes="100vw"
             className="object-cover"
           />
+
+          {/* Someone who asked the OS for less motion gets the still and no
+              loop at all — the element is not rendered, so the file is never
+              fetched either. */}
+          {!reduceMotion && (
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              onPlaying={() => setVideoPlaying(true)}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1.4s] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                videoPlaying ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <source src="/hero3.mp4" type="video/mp4" />
+            </video>
+          )}
         </motion.div>
 
         {/* Tar, not a blue wash. The gradient is the paint the photograph sits

@@ -90,6 +90,26 @@ export const registry = {
     "Prawns resting in a bowl of crushed ice",
     "#b4726a",
   ),
+  /* The three below were added for the best-sellers section: the registry had
+     nothing for spiny lobster or squid, and every Fish line was sharing one
+     mackerel photograph. `alt` names what is actually in the frame — a caption
+     that claimed the species the line is sold under would be a caption that
+     lies. */
+  grouperLanding: e(
+    "unsplash-rYwqoxleZbU",
+    "Spotted grouper laid out on a landing table beside crab and tuna",
+    "#767279",
+  ),
+  spinyLobster: e(
+    "unsplash-OJPBfUqgsRU",
+    "Whole spiny lobsters piled on a quayside table",
+    "#473e3d",
+  ),
+  squidOnIce: e(
+    "unsplash-h80T-wumakg",
+    "Fresh whole squid on ice with lime and coriander",
+    "#78735c",
+  ),
   tunaPile: e(
     "photo-1766998112558-c8632e66cc49",
     "Freshly landed tuna stacked at the quay",

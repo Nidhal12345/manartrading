@@ -46,6 +46,20 @@ export const PREPARATIONS = [
 
 export type Preparation = (typeof PREPARATIONS)[number];
 
+/**
+ * The counter's shorthand for why a line stands out.
+ *
+ * A key rather than a phrase: printed English on the Arabic page was the bug
+ * this replaces, and the three words are translated through `Shop.badges.*`.
+ *
+ * PLACEHOLDER, in the same sense as the rest of this file — which lines carry
+ * which badge is the client's to confirm, and nothing on the site quotes a
+ * figure behind them.
+ */
+export const BADGES = ["bestSeller", "premium", "chefsPick"] as const;
+
+export type Badge = (typeof BADGES)[number];
+
 export type Product = {
   slug: string;
   name: string;
@@ -60,7 +74,7 @@ export type Product = {
   preparation: Preparation[];
   rating: number;
   reviews: number;
-  badge?: string;
+  badge?: Badge;
   /** Primary shot — the product photograph. */
   image: ImageKey;
   /** Detail-page gallery: the product in the wild, and plated. */
@@ -167,9 +181,18 @@ type Spec = {
   waters: Waters;
   origin: string;
   tagline: string;
-  badge?: string;
+  badge?: Badge;
   /** Overrides the category default where this line cuts differently. */
   preparation?: Preparation[];
+  /**
+   * Overrides the category default photo where a species-specific shot exists.
+   *
+   * Without it every Fish line shares one mackerel photograph and every
+   * shellfish line shares one bowl of prawns — invisible while the two shots
+   * only ever appear on separate pages, and obvious the moment six lines are
+   * shown side by side.
+   */
+  image?: ImageKey;
 };
 
 const CATALOGUE: Record<Category, Spec[]> = {
@@ -181,7 +204,8 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Red Sea",
       origin: "Farasan Banks",
       tagline: "The one the Jeddah counters sell out of first.",
-      badge: "Premium",
+      badge: "premium",
+      image: "blueTableFish",
     },
     {
       name: "Shareefi",
@@ -200,7 +224,8 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Red Sea",
       origin: "Jazan & Farasan Banks",
       tagline: "The undisputed king of the Saudi table.",
-      badge: "Best seller",
+      badge: "bestSeller",
+      image: "grouperLanding",
     },
     {
       name: "Parrotfish",
@@ -226,7 +251,11 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Arabian Gulf",
       origin: "Dammam & Qatif landings",
       tagline: "The grill fish this country runs on.",
-      badge: "Best seller",
+      badge: "bestSeller",
+      // The category default already *is* the spotted mackerel shot, but it is
+      // stated here so a change to the Fish default cannot silently take the
+      // one photograph that names this line correctly.
+      image: "mackerelBlue",
     },
     {
       name: "Sea Bream",
@@ -276,7 +305,10 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Arabian Gulf",
       origin: "Gulf trawl grounds",
       tagline: "Heads on, because that is where the flavour hides.",
-      badge: "Best seller",
+      badge: "bestSeller",
+      // Same reasoning as Kingfish: this is the category default today, pinned
+      // so a change to the shellfish default cannot take it away.
+      image: "prawnsOnIce",
       // Peeled and deveined is "cleaned"; split down the back for a skewer is
       // "butterflied" — the same two words the fish counter uses.
       preparation: ["whole", "cleaned", "butterflied"],
@@ -288,7 +320,8 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Red Sea",
       origin: "Farasan Banks",
       tagline: "The whole animal, presented as it came out of the trap.",
-      badge: "Premium",
+      badge: "premium",
+      image: "spinyLobster",
       // Halved lengthways for the grill, which is the butterfly cut here.
       preparation: ["whole", "cleaned", "butterflied"],
     },
@@ -324,7 +357,8 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Arabian Gulf",
       origin: "Gulf trawl grounds",
       tagline: "Whole, tubed or ringed — say the word.",
-      badge: "Chef's pick",
+      badge: "chefsPick",
+      image: "squidOnIce",
       // Rings are a cross-cut through the tube, which is this line's steaking.
       preparation: ["whole", "cleaned", "steaked"],
     },
@@ -389,7 +423,7 @@ function build(category: Category, spec: Spec): Product {
     rating,
     reviews,
     ...(spec.badge ? { badge: spec.badge } : {}),
-    image: d.images.image,
+    image: spec.image ?? d.images.image,
     wild: d.images.wild,
     cooked: d.images.cooked,
     palette: d.palette,
@@ -420,6 +454,40 @@ export const categories = ["All", ...categoryNames] as const;
 
 export function getProduct(slug: string) {
   return products.find((p) => p.slug === slug);
+}
+
+/**
+ * The lines the home page leads with, in the order it shows them — the first is
+ * the one that gets the photograph.
+ *
+ * Slugs rather than a `badge` filter: the section is a curated shelf, and which
+ * six lines sit on it is an editorial decision the client makes by reordering
+ * this array. A filter would have made the order an accident of catalogue
+ * position and the count an accident of how many badges were assigned.
+ *
+ * PLACEHOLDER, like the badges it draws on. Nothing rendered from this list is
+ * a ranking or a sales figure — see `Best.note` in the message files.
+ */
+export const BEST_SELLER_SLUGS = [
+  "fish-grouper",
+  "fish-kingfish",
+  "crustaceans-seafood-shrimp-prawn",
+  "crustaceans-seafood-crayfish",
+  "fish-trevally",
+  "crustaceans-seafood-squid",
+] as const;
+
+/**
+ * Resolved best-seller lines, in `BEST_SELLER_SLUGS` order.
+ *
+ * A slug that no longer exists drops out silently rather than throwing: the
+ * catalogue is placeholder data due to be replaced wholesale, and a renamed line
+ * should cost the home page one plate, not the whole build.
+ */
+export function bestSellers(): Product[] {
+  return BEST_SELLER_SLUGS.map((slug) => getProduct(slug)).filter(
+    (p): p is Product => Boolean(p),
+  );
 }
 
 export function relatedProducts(slug: string, limit = 3) {

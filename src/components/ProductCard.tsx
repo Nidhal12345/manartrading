@@ -106,7 +106,7 @@ export default function ProductCard({
 
           {p.badge && (
             <span className="label absolute end-0 top-4 bg-oxide px-3 py-1.5 text-limewash">
-              {p.badge}
+              {t(`badges.${p.badge}`)}
             </span>
           )}
         </div>

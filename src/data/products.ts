@@ -1,9 +1,9 @@
 import type { ImageKey } from "@/lib/images";
 
 /**
- * The shop catalogue — 63 lines across the 10 categories on the spec sheet.
+ * The shop catalogue — 16 lines across the 2 categories on the spec sheet.
  *
- * Mirrors `./categories`, which indexes the same 10 headings on the home page.
+ * Mirrors `./categories`, which indexes the same 2 headings on the home page.
  * That file lists the range; this one is what the counter actually sells, so
  * every line here carries a grade table and a detail page.
  *
@@ -11,26 +11,54 @@ import type { ImageKey } from "@/lib/images";
  * on WhatsApp when the order is placed, and a figure written down here would
  * ship in the client bundle and go stale the next morning.
  *
- * PLACEHOLDER DATA: names and categories come from the spec sheet and are real.
- * Everything else — Arabic and scientific names, ratings, nutrition, copy — is
- * stand-in content to be replaced with the real figures, same as the
- * photography. Nothing here should be quoted to a customer as-is.
+ * PLACEHOLDER DATA: the categories and the Arabic/English names are the
+ * client's own, from `products-data.json`. Everything else — scientific names,
+ * waters, origins, ratings, nutrition, copy — is stand-in content to be
+ * replaced with the real figures, same as the photography. Nothing here should
+ * be quoted to a customer as-is.
  */
 
-export type Category =
-  | "Lobsters"
-  | "Shell Fishes"
-  | "Shrimps"
-  | "Cephalopods"
-  | "Fishes (Sea Water)"
-  | "Fishes (Fresh Water)"
-  | "European Fishes"
-  | "Fillets"
-  | "Steaks"
-  | "Smoked Products";
+export type Category = "Fish" | "Crustaceans & Seafood";
 
 /** Imported covers the farmed and North Atlantic lines that are neither local sea. */
 export type Waters = "Red Sea" | "Arabian Gulf" | "Imported";
+
+/**
+ * The second axis of the taxonomy: not "which fish" but "which fish, cut how".
+ *
+ * It lives here rather than in the diagram component because it is catalogue
+ * data — the shop filters on it and the detail page quotes it — and the drawing
+ * is only one way of rendering it.
+ *
+ * PLACEHOLDER, in the same sense as the rest of this file: the vocabulary is
+ * real and the per-line assignment is a reasonable reading of the trade (a
+ * 300 g Rabbitfish is not steaked; a crab is not filleted), but it has not been
+ * confirmed against what the counter will actually cut. Confirm before it is
+ * quoted to a customer.
+ */
+export const PREPARATIONS = [
+  "whole",
+  "cleaned",
+  "steaked",
+  "filleted",
+  "butterflied",
+] as const;
+
+export type Preparation = (typeof PREPARATIONS)[number];
+
+/**
+ * The counter's shorthand for why a line stands out.
+ *
+ * A key rather than a phrase: printed English on the Arabic page was the bug
+ * this replaces, and the three words are translated through `Shop.badges.*`.
+ *
+ * PLACEHOLDER, in the same sense as the rest of this file — which lines carry
+ * which badge is the client's to confirm, and nothing on the site quotes a
+ * figure behind them.
+ */
+export const BADGES = ["bestSeller", "premium", "chefsPick"] as const;
+
+export type Badge = (typeof BADGES)[number];
 
 export type Product = {
   slug: string;
@@ -42,9 +70,11 @@ export type Product = {
   waters: Waters;
   season: string;
   method: string;
+  /** How this line can be prepared, in `PREPARATIONS` order. Never empty. */
+  preparation: Preparation[];
   rating: number;
   reviews: number;
-  badge?: string;
+  badge?: Badge;
   /** Primary shot — the product photograph. */
   image: ImageKey;
   /** Detail-page gallery: the product in the wild, and plated. */
@@ -67,7 +97,7 @@ export type Product = {
  * Category defaults
  *
  * Shared presentation and handling detail lives here rather than being
- * repeated across 63 entries. A line only states what makes it different.
+ * repeated across every entry. A line only states what makes it different.
  * ------------------------------------------------------------------ */
 
 type CategoryDefaults = {
@@ -75,6 +105,8 @@ type CategoryDefaults = {
   palette: [string, string, string];
   season: string;
   method: string;
+  /** The cuts this whole heading takes; a line overrides it only where it differs. */
+  preparation: Preparation[];
   texture: string;
   flavour: string;
   bestFor: string[];
@@ -87,103 +119,12 @@ type CategoryDefaults = {
 };
 
 const DEFAULTS: Record<Category, CategoryDefaults> = {
-  Lobsters: {
-    images: { image: "colourfulCatch", wild: "wildReef", cooked: "grilledPlate" },
-    palette: ["#8E3B33", "#C1443C", "#F0A08F"],
-    season: "Oct – Apr",
-    method: "Trap caught",
-    texture: "Firm, dense bite",
-    flavour: "Sweet and rich",
-    bestFor: ["Grill", "Butter poach", "Thermidor", "Salad"],
-    highlights: [
-      "Held live or blast-frozen at landing",
-      "Graded by piece weight before packing",
-      "Prepared to order — split, halved or left whole",
-      "Cold chain maintained end to end",
-    ],
-    sizes: [
-      { label: "Small", weight: "200 – 350 g" },
-      { label: "Medium", weight: "350 – 600 g" },
-      { label: "Large", weight: "600 – 900 g" },
-    ],
-    nutrition: { protein: 19, fat: 1.1, omega3: 0.3, calories: 89 },
-    blurb: "A premium shellfish line kept for the occasions that deserve it.",
-  },
-
-  "Shell Fishes": {
-    images: { image: "marketCounter", wild: "wildReef", cooked: "charcoalGrill" },
-    palette: ["#5F5A50", "#7C7266", "#E0D5C4"],
-    season: "Year-round",
-    method: "Farmed & trap caught",
-    texture: "Tender with a clean bite",
-    flavour: "Briny and mineral",
-    bestFor: ["Steam", "White wine broth", "Pasta", "Grill"],
-    highlights: [
-      "Purified and graded before packing",
-      "Supplied raw or pre-cooked to order",
-      "Packed in sealed food-grade trays",
-      "Cold chain maintained end to end",
-    ],
-    sizes: [
-      { label: "1 kg pack", weight: "per kg" },
-      { label: "2 kg pack", weight: "per kg" },
-      { label: "5 kg box", weight: "per kg" },
-    ],
-    nutrition: { protein: 18.2, fat: 2.2, omega3: 0.6, calories: 96 },
-    blurb: "Shellfish handled cold and fast, which is the whole trick with it.",
-  },
-
-  Shrimps: {
-    images: { image: "prawnsOnIce", wild: "wildReef", cooked: "charcoalGrill" },
-    palette: ["#C1443C", "#F0785C", "#FBC0A4"],
-    season: "Aug – Dec (Gulf), year-round imported",
-    method: "Licensed trawl & farmed",
-    texture: "Firm, snappy",
-    flavour: "Sweet, briny",
-    bestFor: ["Garlic butter", "Grill skewers", "Biryani", "Salona"],
-    highlights: [
-      "Graded by count per kilo, sized consistently",
-      "Available head-on, headless, peeled or cooked",
-      "IQF frozen so you thaw only what you need",
-      "Cold chain maintained end to end",
-    ],
-    sizes: [
-      { label: "31/40 count", weight: "per kg" },
-      { label: "21/25 count", weight: "per kg" },
-      { label: "16/20 count", weight: "per kg" },
-    ],
-    nutrition: { protein: 20.3, fat: 1.7, omega3: 0.5, calories: 99 },
-    blurb: "Our highest-volume line, carried in every cut a kitchen asks for.",
-  },
-
-  Cephalopods: {
-    images: { image: "fishRows", wild: "wildSpotted", cooked: "grilledLeaf" },
-    palette: ["#3E4A50", "#5F6660", "#B9C2BD"],
-    season: "Year-round",
-    method: "Net & trap caught",
-    texture: "Springy, firm",
-    flavour: "Clean, faintly sweet",
-    bestFor: ["Flash fry", "Grill", "Stew", "Rings"],
-    highlights: [
-      "Cleaned, gutted and skinned before packing",
-      "Supplied whole, tubed or ringed",
-      "Frozen at sea on the day of catch",
-      "Cold chain maintained end to end",
-    ],
-    sizes: [
-      { label: "Small", weight: "per kg" },
-      { label: "Medium", weight: "per kg" },
-      { label: "Large", weight: "per kg" },
-    ],
-    nutrition: { protein: 16.4, fat: 1, omega3: 0.35, calories: 79 },
-    blurb: "Cleaned the moment it lands, because texture is lost by waiting.",
-  },
-
-  "Fishes (Sea Water)": {
+  Fish: {
     images: { image: "mackerelBlue", wild: "wildSpotted", cooked: "charcoalGrill" },
     palette: ["#123C63", "#2A6E9E", "#7FC5D9"],
     season: "Year-round, peak Oct – Mar",
     method: "Hand line & net",
+    preparation: ["whole", "cleaned", "steaked", "filleted", "butterflied"],
     texture: "Firm, medium flake",
     flavour: "Clean and full",
     bestFor: ["Charcoal grill", "Whole roast", "Sayadiyah", "Curry"],
@@ -202,119 +143,30 @@ const DEFAULTS: Record<Category, CategoryDefaults> = {
     blurb: "Landed on the Red Sea and Gulf coasts, graded fresh every day.",
   },
 
-  "Fishes (Fresh Water)": {
-    images: { image: "greyWholeFish", wild: "wildGrouper", cooked: "grilledLeaf" },
-    palette: ["#2E7D6F", "#4FB3A0", "#A9E3D6"],
-    season: "Year-round",
-    method: "Farmed",
-    texture: "Soft, fine flake",
-    flavour: "Mild and gentle",
-    bestFor: ["Fry", "Curry", "Whole roast", "Stew"],
+  "Crustaceans & Seafood": {
+    images: { image: "prawnsOnIce", wild: "wildReef", cooked: "grilledPlate" },
+    palette: ["#C1443C", "#F0785C", "#FBC0A4"],
+    season: "Year-round, peak Oct – Apr",
+    method: "Trap, trawl & net caught",
+    /* Nothing under this heading is filleted; a line that can be split for the
+       grill, or cross-cut into rings, says so on its own row. */
+    preparation: ["whole", "cleaned"],
+    texture: "Firm, snappy bite",
+    flavour: "Sweet and briny",
+    bestFor: ["Garlic butter", "Grill skewers", "Flash fry", "Salona"],
     highlights: [
-      "Farmed to a consistent size all year",
-      "Scaled and gutted, heads on or off",
-      "Steady supply independent of the sea season",
+      "Graded by piece weight or count per kilo",
+      "Cleaned and prepared to order — never in advance",
+      "Held live or blast-frozen at landing",
       "Cold chain maintained end to end",
     ],
     sizes: [
-      { label: "Small", weight: "0.5 – 1.0 kg" },
-      { label: "Medium", weight: "1.0 – 1.8 kg" },
-      { label: "Large", weight: "1.8 – 3.0 kg" },
+      { label: "Small", weight: "per kg" },
+      { label: "Medium", weight: "per kg" },
+      { label: "Large", weight: "per kg" },
     ],
-    nutrition: { protein: 19.2, fat: 2.8, omega3: 0.4, calories: 106 },
-    blurb: "A dependable everyday line that never moves with the weather.",
-  },
-
-  "European Fishes": {
-    images: { image: "marketBream", wild: "wildSpotted", cooked: "grilledPlate" },
-    palette: ["#0E6BA8", "#1E9BD7", "#8FD9E8"],
-    season: "Year-round",
-    method: "Farmed, air-freighted",
-    texture: "Fine, tender flake",
-    flavour: "Delicate, buttery",
-    bestFor: ["Oven bake", "Pan sear", "Steam", "Sashimi grade"],
-    highlights: [
-      "Air-freighted, typically 48 hours from harvest",
-      "Farm and harvest date traceable per box",
-      "Whole fish or portioned to order",
-      "Cold chain maintained end to end",
-    ],
-    sizes: [
-      { label: "Small", weight: "0.4 – 0.8 kg" },
-      { label: "Medium", weight: "0.8 – 1.6 kg" },
-      { label: "Large", weight: "1.6 – 3.0 kg" },
-    ],
-    nutrition: { protein: 20.4, fat: 6.8, omega3: 1.8, calories: 146 },
-    blurb: "Flown in for the kitchens that ask for it by name.",
-  },
-
-  Fillets: {
-    images: { image: "fishmonger", wild: "wildGrouper", cooked: "grilledPlate" },
-    palette: ["#8E5148", "#C0705E", "#F0C3AC"],
-    season: "Year-round",
-    method: "Filleted to order",
-    texture: "Boneless, even flake",
-    flavour: "Clean and mild",
-    bestFor: ["Pan sear", "Oven bake", "Fry", "Curry"],
-    highlights: [
-      "Pin-boned and trimmed, zero waste",
-      "Skin on or off at no extra charge",
-      "Portioned to a fixed gram weight on request",
-      "Cold chain maintained end to end",
-    ],
-    sizes: [
-      { label: "120 – 180 g", weight: "per portion" },
-      { label: "180 – 240 g", weight: "per portion" },
-      { label: "Whole side", weight: "1 – 2 kg" },
-    ],
-    nutrition: { protein: 21.2, fat: 3.4, omega3: 0.7, calories: 118 },
-    blurb: "Cut for kitchens that want no bones and no waste on the pass.",
-  },
-
-  Steaks: {
-    images: { image: "cuttingLoin", wild: "wildSpotted", cooked: "charcoalGrill" },
-    palette: ["#7A2E2A", "#B04A3E", "#E8A292"],
-    season: "Year-round",
-    method: "Cut to order",
-    texture: "Dense, meaty",
-    flavour: "Rich and full",
-    bestFor: ["Charcoal grill", "Hard sear", "Machboos", "Skewers"],
-    highlights: [
-      "Cut to 2.5 cm cross-section as standard",
-      "Thickness cut to your spec on request",
-      "Bone-in for flavour, trimmed clean",
-      "Cold chain maintained end to end",
-    ],
-    sizes: [
-      { label: "2 cm cut", weight: "per kg" },
-      { label: "2.5 cm cut", weight: "per kg" },
-      { label: "4 cm cut", weight: "per kg" },
-    ],
-    nutrition: { protein: 22.4, fat: 4.8, omega3: 1.1, calories: 132 },
-    blurb: "Thick cross-section cuts built to hold together over open flame.",
-  },
-
-  "Smoked Products": {
-    images: { image: "charcoalGrill", wild: "wildSpotted", cooked: "grilledLeaf" },
-    palette: ["#5A4632", "#A8622F", "#E0B183"],
-    season: "Year-round",
-    method: "Cold & hot smoked",
-    texture: "Silky, close-grained",
-    flavour: "Deep, smoky, savoury",
-    bestFor: ["Cold platter", "Bagel & cream cheese", "Salad", "Canapés"],
-    highlights: [
-      "Cured and smoked over hardwood",
-      "Sliced and interleaved, or supplied whole",
-      "Ready to eat, no preparation required",
-      "Cold chain maintained end to end",
-    ],
-    sizes: [
-      { label: "200 g pack", weight: "sliced" },
-      { label: "500 g pack", weight: "sliced" },
-      { label: "Whole side", weight: "1 – 1.5 kg" },
-    ],
-    nutrition: { protein: 23.6, fat: 7.4, omega3: 1.9, calories: 158 },
-    blurb: "Cured and smoked slowly, then packed to be eaten as it is.",
+    nutrition: { protein: 19.4, fat: 1.4, omega3: 0.4, calories: 92 },
+    blurb: "Handled cold and fast, which is the whole trick with shellfish.",
   },
 };
 
@@ -329,554 +181,186 @@ type Spec = {
   waters: Waters;
   origin: string;
   tagline: string;
-  badge?: string;
+  badge?: Badge;
+  /** Overrides the category default where this line cuts differently. */
+  preparation?: Preparation[];
+  /**
+   * Overrides the category default photo where a species-specific shot exists.
+   *
+   * Without it every Fish line shares one mackerel photograph and every
+   * shellfish line shares one bowl of prawns — invisible while the two shots
+   * only ever appear on separate pages, and obvious the moment six lines are
+   * shown side by side.
+   */
+  image?: ImageKey;
 };
 
 const CATALOGUE: Record<Category, Spec[]> = {
-  Lobsters: [
+  Fish: [
     {
-      name: "Rock Lobster Whole",
-      arabic: "كركند صخري كامل",
-      scientific: "Panulirus homarus",
+      name: "Trevally",
+      arabic: "الناجل",
+      scientific: "Plectropomus areolatus",
       waters: "Red Sea",
       origin: "Farasan Banks",
-      tagline: "The whole animal, presented as it came out of the trap.",
-      badge: "Premium",
+      tagline: "The one the Jeddah counters sell out of first.",
+      badge: "premium",
+      image: "blueTableFish",
     },
     {
-      name: "Rock Lobster Tail",
-      arabic: "ذيل كركند صخري",
-      scientific: "Panulirus homarus",
+      name: "Shareefi",
+      arabic: "الشريفي",
+      scientific: "Carangoides spp.",
       waters: "Red Sea",
-      origin: "Farasan Banks",
-      tagline: "All the meat, none of the work.",
+      origin: "Al Lith & Qunfudhah",
+      tagline: "Smaller, leaner, and a favourite off the charcoal.",
+      // Comes in too small to cross-cut into steaks that hold together.
+      preparation: ["whole", "cleaned", "filleted", "butterflied"],
     },
     {
-      name: "Rock Lobster Meat",
-      arabic: "لحم كركند صخري",
-      scientific: "Panulirus homarus",
+      name: "Grouper",
+      arabic: "الهامور",
+      scientific: "Epinephelus coioides",
       waters: "Red Sea",
-      origin: "Farasan Banks",
-      tagline: "Shelled and ready for the pan.",
+      origin: "Jazan & Farasan Banks",
+      tagline: "The undisputed king of the Saudi table.",
+      badge: "bestSeller",
+      image: "grouperLanding",
     },
     {
-      name: "Sand Lobster Whole",
-      arabic: "كركند رملي كامل",
-      scientific: "Thenus orientalis",
-      waters: "Arabian Gulf",
-      origin: "Gulf trawl grounds",
-      tagline: "Flatter, sweeter, and easier to portion.",
-    },
-    {
-      name: "Sand Lobster Tail",
-      arabic: "ذيل كركند رملي",
-      scientific: "Thenus orientalis",
-      waters: "Arabian Gulf",
-      origin: "Gulf trawl grounds",
-      tagline: "The best part, split and ready for the grill.",
-    },
-    {
-      name: "Sand Lobster Meat",
-      arabic: "لحم كركند رملي",
-      scientific: "Thenus orientalis",
-      waters: "Arabian Gulf",
-      origin: "Gulf trawl grounds",
-      tagline: "Clean picked meat, sold by weight.",
-    },
-    {
-      name: "Canadian Lobster Whole",
-      arabic: "كركند كندي كامل",
-      scientific: "Homarus americanus",
-      waters: "Imported",
-      origin: "Nova Scotia, Canada",
-      tagline: "Cold-water claws, the ones people photograph.",
-      badge: "Imported",
-    },
-  ],
-
-  "Shell Fishes": [
-    {
-      name: "Green Mussel Half Shell",
-      arabic: "بلح البحر الأخضر نصف صدفة",
-      scientific: "Perna viridis",
-      waters: "Imported",
-      origin: "New Zealand & Vietnam",
-      tagline: "Sat on the half shell, ready to dress and bake.",
-    },
-    {
-      name: "Green Mussel Whole",
-      arabic: "بلح البحر الأخضر كامل",
-      scientific: "Perna viridis",
-      waters: "Imported",
-      origin: "New Zealand & Vietnam",
-      tagline: "Whole shell on, for a pot and a lid.",
-    },
-    {
-      name: "Cooked Whole Mussel",
-      arabic: "بلح البحر المطبوخ كامل",
-      scientific: "Perna viridis",
-      waters: "Imported",
-      origin: "New Zealand & Vietnam",
-      tagline: "Already cooked — reheat and serve.",
-    },
-    {
-      name: "Mussel Meat",
-      arabic: "لحم بلح البحر",
-      scientific: "Perna viridis",
-      waters: "Imported",
-      origin: "New Zealand & Vietnam",
-      tagline: "Shelled meat by the kilo, no shells to bin.",
-    },
-    {
-      name: "Crab Whole",
-      arabic: "سلطعون كامل",
-      scientific: "Portunus pelagicus",
-      waters: "Arabian Gulf",
-      origin: "Qatif & Tarout Bay",
-      tagline: "Blue swimmer crab, straight from the trap.",
-    },
-    {
-      name: "Crab Stick",
-      arabic: "أصابع السلطعون",
-      scientific: "Surimi blend",
-      waters: "Imported",
-      origin: "Japan & Thailand",
-      tagline: "The reliable one, for salads and rolls.",
-    },
-    {
-      name: "Soft Shell Crab",
-      arabic: "سلطعون طري القشرة",
-      scientific: "Scylla serrata",
-      waters: "Imported",
-      origin: "Vietnam & Myanmar",
-      tagline: "Fry it whole and eat the shell too.",
-      badge: "Chef's pick",
-    },
-    {
-      name: "Snow Crab Leg",
-      arabic: "أرجل سلطعون الثلج",
-      scientific: "Chionoecetes opilio",
-      waters: "Imported",
-      origin: "North Atlantic",
-      tagline: "Long legs, sweet meat, minimal effort.",
-    },
-    {
-      name: "King Crab Leg (Raw and Cooked)",
-      arabic: "أرجل السلطعون الملكي (نيء ومطبوخ)",
-      scientific: "Paralithodes camtschaticus",
-      waters: "Imported",
-      origin: "Norway & Alaska",
-      tagline: "The centrepiece. Raw or cooked, your call.",
-      badge: "Premium",
-    },
-  ],
-
-  Shrimps: [
-    {
-      name: "Head On (White, Tiger, Scampi, Flower)",
-      arabic: "روبيان برأس",
-      scientific: "Penaeus spp.",
-      waters: "Arabian Gulf",
-      origin: "Gulf trawl grounds",
-      tagline: "Heads on, because that is where the flavour hides.",
-      badge: "Fresh daily",
-    },
-    {
-      name: "Head Less (White, Tiger, Pink, Scampi, Flower)",
-      arabic: "روبيان بدون رأس",
-      scientific: "Penaeus spp.",
-      waters: "Arabian Gulf",
-      origin: "Gulf trawl grounds",
-      tagline: "Headed at the plant, so you pay for what you cook.",
-    },
-    {
-      name: "Peeled and Deveined Tail On (PDTO)",
-      arabic: "روبيان مقشر منزوع العرق مع الذيل",
-      scientific: "Penaeus vannamei",
-      waters: "Imported",
-      origin: "India & Vietnam",
-      tagline: "Tail left on for the look, everything else done.",
-    },
-    {
-      name: "Peeled and Deveined (PD)",
-      arabic: "روبيان مقشر منزوع العرق",
-      scientific: "Penaeus vannamei",
-      waters: "Imported",
-      origin: "India & Vietnam",
-      tagline: "Straight into the pan, nothing to pick out.",
-    },
-    {
-      name: "Peeled and Undeveined (PUD)",
-      arabic: "روبيان مقشر غير منزوع العرق",
-      scientific: "Penaeus vannamei",
-      waters: "Imported",
-      origin: "India & Vietnam",
-      tagline: "The volume line for stocks, curries and rice.",
-    },
-    {
-      name: "Cooked PUD / PD",
-      arabic: "روبيان مطبوخ",
-      scientific: "Penaeus vannamei",
-      waters: "Imported",
-      origin: "India & Vietnam",
-      tagline: "Cooked and chilled — open, drain, serve.",
-    },
-  ],
-
-  Cephalopods: [
-    {
-      name: "Cuttlefish Whole (Whole Cleaned, Fillet)",
-      arabic: "حبار كامل (منظف، فيليه)",
-      scientific: "Sepia pharaonis",
-      waters: "Arabian Gulf",
-      origin: "Gulf trawl grounds",
-      tagline: "Cleaned whole or opened flat as fillet.",
-    },
-    {
-      name: "Squid Whole (Whole Cleaned, Tube, Rings)",
-      arabic: "كاليماري كامل (منظف، أنبوب، حلقات)",
-      scientific: "Loligo duvauceli",
-      waters: "Arabian Gulf",
-      origin: "Gulf trawl grounds",
-      tagline: "Whole, tubed or ringed — say the word.",
-      badge: "Best seller",
-    },
-    {
-      name: "Octopus Gutted and Cleaned",
-      arabic: "أخطبوط منظف",
-      scientific: "Octopus vulgaris",
-      waters: "Red Sea",
-      origin: "Jeddah coastline",
-      tagline: "Gutted, cleaned, and ready for a long slow braise.",
-    },
-  ],
-
-  "Fishes (Sea Water)": [
-    {
-      name: "King Fish",
-      arabic: "كنعد",
-      scientific: "Scomberomorus commerson",
-      waters: "Arabian Gulf",
-      origin: "Dammam & Qatif landings",
-      tagline: "The grill fish this country runs on.",
-      badge: "Best seller",
-    },
-    {
-      name: "White Pomfret",
-      arabic: "زبيدي أبيض",
-      scientific: "Pampus argenteus",
-      waters: "Arabian Gulf",
-      origin: "Jubail & Ras Tanura",
-      tagline: "The most prized fish in the Gulf, and it knows it.",
-      badge: "Limited",
-    },
-    {
-      name: "Black Pomfret",
-      arabic: "زبيدي أسود",
-      scientific: "Parastromateus niger",
-      waters: "Arabian Gulf",
-      origin: "Jubail & Ras Tanura",
-      tagline: "Darker skin, deeper flavour, everyday fish.",
-    },
-    {
-      name: "Ribbon Fish",
-      arabic: "سمك الشريط",
-      scientific: "Trichiurus lepturus",
-      waters: "Arabian Gulf",
-      origin: "Gulf trawl grounds",
-      tagline: "Long, silver and startlingly good fried.",
-    },
-    {
-      name: "Parrot Fish",
-      arabic: "ببغاء",
+      name: "Parrotfish",
+      arabic: "الحريد",
       scientific: "Scarus ghobban",
       waters: "Red Sea",
-      origin: "Yanbu reefs",
+      origin: "Farasan Islands",
       tagline: "Bright as a coral reef, mild as they come.",
+      preparation: ["whole", "cleaned", "filleted", "butterflied"],
     },
     {
-      name: "Emperor",
-      arabic: "شعري",
+      name: "Emperor (Spangled Emperor)",
+      arabic: "الشعور",
       scientific: "Lethrinus nebulosus",
       waters: "Red Sea",
       origin: "Al Lith & Qunfudhah",
       tagline: "The everyday fish that never disappoints.",
     },
     {
-      name: "Barracuda (Agam)",
-      arabic: "عقام",
-      scientific: "Sphyraena jello",
-      waters: "Red Sea",
-      origin: "Offshore Red Sea fleet",
-      tagline: "Lean, firm and built for steaks.",
-    },
-    {
-      name: "Mackerel",
-      arabic: "ماكريل",
-      scientific: "Rastrelliger kanagurta",
+      name: "Kingfish (Spanish Mackerel)",
+      arabic: "الكنعد",
+      scientific: "Scomberomorus commerson",
       waters: "Arabian Gulf",
-      origin: "Dammam landings",
-      tagline: "Oily, cheap and criminally underrated.",
-    },
-  ],
-
-  "Fishes (Fresh Water)": [
-    {
-      name: "Rohu",
-      arabic: "روهو",
-      scientific: "Labeo rohita",
-      waters: "Imported",
-      origin: "India & Bangladesh",
-      tagline: "The carp that anchors a South Asian kitchen.",
-    },
-    {
-      name: "Tilapia",
-      arabic: "بلطي",
-      scientific: "Oreochromis niloticus",
-      waters: "Imported",
-      origin: "Egypt & local farms",
-      tagline: "Mild, affordable and endlessly forgiving.",
-    },
-    {
-      name: "Milkfish",
-      arabic: "سمك الحليب",
-      scientific: "Chanos chanos",
-      waters: "Imported",
-      origin: "Philippines & Indonesia",
-      tagline: "Sweet white meat, worth the bones.",
-    },
-    {
-      name: "Pangush",
-      arabic: "بانغاش",
-      scientific: "Pangasius hypophthalmus",
-      waters: "Imported",
-      origin: "Mekong Delta, Vietnam",
-      tagline: "Boneless, neutral, and always in stock.",
-    },
-  ],
-
-  "European Fishes": [
-    {
-      name: "Salmon Whole",
-      arabic: "سلمون كامل",
-      scientific: "Salmo salar",
-      waters: "Imported",
-      origin: "Norway",
-      tagline: "The whole side, still in its skin.",
-      badge: "Chef's pick",
-    },
-    {
-      name: "Rainbow Trout Whole",
-      arabic: "تراوت قوس قزح كامل",
-      scientific: "Oncorhynchus mykiss",
-      waters: "Imported",
-      origin: "Turkey & Denmark",
-      tagline: "Salmon's quieter, cheaper cousin.",
-    },
-    {
-      name: "Sea Bass",
-      arabic: "قاروص",
-      scientific: "Dicentrarchus labrax",
-      waters: "Imported",
-      origin: "Greece & Turkey",
-      tagline: "Plate-sized, whole, and impossible to get wrong.",
+      origin: "Dammam & Qatif landings",
+      tagline: "The grill fish this country runs on.",
+      badge: "bestSeller",
+      // The category default already *is* the spotted mackerel shot, but it is
+      // stated here so a change to the Fish default cannot silently take the
+      // one photograph that names this line correctly.
+      image: "mackerelBlue",
     },
     {
       name: "Sea Bream",
-      arabic: "دنيس",
+      arabic: "الدنيس",
       scientific: "Sparus aurata",
       waters: "Imported",
       origin: "Greece & Turkey",
       tagline: "Salt-baked or grilled whole, nothing else needed.",
+      preparation: ["whole", "cleaned", "filleted", "butterflied"],
     },
-  ],
-
-  Fillets: [
     {
-      name: "Salmon",
-      arabic: "فيليه سلمون",
-      scientific: "Salmo salar",
+      name: "Sea Bass",
+      arabic: "القاروص",
+      scientific: "Dicentrarchus labrax",
       waters: "Imported",
-      origin: "Norway",
-      tagline: "Pin-boned sides, cut to whatever gram weight you run.",
-      badge: "Best seller",
+      origin: "Greece & Turkey",
+      tagline: "Plate-sized, whole, and impossible to get wrong.",
+      preparation: ["whole", "cleaned", "filleted", "butterflied"],
     },
     {
-      name: "Nile Perch",
-      arabic: "فيليه قشر بياض",
+      name: "Rabbitfish (White-spotted Spinefoot)",
+      arabic: "الصافي",
+      scientific: "Siganus canaliculatus",
+      waters: "Arabian Gulf",
+      origin: "Qatif & Tarout Bay",
+      tagline: "Small, sweet, and eaten whole with your hands.",
+      // A 300 g fish. Steaking or filleting it would leave nothing on the plate.
+      preparation: ["whole", "cleaned", "butterflied"],
+    },
+    {
+      name: "Bayadh",
+      arabic: "البياض",
       scientific: "Lates niloticus",
       waters: "Imported",
       origin: "Lake Victoria",
       tagline: "Thick white loins that hold their shape.",
-    },
-    {
-      name: "Cream Dory",
-      arabic: "فيليه كريم دوري",
-      scientific: "Pangasius hypophthalmus",
-      waters: "Imported",
-      origin: "Mekong Delta, Vietnam",
-      tagline: "The workhorse fillet for volume kitchens.",
-    },
-    {
-      name: "Pollock",
-      arabic: "فيليه بولاك",
-      scientific: "Theragra chalcogramma",
-      waters: "Imported",
-      origin: "North Pacific",
-      tagline: "What good fish and chips is actually made of.",
-    },
-    {
-      name: "Red Snapper",
-      arabic: "فيليه نهاش أحمر",
-      scientific: "Lutjanus bohar",
-      waters: "Red Sea",
-      origin: "Farasan Islands",
-      tagline: "Deep red skin, snow-white meat.",
-    },
-    {
-      name: "White Snapper",
-      arabic: "فيليه نهاش أبيض",
-      scientific: "Lutjanus argentimaculatus",
-      waters: "Red Sea",
-      origin: "Farasan Islands",
-      tagline: "Cleaner and milder than its red sibling.",
-    },
-    {
-      name: "Grouper Hamour",
-      arabic: "فيليه هامور",
-      scientific: "Epinephelus coioides",
-      waters: "Red Sea",
-      origin: "Jazan & Farasan Banks",
-      tagline: "The undisputed king of the Saudi table, boned out.",
-      badge: "Premium",
-    },
-    {
-      name: "Pangasius",
-      arabic: "فيليه بنغاسيوس",
-      scientific: "Pangasius hypophthalmus",
-      waters: "Imported",
-      origin: "Mekong Delta, Vietnam",
-      tagline: "Neutral, boneless and built for the pass.",
-    },
-    {
-      name: "Basa",
-      arabic: "فيليه باسا",
-      scientific: "Pangasius bocourti",
-      waters: "Imported",
-      origin: "Mekong Delta, Vietnam",
-      tagline: "Softer than pangasius, same easy handling.",
-    },
-    {
-      name: "Haddock",
-      arabic: "فيليه حدوق",
-      scientific: "Melanogrammus aeglefinus",
-      waters: "Imported",
-      origin: "North Atlantic",
-      tagline: "Cold-water flake that smokes beautifully.",
+      // Arrives as loins, not as a whole fish, so the head-on cuts do not apply.
+      preparation: ["steaked", "filleted"],
     },
   ],
 
-  Steaks: [
+  "Crustaceans & Seafood": [
     {
-      name: "King Fish",
-      arabic: "شرائح كنعد",
-      scientific: "Scomberomorus commerson",
-      waters: "Arabian Gulf",
-      origin: "Dammam & Qatif landings",
-      tagline: "Thick steaks built for the grill.",
-      badge: "Best seller",
-    },
-    {
-      name: "Salmon",
-      arabic: "شرائح سلمون",
-      scientific: "Salmo salar",
-      waters: "Imported",
-      origin: "Norway",
-      tagline: "Bone-in cross cuts that stay moist under heat.",
-    },
-    {
-      name: "Snapper",
-      arabic: "شرائح نهاش",
-      scientific: "Lutjanus spp.",
-      waters: "Red Sea",
-      origin: "Farasan Islands",
-      tagline: "Firm red-fish steaks for the charcoal.",
-    },
-    {
-      name: "Rohu",
-      arabic: "شرائح روهو",
-      scientific: "Labeo rohita",
-      waters: "Imported",
-      origin: "India & Bangladesh",
-      tagline: "Cut the way a curry wants it.",
-    },
-    {
-      name: "Pangasius",
-      arabic: "شرائح بنغاسيوس",
-      scientific: "Pangasius hypophthalmus",
-      waters: "Imported",
-      origin: "Mekong Delta, Vietnam",
-      tagline: "Even, boneless steaks, cut for volume service.",
-    },
-    {
-      name: "Barracuda",
-      arabic: "شرائح عقام",
-      scientific: "Sphyraena jello",
-      waters: "Red Sea",
-      origin: "Offshore Red Sea fleet",
-      tagline: "Lean and firm — it will not fall apart on you.",
-    },
-    {
-      name: "Jesh",
-      arabic: "شرائح جش",
-      scientific: "Carangoides bajad",
+      name: "Shrimp / Prawn",
+      arabic: "جمبري",
+      scientific: "Penaeus semisulcatus",
       waters: "Arabian Gulf",
       origin: "Gulf trawl grounds",
-      tagline: "Trevally steaks, dense and full-flavoured.",
-    },
-  ],
-
-  "Smoked Products": [
-    {
-      name: "Salmon",
-      arabic: "سلمون مدخن",
-      scientific: "Salmo salar",
-      waters: "Imported",
-      origin: "Norway & Scotland",
-      tagline: "Cold-smoked, sliced thin, interleaved.",
-      badge: "Premium",
+      tagline: "Heads on, because that is where the flavour hides.",
+      badge: "bestSeller",
+      // Same reasoning as Kingfish: this is the category default today, pinned
+      // so a change to the shellfish default cannot take it away.
+      image: "prawnsOnIce",
+      // Peeled and deveined is "cleaned"; split down the back for a skewer is
+      // "butterflied" — the same two words the fish counter uses.
+      preparation: ["whole", "cleaned", "butterflied"],
     },
     {
-      name: "Trout Fillet",
-      arabic: "فيليه تراوت مدخن",
-      scientific: "Oncorhynchus mykiss",
-      waters: "Imported",
-      origin: "Turkey & Denmark",
-      tagline: "The value alternative to smoked salmon.",
+      name: "Crayfish (Spiny Lobster)",
+      arabic: "استكوزا",
+      scientific: "Panulirus homarus",
+      waters: "Red Sea",
+      origin: "Farasan Banks",
+      tagline: "The whole animal, presented as it came out of the trap.",
+      badge: "premium",
+      image: "spinyLobster",
+      // Halved lengthways for the grill, which is the butterfly cut here.
+      preparation: ["whole", "cleaned", "butterflied"],
     },
     {
-      name: "Mackerel Whole",
-      arabic: "ماكريل مدخن كامل",
-      scientific: "Rastrelliger kanagurta",
+      name: "Lobster",
+      arabic: "لوبستر",
+      scientific: "Homarus americanus",
       waters: "Imported",
-      origin: "North Atlantic",
-      tagline: "Hot-smoked whole, ready to flake apart.",
+      origin: "Nova Scotia, Canada",
+      tagline: "Cold-water claws, the ones people photograph.",
+      preparation: ["whole", "cleaned", "butterflied"],
     },
     {
-      name: "Mackerel Fillet",
-      arabic: "فيليه ماكريل مدخن",
-      scientific: "Rastrelliger kanagurta",
-      waters: "Imported",
-      origin: "North Atlantic",
-      tagline: "Boneless and rich, straight from the pack.",
+      name: "Crab",
+      arabic: "كابوريا",
+      scientific: "Portunus pelagicus",
+      waters: "Arabian Gulf",
+      origin: "Qatif & Tarout Bay",
+      tagline: "Blue swimmer crab, straight from the trap.",
     },
     {
-      name: "Peppered Mackerel Fillet",
-      arabic: "فيليه ماكريل مدخن بالفلفل",
-      scientific: "Rastrelliger kanagurta",
-      waters: "Imported",
-      origin: "North Atlantic",
-      tagline: "Crusted in cracked black pepper before the smoke.",
+      name: "Octopus",
+      arabic: "اخطبوط",
+      scientific: "Octopus vulgaris",
+      waters: "Red Sea",
+      origin: "Jeddah coastline",
+      tagline: "Gutted, cleaned, and ready for a long slow braise.",
+    },
+    {
+      name: "Squid",
+      arabic: "حباره",
+      scientific: "Loligo duvauceli",
+      waters: "Arabian Gulf",
+      origin: "Gulf trawl grounds",
+      tagline: "Whole, tubed or ringed — say the word.",
+      badge: "chefsPick",
+      image: "squidOnIce",
+      // Rings are a cross-cut through the tube, which is this line's steaking.
+      preparation: ["whole", "cleaned", "steaked"],
     },
   ],
 };
@@ -886,8 +370,8 @@ const CATALOGUE: Record<Category, Spec[]> = {
  * ------------------------------------------------------------------ */
 
 /**
- * Names repeat across categories — Salmon is a fillet, a steak and a smoked
- * line — so the route key has to carry the category to stay unique.
+ * The route key carries the category as well as the name, so a line that is
+ * later carried under two headings cannot collide on one slug.
  */
 function toSlug(category: Category, name: string): string {
   const base = `${category} ${name}`
@@ -935,10 +419,11 @@ function build(category: Category, spec: Spec): Product {
     waters: spec.waters,
     season: d.season,
     method: d.method,
+    preparation: spec.preparation ?? d.preparation,
     rating,
     reviews,
     ...(spec.badge ? { badge: spec.badge } : {}),
-    image: d.images.image,
+    image: spec.image ?? d.images.image,
     wild: d.images.wild,
     cooked: d.images.cooked,
     palette: d.palette,
@@ -969,6 +454,40 @@ export const categories = ["All", ...categoryNames] as const;
 
 export function getProduct(slug: string) {
   return products.find((p) => p.slug === slug);
+}
+
+/**
+ * The lines the home page leads with, in the order it shows them — the first is
+ * the one that gets the photograph.
+ *
+ * Slugs rather than a `badge` filter: the section is a curated shelf, and which
+ * six lines sit on it is an editorial decision the client makes by reordering
+ * this array. A filter would have made the order an accident of catalogue
+ * position and the count an accident of how many badges were assigned.
+ *
+ * PLACEHOLDER, like the badges it draws on. Nothing rendered from this list is
+ * a ranking or a sales figure — see `Best.note` in the message files.
+ */
+export const BEST_SELLER_SLUGS = [
+  "fish-grouper",
+  "fish-kingfish",
+  "crustaceans-seafood-shrimp-prawn",
+  "crustaceans-seafood-crayfish",
+  "fish-trevally",
+  "crustaceans-seafood-squid",
+] as const;
+
+/**
+ * Resolved best-seller lines, in `BEST_SELLER_SLUGS` order.
+ *
+ * A slug that no longer exists drops out silently rather than throwing: the
+ * catalogue is placeholder data due to be replaced wholesale, and a renamed line
+ * should cost the home page one plate, not the whole build.
+ */
+export function bestSellers(): Product[] {
+  return BEST_SELLER_SLUGS.map((slug) => getProduct(slug)).filter(
+    (p): p is Product => Boolean(p),
+  );
 }
 
 export function relatedProducts(slug: string, limit = 3) {

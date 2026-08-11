@@ -10,168 +10,205 @@ import {
   useScroll,
   useTransform,
 } from "motion/react";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowUpRight, MessageCircle } from "lucide-react";
 import SplitText from "./ui/SplitText";
-import Magnetic from "./ui/Magnetic";
+import { whatsappHref } from "@/lib/contact";
 
+/**
+ * The hero is the site's one full statement of the world: a hauled hull, read
+ * from the quay.
+ *
+ * The band across the top is cobalt topside paint. The field below it is the
+ * tarred bottom. Between them sits the waterline — struck straight against tape,
+ * ragged underneath, with the cobalt running down into the tar. It is the only
+ * edge treatment on the site, and it is introduced here at full width before it
+ * is used anywhere else.
+ *
+ * The field below the waterline is a loop of the working water, under the same
+ * tar gradient the photograph carried. It is background, not content: muted,
+ * looping, no controls, no sound, and it states nothing the copy does not.
+ * `boatDawn` stays mounted beneath it as the first frame and as the whole of
+ * what a reduced-motion visitor sees.
+ *
+ * This is not the loop that stood here before the redesign. That one was
+ * underwater — drifting caustics and film grain over magnetic pill buttons —
+ * and it was the category default this site exists to refuse. The surface is
+ * the subject here, read from the quay, and the paint above it is unchanged.
+ *
+ * `pt-[112px]` clears the fixed header: a 36px cutoff strip, a 74px nav row and
+ * the 2px scroll rule.
+ */
 export default function HeroCinematic() {
   const t = useTranslations("Hero");
-
+  const nav = useTranslations("Nav");
   const ref = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
-  const [videoReady, setVideoReady] = useState(false);
+
+  /**
+   * The still holds the frame until the loop is actually painting. Video decode
+   * is not instant even from cache, and without this the hero opens on flat tar
+   * for a beat — the one thing a hero cannot do. `onPlaying` rather than
+   * `onCanPlay`: the latter fires while the first frame is still nothing.
+   */
+  const [videoPlaying, setVideoPlaying] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
 
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "22%"]);
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1.06, 1.18]);
-  const copyY = useTransform(scrollYProgress, [0, 1], [0, 140]);
-  const copyFade = useTransform(scrollYProgress, [0, 0.65], [1, 0]);
-  const veil = useTransform(scrollYProgress, [0, 1], [0.55, 0.9]);
+  // The hull settles while the waterline above it holds still. That contrast is
+  // the whole effect, so the travel is short — 8%, where the old parallax ran
+  // 22% and took the horizon with it.
+  const hullY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
+  const copyFade = useTransform(scrollYProgress, [0, 0.72], [1, 0]);
 
-  // Parallax is motion too — hold everything still when the OS asks us to.
-  const plateStyle = reduceMotion ? undefined : { y: imageY, scale: imageScale };
-  const copyStyle = reduceMotion ? undefined : { y: copyY, opacity: copyFade };
-  const veilStyle = reduceMotion ? { opacity: 0.72 } : { opacity: veil };
+  const hullStyle = reduceMotion ? undefined : { y: hullY };
+  const copyStyle = reduceMotion ? undefined : { opacity: copyFade };
 
   return (
     <section
       ref={ref}
-      className="relative flex h-[100svh] min-h-[600px] w-full flex-col overflow-hidden bg-abyss text-bone"
+      className="relative flex min-h-[100svh] w-full flex-col bg-tar text-limewash"
     >
-      {/* plate: the photograph paints instantly and the video cross-fades over
-          the same frame once it can play */}
-      <motion.div
-        aria-hidden="true"
-        style={plateStyle}
-        className="absolute inset-0 will-change-transform"
-      >
-        <Photo
-          image="heroDeep"
-          res={2000}
-          eager
-          sizes="100vw"
-          className="object-cover"
+      {/* Topsides. A plain band of cobalt above the waterline — it carries no
+          copy, so the paint and the drip line are the whole statement. */}
+      <div className="relative z-10 bg-hull pt-[112px]">
+        {/* Cobalt is taped over tar, so the drips that escape the line are
+            cobalt and they run down into the dark field below. */}
+        <div
+          aria-hidden="true"
+          className="waterline absolute inset-x-0 bottom-0"
+          style={{ ["--waterline" as string]: "var(--color-hull)" }}
+        />
+      </div>
+
+      {/* Below the waterline */}
+      <div className="relative flex flex-1 flex-col overflow-hidden">
+        <motion.div
+          aria-hidden="true"
+          style={hullStyle}
+          className="absolute inset-x-0 -inset-y-[10%] will-change-transform"
+        >
+          {/* The still is the floor, not a fallback: it holds the frame while
+              the loop decodes, and it is what a reduced-motion visitor, a
+              blocked autoplay or a failed download is left with. It stays
+              mounted underneath rather than being swapped out, so there is
+              never a frame with nothing in it. */}
+          <Photo
+            image="boatDawn"
+            res={2000}
+            eager
+            sizes="100vw"
+            className="object-cover"
+          />
+
+          {/* Someone who asked the OS for less motion gets the still and no
+              loop at all — the element is not rendered, so the file is never
+              fetched either. */}
+          {!reduceMotion && (
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              onPlaying={() => setVideoPlaying(true)}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1.4s] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                videoPlaying ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <source src="/hero3.mp4" type="video/mp4" />
+            </video>
+          )}
+        </motion.div>
+
+        {/* Tar, not a blue wash. The gradient is the paint the photograph sits
+            under, which is why it is warm black at both ends. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(26,20,16,0.74)_0%,rgba(26,20,16,0.52)_38%,rgba(26,20,16,0.96)_100%)]"
         />
 
-        {!reduceMotion && (
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            disablePictureInPicture
-            preload="auto"
-            aria-hidden="true"
-            tabIndex={-1}
-            ref={(el) => {
-              // onCanPlay can fire before React attaches the handler.
-              if (el && el.readyState >= 2) setVideoReady(true);
-            }}
-            onCanPlay={() => setVideoReady(true)}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
-              videoReady ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <source src="/hero2.mp4" type="video/mp4" />
-          </video>
-        )}
-      </motion.div>
+        <motion.div
+          style={copyStyle}
+          className="relative flex flex-1 flex-col justify-end pb-[calc(4.5rem+env(safe-area-inset-bottom))] pt-20 sm:pt-28"
+        >
+          <div className="container-x">
+            {/* The one place on the site where type animates per line. It reads
+                as lettering being painted on; everywhere else it fired on every
+                heading and made the whole page feel like it was being typed. */}
+            <h1 className="hero-display max-w-[15ch] text-limewash">
+              <SplitText text={t("titleLine1")} animateOnMount className="block" />
+              <SplitText
+                text={t("titleLine2")}
+                animateOnMount
+                delay={0.26}
+                className="block text-ochre"
+              />
+            </h1>
 
-      {/* grading */}
-      <motion.div
-        aria-hidden="true"
-        style={veilStyle}
-        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,20,31,0.82)_0%,rgba(4,20,31,0.35)_38%,rgba(4,20,31,0.88)_100%)]"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(120%_90%_at_15%_20%,rgba(14,107,168,0.35),transparent_60%)]"
-      />
-      {/* extra floor on small screens: the copy sits low, over the busiest
-          part of the frame */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-2/3 bg-[linear-gradient(180deg,transparent,rgba(4,20,31,0.85))] sm:hidden"
-      />
-      <div className="caustics" aria-hidden="true" />
-      <div className="noise" aria-hidden="true" />
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, delay: 0.66, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-7 max-w-[50ch] text-pretty text-[15.5px] leading-[1.8] text-limewash/75 sm:text-[17px] rtl:leading-[2]"
+            >
+              {t("subtitle")}
+            </motion.p>
 
-      {/* ---------- copy ---------- */}
-      <motion.div
-        style={copyStyle}
-        className="relative flex flex-1 flex-col justify-end pb-[calc(3.5rem+env(safe-area-inset-bottom))] pt-24 sm:justify-center sm:pb-24 sm:pt-28"
-      >
-        <div className="container-x">
-          <h1 className="hero-legible hero-display max-w-[15ch]">
-            <SplitText text={t("titleLine1")} animateOnMount className="block" />
-            <SplitText
-              text={t("titleLine2")}
-              animateOnMount
-              delay={0.28}
-              className="block text-sea-300"
-              wordClassName="italic-serif"
-            />
-          </h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="hero-legible mt-6 max-w-[52ch] text-pretty text-[15.5px] leading-[1.75] text-bone/80 sm:mt-7 sm:text-[17px] sm:leading-[1.7] rtl:leading-[2]"
-          >
-            {t("subtitle")}
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-9 flex flex-col items-stretch gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4"
-          >
-            <Magnetic className="w-full sm:w-auto">
+            {/* Two actions, and they are the two things a visitor actually does:
+                look at the range, or talk to the counter. Square, painted, no
+                pills — a painted sign has corners. */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-10 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center"
+            >
               <Link
                 href="/shop"
-                className="group flex w-full items-center justify-between gap-3 rounded-full bg-bone py-3.5 ps-6 pe-3 text-[15px] font-semibold text-abyss transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-aqua sm:inline-flex sm:w-auto sm:justify-start sm:py-4 sm:ps-7"
+                className="group inline-flex items-center justify-between gap-4 bg-oxide py-4 pe-4 ps-7 text-[15px] font-semibold text-limewash transition-colors hover:bg-oxide-lit focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ochre"
               >
                 {t("ctaCatch")}
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-abyss text-bone transition-transform duration-500 group-hover:rotate-45">
-                  <ArrowUpRight className="h-4 w-4 rtl:-scale-x-100" />
-                </span>
+                <ArrowUpRight className="h-4 w-4 shrink-0 transition-transform duration-500 group-hover:rotate-45 rtl-flip" />
               </Link>
-            </Magnetic>
 
-            <Magnetic className="w-full sm:w-auto" strength={0.2}>
-              <Link
-                href="/about"
-                className="flex w-full items-center justify-center gap-2 rounded-full border border-white/30 px-6 py-3.5 text-[15px] font-semibold text-bone/90 transition-colors hover:border-white/60 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-aqua sm:inline-flex sm:w-auto sm:py-4"
+              <a
+                href={whatsappHref()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2.5 border border-limewash/30 px-7 py-4 text-[15px] font-semibold text-limewash/90 transition-colors hover:border-limewash hover:text-limewash focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ochre"
               >
-                {t("ctaHow")}
-              </Link>
-            </Magnetic>
-          </motion.div>
-        </div>
-      </motion.div>
+                <MessageCircle className="h-4 w-4 shrink-0" />
+                {nav("whatsapp")}
+              </a>
+            </motion.div>
+          </div>
+        </motion.div>
 
-      {/* scroll cue */}
-      <motion.div
+        {/* Scroll cue, on the ochre draft-mark scale rather than an animated
+            aqua tick. */}
+        <motion.div
+          aria-hidden="true"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 0.8 }}
+          className="container-x pointer-events-none absolute inset-x-0 bottom-7 hidden sm:block"
+        >
+          <div className="flex items-center justify-end gap-3">
+            <span className="label text-limewash/45">{t("scroll")}</span>
+            <ArrowDown className="h-3.5 w-3.5 text-ochre" />
+          </div>
+        </motion.div>
+      </div>
+
+      {/* The tar field ends on the page ground, so the site's own waterline
+          hands the hero off to the fork below. */}
+      <div
         aria-hidden="true"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.3, duration: 0.8 }}
-        className="container-x pointer-events-none absolute inset-x-0 bottom-8 hidden sm:block"
-      >
-        <div className="flex items-center justify-end gap-3">
-          <span className="label text-bone/55">{t("scroll")}</span>
-          <span className="relative h-12 w-px overflow-hidden bg-white/20">
-            <span className="animate-scroll-hint absolute inset-x-0 top-0 h-1/2 bg-aqua" />
-          </span>
-          <ArrowDown className="h-3.5 w-3.5 text-bone/55" />
-        </div>
-      </motion.div>
+        className="waterline absolute inset-x-0 bottom-0 z-10"
+      />
     </section>
   );
 }

@@ -1,127 +1,85 @@
-"use client";
-
 import { Link } from "@/i18n/navigation";
-import Image from "next/image";
-import { motion } from "motion/react";
-import { ArrowUpRight, PackageOpen, Ship, Truck } from "lucide-react";
-import Reveal, { StaggerGroup, StaggerItem } from "./Reveal";
-import SplitText from "./ui/SplitText";
-import Magnetic from "./ui/Magnetic";
-import waterSurface from "../../public/back3.png";
+import { getTranslations } from "next-intl/server";
+import { ArrowUpRight } from "lucide-react";
+import Reveal from "./Reveal";
+import { SectionIntro } from "./Decor";
 
 /**
- * Three-step overview of the order journey, threaded on a single rule so it
- * reads as a sequence rather than three unrelated cards.
+ * How we buy — three steps, hung on the waterline.
  *
- * Deliberately the short version: `ProcessSticky` further down the page tells
- * the same story at length, so everything here stays to one sentence.
+ * The copy is kept exactly as it was: plain, specific, no boilerplate, and it
+ * makes no claim PRODUCT.md flags as unverified. Only the shell is rebuilt. It
+ * has moved into `messages/*.json` because it was hardcoded English in the
+ * component, which meant the Arabic site was silently showing English here.
  *
- * No top padding: the category index above is also white, so the two run
- * together as one field and its `pb` alone sets the gap. Adding padding here
- * too would stack into a double-height rhythm.
+ * The three circular icon badges are gone. A step is a painted plate with its
+ * number stencilled on it, and the rule the three sit on is the same waterline
+ * the rest of the site is built around — drawn once, across the row, rather than
+ * being faked with a hairline that had to be positioned against icon centres.
  */
-const steps = [
-  {
-    n: "01",
-    title: "We source",
-    copy: "Our own buyers take the fish straight off the boats on the Red Sea and Gulf coasts, and we import the rest ourselves — never through a wholesaler, never a second day.",
-    Icon: Ship,
-  },
-  {
-    n: "02",
-    title: "You choose",
-    copy: "Pick your species and tell us how you cook it — whole, butterflied, steaked or filleted. Cut to order just before dispatch, at no extra charge.",
-    Icon: PackageOpen,
-  },
-  {
-    n: "03",
-    title: "We deliver",
-    copy: "Buried in flake ice minutes after landing and held at 0 – 2 °C to your door, with same-day delivery across the Kingdom.",
-    Icon: Truck,
-  },
-];
+export default async function HowItWorks() {
+  const t = await getTranslations("HowItWorks");
 
-export default function HowItWorks() {
+  const steps = ["source", "choose", "deliver"] as const;
+
   return (
-    <section className="relative isolate bg-white pb-24 lg:pb-32">
-      {/*
-        Decorative backdrop. `isolate` on the section makes this negative-z
-        child paint above the white base but below the content. The top is
-        masked to transparent because the category index above is also white
-        and butts straight against this edge — without the fade the image
-        starts on a visible horizontal seam.
-      */}
-      <Image
-        src={waterSurface}
-        alt=""
-        fill
-        sizes="100vw"
-        placeholder="blur"
-        className="-z-10 object-cover object-bottom"
-        style={{
-          maskImage: "linear-gradient(to bottom, transparent, #000 30%)",
-          WebkitMaskImage: "linear-gradient(to bottom, transparent, #000 30%)",
-        }}
-      />
-
+    <section className="relative bg-hull py-24 text-limewash md:py-32">
       <div className="container-x">
-        <SplitText
-          as="h2"
-          text="How it works"
-          className="display-lg mx-auto block text-center text-ink"
+        <SectionIntro
+          light
+          index="05"
+          eyebrow={t("eyebrow")}
+          title={t("title")}
         />
 
-        <div className="relative mt-16 lg:mt-20">
-          {/* The rule the three markers sit on. It has to stop dead on the
-              outer icons' centres: that is half a column in from each edge,
-              and a column is a third of the row *minus* the two 2rem gaps.
-              `top-9` is half the 72px icon, so the rule bisects them. */}
-          <motion.span
-            aria-hidden="true"
-            className="absolute left-[calc((100%_-_4rem)_/_6)] right-[calc((100%_-_4rem)_/_6)] top-9 hidden h-px origin-left bg-ink/12 md:block rtl:origin-right"
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          />
-
-          <StaggerGroup className="grid gap-14 md:grid-cols-3 md:gap-8">
-            {steps.map(({ n, title, copy, Icon }) => (
-              <StaggerItem key={n}>
-                <div className="group flex flex-col items-center text-center">
-                  <span className="relative grid h-18 w-18 place-items-center rounded-full border border-ink/12 bg-white text-ocean transition-colors duration-500 group-hover:border-transparent group-hover:bg-ink group-hover:text-bone">
-                    <Icon className="h-7 w-7" strokeWidth={1.25} />
+        <div className="mt-14 grid gap-px bg-limewash/20 md:grid-cols-3 lg:mt-16">
+          {steps.map((step, i) => (
+            <Reveal key={step} blur={false} delay={i * 0.1} className="h-full">
+              <div className="flex h-full flex-col bg-hull p-7 md:p-8">
+                {/* The stencilled step number, on its own painted rule — the
+                    draft-mark ladder the product pages use for grades. */}
+                <div className="flex items-center gap-4">
+                  <span className="numeral text-[40px] leading-none text-ochre">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
-
-                  <span className="numeral mt-7 text-[12.5px] text-ocean">
-                    {n}
-                  </span>
-                  <h3 className="display-md mt-3 text-ink">{title}</h3>
-                  <p className="mt-4 max-w-[36ch] text-[15px] leading-relaxed text-ink/60">
-                    {copy}
-                  </p>
+                  <span aria-hidden="true" className="h-px flex-1 bg-limewash/25" />
                 </div>
-              </StaggerItem>
-            ))}
-          </StaggerGroup>
+
+                <h3 className="display-md mt-7 text-limewash">
+                  {t(`${step}.title`)}
+                </h3>
+
+                <p className="mt-4 text-[15px] leading-[1.8] text-limewash/75 rtl:leading-[2]">
+                  {t(`${step}.copy`)}
+                </p>
+              </div>
+            </Reveal>
+          ))}
         </div>
 
-        <Reveal delay={0.15}>
-          <div className="mt-16 flex justify-center lg:mt-20">
-            <Magnetic>
-              <Link
-                href="/shop"
-                className="group inline-flex items-center gap-3 rounded-full bg-ink py-4 pe-3 ps-7 text-[15px] font-semibold text-bone transition-colors hover:bg-abyss"
-              >
-                Shop now
-                <span className="grid h-9 w-9 place-items-center rounded-full bg-bone text-ink transition-transform duration-500 group-hover:rotate-45">
-                  <ArrowUpRight className="h-4 w-4" />
-                </span>
-              </Link>
-            </Magnetic>
+        <Reveal blur={false} delay={0.24}>
+          <div className="mt-12">
+            <Link
+              href="/shop"
+              className="group inline-flex items-center gap-4 bg-oxide py-4 pe-4 ps-7 text-[15px] font-semibold text-limewash transition-colors hover:bg-oxide-lit focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ochre"
+            >
+              {t("cta")}
+              <ArrowUpRight
+                aria-hidden="true"
+                className="h-4 w-4 shrink-0 transition-transform duration-500 group-hover:rotate-45 rtl-flip"
+              />
+            </Link>
           </div>
         </Reveal>
       </div>
+
+      {/* Cobalt sits above the limewash ground here, so the paint that runs is
+          cobalt — the same edge as the hero, one field further down the page. */}
+      <div
+        aria-hidden="true"
+        className="waterline absolute inset-x-0 bottom-0"
+        style={{ ["--waterline" as string]: "var(--color-hull)" }}
+      />
     </section>
   );
 }

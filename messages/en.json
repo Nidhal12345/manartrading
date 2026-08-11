@@ -23,6 +23,8 @@
     "closeMenu": "Close menu",
     "switchLanguage": "Change language",
     "switchLanguageEn": "English",
+    "cutoff": "Landed today · same-day delivery — message us for today's cutoff",
+    "whatsapp": "WhatsApp us",
     "addressLine1": "Hijrah Road, Medina",
     "addressLine2": "Saudi Arabia"
   },
@@ -34,36 +36,511 @@
     "ctaHow": "How we buy",
     "scroll": "Scroll"
   },
+  "Best": {
+    "title": "What the counter sells most",
+    "copy": "The lines people walk in and ask for by name, and the ones the kitchens keep on a standing order. Every one of them is quoted by the kilo when you order.",
+    "cardCta": "See this line",
+    "carouselLabel": "Best-selling lines",
+    "slideLabel": "{index} of {total}",
+    "pageLabel": "Go to page {index}",
+    "prev": "Previous lines",
+    "next": "Next lines",
+    "allCta": "Shop all {total} lines",
+    "askCta": "Ask what is on ice today",
+    "whatsappMessage": "Hello — what do you have on ice today?",
+    "lines": {
+      "fish-grouper": {
+        "tagline": "The undisputed king of the Saudi table. Firm white flesh that holds together whole on the charcoal, and takes every cut the counter makes."
+      },
+      "fish-kingfish": {
+        "tagline": "Cross-cut into steaks, straight onto the grill."
+      },
+      "crustaceans-seafood-shrimp-prawn": {
+        "tagline": "Heads on, which is where the flavour is."
+      },
+      "crustaceans-seafood-crayfish": {
+        "tagline": "Whole out of the trap, split for the grill."
+      },
+      "fish-trevally": {
+        "tagline": "Off the Farasan Banks — the one the Jeddah counters sell out of first."
+      },
+      "crustaceans-seafood-squid": {
+        "tagline": "Whole, tubed or ringed — say the word."
+      }
+    }
+  },
+  "Fork": {
+    "eyebrow": "Two ways to buy",
+    "title": "Buying for a table, or for a kitchen?",
+    "copy": "They are not the same order, and this site has stopped pretending they are. Pick the one that is you — the rest of the page follows it.",
+    "table": {
+      "title": "Buying for the table",
+      "arabic": "للمنزل",
+      "latin": "For the table",
+      "copy": "One box, this week, for your own kitchen. Pick the fish, say how you want it cut, and we quote it by the kilo before anything is prepared.",
+      "p1": "Order by the piece or by the kilo, for one meal or a week",
+      "p2": "Cleaned, scaled and cut how you cook it, at no charge",
+      "p3": "Quoted and confirmed on WhatsApp before we cut",
+      "cta": "See the range"
+    },
+    "kitchen": {
+      "title": "Buying for a kitchen",
+      "arabic": "للمطاعم",
+      "latin": "For the kitchen",
+      "copy": "A standing list, a delivery window you can build a service around, and one person who knows what your kitchen takes. Restaurants, hotels and caterers.",
+      "p1": "A fixed daily or weekly list, agreed once",
+      "p2": "The same delivery window every day",
+      "p3": "One contact who knows your kitchen, not a call centre",
+      "cta": "Set up a standing order"
+    }
+  },
   "Offerings": {
+    "eyebrow": "Today's counter",
+    "title": "What the counter carries",
+    "copy": "Three ways in: the fish counter, the shellfish season, and a standing order for a kitchen.",
+    "caveat": "This is the range we carry, not a live landing report. What is actually on ice on any given morning depends on the boats, the weather and the season — message us and we will tell you what is there today.",
     "fish": {
-      "kicker": "The counter",
-      "title": "Sea, river & European fish",
-      "arabic": "سمك طازج",
-      "copy": "King Fish, Emperor, White Pomfret, Sea Bass and Sea Bream — landed on the Red Sea and Gulf coasts or flown in overnight, and graded before anything reaches the counter.",
-      "countLabel": "On the counter",
-      "countUnit": "species",
-      "cta": "Shop the fish"
+      "title": "Fish",
+      "arabic": "الأسماك",
+      "latin": "Fish",
+      "copy": "Hamour, Kanad, Shaour, Najil, Sea Bass and Sea Bream — landed on the Red Sea and Gulf coasts, or flown in overnight.",
+      "unit": "lines carried"
     },
     "shellfish": {
-      "kicker": "Same day only",
-      "title": "Prawns & shellfish",
-      "arabic": "روبيان الخليج",
-      "copy": "Gulf tiger prawns, head-on and still snapping, bought through the licensed season and sold only on the day they land.",
-      "gradeLabel": "Grades",
-      "grade": "U/15 – 21/25",
-      "cta": "Shop robyan"
+      "title": "Crustaceans & seafood",
+      "arabic": "القشريات والمأكولات البحرية",
+      "latin": "Crustaceans & seafood",
+      "copy": "Gulf shrimp head-on and still snapping, crayfish, lobster, crab, octopus and squid — sold on the day they land.",
+      "unit": "lines, in season"
     },
     "orders": {
-      "kicker": "For kitchens",
       "title": "Standing kitchen orders",
       "arabic": "طلبات المطاعم",
-      "copy": "A fixed list, the same delivery window every day, and one contact who knows your kitchen. Restaurants, hotels and caterers across the Kingdom.",
-      "minLabel": "Minimum order",
-      "minUnit": "kg",
-      "slotLabel": "Delivery",
-      "slot": "Same day",
-      "cta": "Talk to our team"
+      "latin": "Standing kitchen orders",
+      "copy": "A fixed list, the same delivery window every day, and one contact who knows your kitchen.",
+      "unit": "By arrangement"
     }
+  },
+  "Seas": {
+    "eyebrow": "Two coastlines",
+    "title": "A country with two very different seas",
+    "copy": "Reef species off the Red Sea shelves, pelagics from the offshore fleet, and Gulf shellfish inside their licensed seasons. The counter never looks the same two weeks running.",
+    "portsLabel": "Ports",
+    "linesLabel": "On the spec sheet",
+    "linesUnit": "lines",
+    "red": {
+      "name": "Red Sea",
+      "arabic": "البحر الأحمر",
+      "latin": "Red Sea",
+      "copy": "Warm, deep and reef-built. This is where the fish the Saudi table asks for by name comes from — Hamour off the Farasan Banks, Shaour and Najil from the southern shelves.",
+      "ports": "Jeddah · Yanbu · Al Lith · Qunfudhah · Jazan · Farasan",
+      "season": "Fishes year-round; the reef species peak October to March."
+    },
+    "gulf": {
+      "name": "Arabian Gulf",
+      "arabic": "الخليج العربي",
+      "latin": "Arabian Gulf",
+      "copy": "Shallower, silted, and far more seasonal. The Gulf is where the shrimp season is set by licence, and where the Kanad this whole country grills comes off the boats.",
+      "ports": "Dammam · Qatif · Jubail · Ras Tanura",
+      "season": "Shrimp only inside the licensed season, which is set fresh each year."
+    },
+    "imported": {
+      "label": "The third water",
+      "copy": "Farmed bream and bass, North Atlantic lobster, Nile perch — imported, and labelled as imported."
+    }
+  },
+  "Range": {
+    "eyebrow": "The range",
+    "title": "Everything we carry, named",
+    "copy": "Two headings on the spec sheet. Every line is quoted by the kilo at the time of the order, against that morning's landing — which is why there is no price printed anywhere on this site.",
+    "linesLabel": "lines carried",
+    "cta": "Shop the range"
+  },
+  "HowItWorks": {
+    "eyebrow": "How we buy",
+    "title": "How it works",
+    "cta": "Shop now",
+    "source": {
+      "title": "We source",
+      "copy": "Our own buyers take the fish straight off the boats on the Red Sea and Gulf coasts, and we import the rest ourselves — never through a wholesaler, never a second day."
+    },
+    "choose": {
+      "title": "You choose",
+      "copy": "Pick your species and tell us how you cook it — whole, butterflied, steaked or filleted. Cut to order just before dispatch, at no extra charge."
+    },
+    "deliver": {
+      "title": "We deliver",
+      "copy": "Buried in flake ice minutes after landing and held at 0 – 2 °C to your door, with same-day delivery across the Kingdom."
+    }
+  },
+  "Cuts": {
+    "eyebrow": "Cuts & handling",
+    "title": "Tell us how you cook it",
+    "copy": "The second question at any counter, and the one most sites never ask. Every line we carry can be prepared five ways, cut to order just before dispatch.",
+    "note": "None of this costs extra, and nothing is cut in advance. Say which one you want in the order notes or on WhatsApp — and if you are not sure, tell us the dish and we will pick for you.",
+    "whole": {
+      "title": "Whole",
+      "arabic": "كامل",
+      "latin": "Whole",
+      "copy": "As it came off the boat, head and tail on. The way it is bought at the quay."
+    },
+    "cleaned": {
+      "title": "Cleaned",
+      "arabic": "منظّف",
+      "latin": "Cleaned",
+      "copy": "Scaled, gutted and gilled, ready for the oven or the charcoal."
+    },
+    "steaked": {
+      "title": "Steaked",
+      "arabic": "شرائح",
+      "latin": "Steaked",
+      "copy": "Cross-cut through the bone into even steaks. Holds together on a grill."
+    },
+    "filleted": {
+      "title": "Filleted",
+      "arabic": "فيليه",
+      "latin": "Filleted",
+      "copy": "Both sides off the frame, skin on or skinless, pin bones out."
+    },
+    "butterflied": {
+      "title": "Butterflied",
+      "arabic": "مفتوح",
+      "latin": "Butterflied",
+      "copy": "Opened along the spine and laid flat — the cut for a whole grilled fish."
+    }
+  },
+  "Faq": {
+    "delivery": {
+      "q": "Where do you deliver, and by when?",
+      "a": "Same-day delivery across the Kingdom on chilled transport, with the cut-off depending on where you are. Message us with your city and we will give you today's cut-off and window before you order — better that than a time printed here that is wrong for your street."
+    },
+    "weight": {
+      "q": "How do you charge when the fish weighs more or less than I ordered?",
+      "a": "You are invoiced on the actual weight at packing, never the estimate. If a whole fish comes in over what you asked for, we call you before it leaves the counter and you decide."
+    },
+    "cuts": {
+      "q": "Can I choose how the fish is cleaned and cut?",
+      "a": "Yes, and it costs nothing. Whole, cleaned, cross-cut steaks, skin-on or skinless fillets, butterflied — tell us in the order notes. Everything is prepared right before dispatch, never in advance."
+    },
+    "trade": {
+      "q": "Do you supply restaurants and hotels?",
+      "a": "Yes — it is one of the two ways we sell, and it works differently from a household order: a standing list, a fixed delivery window, and one contact who knows your kitchen. Minimums and terms are set per kitchen, so talk to us and we will build it around your service."
+    },
+    "problem": {
+      "q": "What happens if I am not happy with the fish?",
+      "a": "Tell us on the day it arrives and we will make it right — refunded, or replaced on the next run. No photographs, no forms, no argument."
+    },
+    "payment": {
+      "q": "How do I pay?",
+      "a": "The order is quoted and confirmed on WhatsApp and payment is arranged there — the site does not take card payments yet. Ask what we can accept for your order and we will tell you straight."
+    }
+  },
+  "Home": {
+    "faq": {
+      "eyebrow": "Questions",
+      "title": "What people ask before the first order",
+      "copy": "Answered plainly. Where something is not settled yet, this says so rather than inventing a figure."
+    },
+    "close": {
+      "eyebrow": "One conversation",
+      "title": "Eat it tonight.",
+      "copy": "Tell us the species, the weight and how you want it cut. We confirm the quote and the delivery window on WhatsApp, and nothing is cut until you say yes.",
+      "whatsapp": "Message the counter",
+      "note": "Not sure what to ask for?",
+      "browse": "Look at the range first."
+    }
+  },
+  "Shop": {
+    "eyebrow": "The counter",
+    "title": "Everything on the ice today",
+    "copy": "Two headings, five ways of cutting them, three waters. Availability moves with the boats, so the list is rebuilt as the fish lands — and every line is quoted by the kilo when you order.",
+    "crumb": "Shop",
+    "searchLabel": "Search the counter",
+    "searchPlaceholder": "Grouper, Kanad, shrimp…",
+    "categoryLabel": "Heading",
+    "waterLabel": "Water",
+    "prepLabel": "Cut",
+    "allCategories": "Everything",
+    "allWaters": "All waters",
+    "allPreps": "Any cut",
+    "clear": "Clear filters",
+    "countLabel": "{shown} of {total} lines",
+    "filtersOpen": "Filters",
+    "filtersClose": "Done",
+    "activeFilters": "{count} active",
+    "empty": {
+      "title": "Nothing matches that",
+      "copy": "Try another heading, another water, or a different cut. The counter carries sixteen lines in all — clearing the filters shows every one of them.",
+      "cta": "Clear all filters"
+    },
+    "waters": {
+      "Red Sea": "Red Sea",
+      "Arabian Gulf": "Arabian Gulf",
+      "Imported": "Imported"
+    },
+    "categories": {
+      "Fish": "Fish",
+      "Crustaceans & Seafood": "Crustaceans & seafood"
+    },
+    "badges": {
+      "bestSeller": "Best seller",
+      "premium": "Premium",
+      "chefsPick": "Chef's pick"
+    },
+    "note": "Cut to order, free of charge, right before dispatch — never in advance. If a line will not take the cut you want, it does not appear under that filter.",
+    "before": {
+      "eyebrow": "Good to know",
+      "title": "Before you order",
+      "prep": {
+        "q": "How is the fish prepared?",
+        "a": "Tell us in the order notes — whole, cleaned, steaked, filleted or butterflied. Preparation is free and done right before dispatch, never in advance."
+      },
+      "size": {
+        "q": "What if the size I want is gone?",
+        "a": "We call you before dispatch with the nearest grade available and adjust the order by weight. You are never sent a size we could not supply."
+      },
+      "trade": {
+        "q": "Do you supply restaurants?",
+        "a": "Yes, on a standing list with a fixed delivery window and one contact who knows your kitchen. Minimums and terms are set per kitchen, so talk to us and we will build it around your service."
+      }
+    }
+  },
+  "Product": {
+    "views": {
+      "onIce": "On ice",
+      "inWater": "In the water",
+      "onPlate": "On the plate"
+    },
+    "showView": "Show {label}",
+    "priced": {
+      "title": "Priced on WhatsApp",
+      "copy": "Send us the grade, the weight and the cut. We confirm today's rate by the kilo and the delivery window before anything is prepared."
+    },
+    "gradeLabel": "Grade",
+    "cutLabel": "Cut",
+    "qtyLabel": "Weight",
+    "qtyUnit": "kg",
+    "decrease": "Less weight",
+    "increase": "More weight",
+    "order": "Order {qty} kg on WhatsApp",
+    "orderPhone": "Or order by phone",
+    "message": "Hello Manar Trading. I would like {qty} kg of {name} ({arabic}), {grade} grade ({weight}), prepared {cut}. Could you confirm the price and the delivery window?",
+    "handling": {
+      "chilled": {
+        "title": "0 – 2 °C",
+        "copy": "Iced at landing and held cold to your door"
+      },
+      "cutToOrder": {
+        "title": "Cut to order",
+        "copy": "Prepared before dispatch, never in advance"
+      },
+      "guarantee": {
+        "title": "Guaranteed",
+        "copy": "Not right on the day? Refunded or replaced"
+      }
+    },
+    "spec": {
+      "title": "The spec sheet",
+      "origin": "Origin",
+      "waters": "Waters",
+      "method": "Catch method",
+      "season": "Season",
+      "texture": "Texture",
+      "flavour": "Flavour",
+      "scientific": "Species",
+      "cuts": "Cuts available"
+    },
+    "tabs": {
+      "story": "About this line",
+      "nutrition": "Nutrition",
+      "cooking": "How to cook it"
+    },
+    "nutrition": {
+      "note": "Typical values per 100 g of raw edible portion.",
+      "placeholder": "These four figures are indicative, not measured on our own stock. Treat them as a guide and ask us if a number matters for your kitchen.",
+      "protein": "Protein",
+      "fat": "Fat",
+      "omega3": "Omega-3",
+      "energy": "Energy",
+      "unitG": "g",
+      "unitKcal": "kcal"
+    },
+    "cooking": {
+      "title": "Best cooked as",
+      "copy": "Season simply and let the fish carry the plate. If you tell us the dish when you order, we will cut it the way that dish wants.",
+      "stepsTitle": "Four things that matter",
+      "s1": "Take it out of the fridge fifteen minutes before cooking so it comes closer to room temperature.",
+      "s2": "Pat the skin completely dry, then salt it generously — that is what gives you crisp skin.",
+      "s3": "Cook it four-fifths of the time on the first side. Turn once, never twice.",
+      "s4": "Rest it three minutes before serving. The centre finishes cooking off the heat."
+    },
+    "related": {
+      "eyebrow": "Also on the ice",
+      "title": "Landed the same morning"
+    }
+  },
+  "About": {
+    "hero": {
+      "eyebrow": "Who we are",
+      "title": "A seafood company that buys, grades and supplies",
+      "copy": "Manar Trading buys off the Red Sea and Arabian Gulf coasts and imports the rest, then grades every box before it leaves the building. One counter, two kinds of customer: kitchens that need the same standard on every delivery, and families buying dinner for tonight."
+    },
+    "what": {
+      "eyebrow": "What we do",
+      "title": "One chain, boat to counter",
+      "p1": "Manar means lighthouse — the fixed point a boat steers towards. That is the whole idea behind the name: one supplier a kitchen can rely on, holding the same standard on every box that leaves us.",
+      "p2": "We buy off both Saudi coasts and import the rest ourselves, so the list stays full even when a season closes. Nothing is accepted before it is graded, everything stays in the cold chain, and it is cut the way you asked for just before dispatch.",
+      "p3": "We sell by the kilo to a family and by the crate to a kitchen. Both get the same fish, off the same ice, graded by the same standard.",
+      "caption": "Stand-in photograph. Manar's own counter is on the shot list."
+    },
+    "story": {
+      "eyebrow": "The story",
+      "note": "Reserved — not yet written",
+      "title": "This is where the founder's story goes",
+      "p1": "Every seafood company in this trade runs a founder's story on this page, and the good ones are specific: a name, a first boat, the year it started. We have not been given those details yet, so there is nothing written here pretending to be them.",
+      "p2": "What can be said without inventing anybody is on the rest of this page — which waters the fish comes from, how it is graded, and what happens between the quay and your door. When the real account is recorded it lands here, in full."
+    },
+    "rules": {
+      "eyebrow": "How we work",
+      "title": "Four things we hold to",
+      "r1": {
+        "title": "Honest about age",
+        "copy": "If a box came in yesterday, we say so when you ask. Day-two fish is sold as day-two fish or it is not sold."
+      },
+      "r2": {
+        "title": "Seasons, to the day",
+        "copy": "A closed season is closed. Undersized fish is refused at the quay rather than graded down and quietly put on the counter."
+      },
+      "r3": {
+        "title": "Graded before accepted",
+        "copy": "Nothing goes onto the ice before it has been looked at properly. What fails grading leaves on the truck it arrived on."
+      },
+      "r4": {
+        "title": "Cut when you order",
+        "copy": "Scaling, gutting and portioning happen just before dispatch. Nothing is cut in advance to save a minute at the counter."
+      }
+    },
+    "range": {
+      "eyebrow": "The range",
+      "title": "What the counter carries",
+      "lines": "Lines on the spec sheet",
+      "categories": "Categories",
+      "waters": "Waters we buy from",
+      "cuts": "Cuts to order",
+      "note": "These four figures are counted from the catalogue itself, so they cannot drift out of step with what is actually listed."
+    },
+    "cta": {
+      "eyebrow": "Talk to us",
+      "title": "The rest is easier said than written",
+      "copy": "Ring the counter or send a message. Where it came from, when it landed, how it was handled — those are the questions we like.",
+      "primary": "Get in touch",
+      "secondary": "Message us on WhatsApp"
+    }
+  },
+  "Contact": {
+    "hero": {
+      "eyebrow": "Get in touch",
+      "title": "Tell us what you need and when you need it",
+      "copy": "Orders, kitchen supply, quotes, or just a question about what is worth buying this week. Every path on this page ends with a person, not a ticket number."
+    },
+    "channels": {
+      "call": {
+        "label": "Call the counter",
+        "note": "The fastest answer during opening hours"
+      },
+      "whatsapp": {
+        "label": "WhatsApp",
+        "note": "Send your list and we quote by the kilo"
+      },
+      "email": {
+        "label": "Email",
+        "note": "Quotes and paperwork"
+      },
+      "visit": {
+        "label": "Visit the shop",
+        "note": "Open every day — hours below"
+      }
+    },
+    "unconfirmed": "The phone number is live. The email address, the opening hours and the CR number are still placeholders awaiting confirmation, so call before you travel.",
+    "paths": {
+      "eyebrow": "Two ways in",
+      "title": "Which one is this?",
+      "copy": "The two conversations are genuinely different, so they start differently. Both open WhatsApp with the opening line already written.",
+      "table": {
+        "arabic": "للبيت",
+        "latin": "For the home",
+        "title": "Buying for the table",
+        "copy": "One order, cut the way you cook it, delivered the same day. Tell us the fish and the weight, and we quote by the kilo before anything is packed.",
+        "cta": "Start a home order",
+        "message": "Hello Manar. I would like to order for my home. Here is what I need:"
+      },
+      "kitchen": {
+        "arabic": "للمطبخ",
+        "latin": "For the kitchen",
+        "title": "Buying for a kitchen",
+        "copy": "Restaurants, hotels and caterers. Standing orders, weekly lists, a grade you need held to every time. Terms are agreed per kitchen rather than off a published tier.",
+        "cta": "Open a trade conversation",
+        "message": "Hello Manar. I am enquiring about supply for a kitchen. Here are the details:"
+      }
+    },
+    "form": {
+      "eyebrow": "Or compose it here",
+      "title": "Write the message, then send it yourself",
+      "copy": "This fills in a WhatsApp message and hands it to your own phone. Nothing is submitted from this page and nothing is stored here — you press send, and the thread stays in your account.",
+      "audienceLabel": "Who is this for?",
+      "audienceTable": "My table",
+      "audienceKitchen": "A kitchen",
+      "nameLabel": "Your name",
+      "namePlaceholder": "Faisal Al-Harbi",
+      "phoneLabel": "Phone",
+      "phonePlaceholder": "+966 5X XXX XXXX",
+      "businessLabel": "Kitchen or business name",
+      "businessPlaceholder": "Al Manzil Restaurant",
+      "optional": "Optional",
+      "topicLabel": "What is it about?",
+      "topics": {
+        "order": "Place an order",
+        "supply": "Kitchen supply",
+        "standing": "Standing weekly order",
+        "delivery": "Delivery question",
+        "other": "Something else"
+      },
+      "messageLabel": "What do you need?",
+      "messagePlaceholder": "Six kilos of Grouper, cleaned and butterflied, Thursday morning to Al Rawdah…",
+      "errName": "Please tell us your name",
+      "errPhone": "A reachable phone number, please",
+      "errMessage": "A little more detail helps us quote accurately",
+      "submit": "Open WhatsApp with this",
+      "waMessage": "Manar Trading — enquiry\n\nName: {name}\nPhone: {phone}\nFor: {audience}\nAbout: {topic}\n\n{message}",
+      "emailFallback": "Not on WhatsApp? Send the same details to {email}."
+    },
+    "hours": {
+      "title": "Opening hours",
+      "satWed": "Saturday – Wednesday",
+      "thu": "Thursday",
+      "fri": "Friday",
+      "satWedTime": "6:00 – 23:00",
+      "thuTime": "6:00 – 00:00",
+      "friTime": "14:00 – 23:00",
+      "note": "The counter is fullest between 6 and 10 in the morning, straight after the boats unload."
+    },
+    "visit": {
+      "title": "Find us",
+      "directions": "Open directions in Google Maps",
+      "caption": "Stand-in photograph, not the shopfront."
+    },
+    "faq": {
+      "eyebrow": "Good to know",
+      "title": "Questions we get every week",
+      "copy": "If yours is not here, call the counter — we would rather answer it properly than guess in writing."
+    }
+  },
+  "NotFound": {
+    "code": "404",
+    "title": "Nothing at this address",
+    "copy": "The page you asked for is not here. The counter still is.",
+    "shop": "Go to the shop",
+    "home": "Back home"
   },
   "Footer": {
     "newsletterLabel": "The daily list",

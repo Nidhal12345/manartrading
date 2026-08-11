@@ -1,132 +1,166 @@
-import Photo from "@/components/ui/Photo";
 import type { Metadata } from "next";
-import { Link } from "@/i18n/navigation";
+import { getTranslations } from "next-intl/server";
+import { ArrowUpRight, MessageCircle } from "lucide-react";
 
-import { ArrowUpRight } from "lucide-react";
+import { Link } from "@/i18n/navigation";
+import Photo from "@/components/ui/Photo";
 import PageHero from "@/components/PageHero";
 import Reveal, { StaggerGroup, StaggerItem } from "@/components/Reveal";
-import SplitText from "@/components/ui/SplitText";
-import Magnetic from "@/components/ui/Magnetic";
 import { SectionIntro } from "@/components/Decor";
+import { whatsappHref } from "@/lib/contact";
+import {
+  PREPARATIONS,
+  categoryNames,
+  products,
+} from "@/data/products";
 
-export const metadata: Metadata = {
-  title: "About us",
-  description:
-    "Manar Trading is a Saudi seafood import and supply company on Hijrah Road in Medina, selling Red Sea, Arabian Gulf and imported fish to restaurants, hotels and households across the Kingdom.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "About" });
 
-const values = [
-  {
-    title: "Honesty about age",
-    copy: "If a fish came in yesterday we say so. We have never sold a day-two fish as day-one, and we never will.",
-  },
-  {
-    title: "Fishing that lasts",
-    copy: "We buy hand-line and pole-caught wherever we can, respect closed seasons to the day, and refuse undersized fish outright.",
-  },
-  {
-    title: "The same suppliers",
-    copy: "Most of the boats and shippers we buy from have supplied us for years, and we pay in full when we take the fish.",
-  },
-  {
-    title: "Restaurant standards",
-    copy: "Every batch is logged with source, landing time and temperature — the same paperwork a five-star kitchen audits us on.",
-  },
-];
+  return { title: t("hero.eyebrow"), description: t("hero.copy") };
+}
 
-export default function AboutPage() {
+/**
+ * The founder-story page every competitor runs — built honest.
+ *
+ * All six of the sites this redesign was drawn from carry a named, dated origin
+ * story here, and it is one of the few things they do that genuinely earns
+ * trust. Manar's has not been recorded yet, so section 02 is a *stated* gap
+ * rather than a plausible invention. PRODUCT.md principle 5 — never manufacture
+ * credibility — makes that the only available move, and saying so outright reads
+ * better than a paragraph of atmosphere pretending to be history.
+ *
+ * What replaced the old page: an "About us" that asserted the boats had supplied
+ * us "for years" (a longevity claim PRODUCT.md flags), and batch paperwork "a
+ * five-star kitchen audits us on" (the same HACCP-style claim already struck
+ * from the FAQ). The four rules that stand now are policy commitments, which the
+ * business can keep from day one, rather than history it has not evidenced.
+ *
+ * Section 04 is the counterweight: four figures that are true by construction
+ * because they are counted off the catalogue at build time.
+ */
+export default async function AboutPage() {
+  const t = await getTranslations("About");
+  const nav = await getTranslations("Nav");
+
+  const rules = ["r1", "r2", "r3", "r4"] as const;
+
+  const range = [
+    { key: "lines", value: products.length },
+    { key: "categories", value: categoryNames.length },
+    { key: "waters", value: new Set(products.map((p) => p.waters)).size },
+    { key: "cuts", value: PREPARATIONS.length },
+  ] as const;
+
   return (
     <>
       <PageHero
         image="harbour"
-        eyebrow="Who we are"
-        title="A seafood company that imports, grades and supplies"
-        copy="Manar Trading buys and imports fish for the whole Kingdom — for restaurants, hotels and caterers who need the same standard on every delivery, and for families buying dinner for tonight."
-        crumbs={[{ href: "/", label: "Home" }, { label: "About" }]}
+        eyebrow={t("hero.eyebrow")}
+        title={t("hero.title")}
+        copy={t("hero.copy")}
+        crumbs={[{ href: "/", label: nav("home") }, { label: nav("about") }]}
       />
 
-      {/* ---------- story ---------- */}
-      <section className="bg-white py-24 lg:py-32">
+      {/* ---------- 01 · what we do ---------- */}
+      <section className="bg-limewash py-24 lg:py-32">
         <div className="container-x grid gap-14 lg:grid-cols-2 lg:gap-20">
           <div>
             <SectionIntro
               index="01"
-              eyebrow="What we do"
-              title="One chain, from the boat to your counter"
+              eyebrow={t("what.eyebrow")}
+              title={t("what.title")}
             />
-            <div className="mt-9 space-y-6 text-[16px] leading-[1.9] text-ink/70">
-              <p>
-                Manar means lighthouse — the fixed point a boat steers towards.
-                That is the whole idea behind the company: one supplier a
-                kitchen can rely on, holding the same standard on every box
-                that leaves us.
-              </p>
-              <p>
-                We buy off the Red Sea and Arabian Gulf coasts and import the
-                rest ourselves, so the list stays full even when a season
-                closes. Nothing is accepted before it is graded, everything
-                stays in the cold chain, and it is cut the way you asked for
-                just before dispatch.
-              </p>
-              <p>
-                We sell to kitchens ordering three hundred kilos and to families
-                buying two. Both get the same fish, off the same ice, graded by
-                the same standard.
-              </p>
+            <div className="mt-9 space-y-6 text-[16px] leading-[1.9] text-tar/75 rtl:leading-[2.1]">
+              <p>{t("what.p1")}</p>
+              <p>{t("what.p2")}</p>
+              <p>{t("what.p3")}</p>
             </div>
           </div>
 
           <Reveal direction="left">
-            <div className="relative aspect-[4/5] overflow-hidden bg-abyss">
-              <Photo
-                image="marketCounter"
-                res={1000}
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(4,20,31,0.8))]" />
-              <p className="absolute inset-x-0 bottom-0 p-7 text-[14px] leading-relaxed text-bone/80">
-                The counter on Hijrah Road, Medina.
-              </p>
-            </div>
+            <figure className="relative">
+              <div className="relative aspect-[4/5] overflow-hidden bg-tar">
+                <Photo
+                  image="marketCounter"
+                  res={1000}
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover"
+                />
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 bg-[linear-gradient(180deg,transparent_58%,rgba(26,20,16,0.72))]"
+                />
+                <div
+                  aria-hidden="true"
+                  className="waterline absolute inset-x-0 bottom-0"
+                />
+              </div>
+              {/* The stand-in is labelled as a stand-in. Presenting stock
+                  photography as the client's own counter is the picture
+                  equivalent of an invented testimonial. */}
+              <figcaption className="label mt-5 text-rope">
+                {t("what.caption")}
+              </figcaption>
+            </figure>
           </Reveal>
         </div>
       </section>
 
-      {/* ---------- pull quote ---------- */}
-      <section className="relative h-[60svh] min-h-[380px] overflow-hidden bg-abyss">
-        <Photo
-          image="boatDawn"
-          res={1800}
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-abyss/70" />
-        <div className="container-x relative flex h-full flex-col justify-center">
-          <SplitText
-            as="p"
-            text="You cannot make a fish fresher than the moment you buy it."
-            className="display-lg block max-w-[18ch] text-bone"
-          />
-          <p className="label mt-8 text-bone/50">Manar Trading · Medina</p>
-        </div>
-      </section>
-
-      {/* ---------- values ---------- */}
-      <section className="bg-bone py-24 lg:py-32">
+      {/* ---------- 02 · the story, stated as missing ---------- */}
+      <section className="relative bg-hull py-24 text-limewash lg:py-32">
         <div className="container-x">
           <SectionIntro
+            light
             index="02"
-            eyebrow="What we stand on"
-            title="Four rules we do not bend"
+            eyebrow={t("story.eyebrow")}
+            title={t("story.title")}
           />
-          <StaggerGroup className="mt-16 grid gap-px border-t border-ink/12 bg-ink/12 md:grid-cols-2">
-            {values.map((v) => (
-              <StaggerItem key={v.title} className="bg-bone">
-                <div className="h-full px-7 py-10">
-                  <h3 className="display-md text-[21px] text-ink">{v.title}</h3>
-                  <p className="mt-4 max-w-md text-[15px] leading-relaxed text-ink/60">
-                    {v.copy}
+
+          <Reveal blur={false} delay={0.12}>
+            <div className="mt-12 max-w-2xl border-s-4 border-ochre ps-7">
+              <span className="label text-ochre">{t("story.note")}</span>
+              <div className="mt-5 space-y-5 text-[16px] leading-[1.9] text-limewash/80 rtl:leading-[2.1]">
+                <p>{t("story.p1")}</p>
+                <p>{t("story.p2")}</p>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+
+        <div
+          aria-hidden="true"
+          className="waterline absolute inset-x-0 bottom-0"
+          style={{ ["--waterline" as string]: "var(--color-hull)" }}
+        />
+      </section>
+
+      {/* ---------- 03 · the four rules ---------- */}
+      <section className="bg-limewash py-24 lg:py-32">
+        <div className="container-x">
+          <SectionIntro
+            index="03"
+            eyebrow={t("rules.eyebrow")}
+            title={t("rules.title")}
+          />
+
+          <StaggerGroup className="mt-14 grid gap-px border-t-2 border-tar bg-tar/15 md:grid-cols-2 lg:mt-16">
+            {rules.map((r, i) => (
+              <StaggerItem key={r} className="bg-chalk">
+                <div className="flex h-full flex-col px-7 py-9 md:px-8 md:py-10">
+                  <span className="draft-mark text-[12.5px]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="display-md mt-6 text-[22px] text-tar">
+                    {t(`rules.${r}.title`)}
+                  </h3>
+                  <p className="mt-4 max-w-md text-[15px] leading-[1.8] text-tar/70 rtl:leading-[2]">
+                    {t(`rules.${r}.copy`)}
                   </p>
                 </div>
               </StaggerItem>
@@ -135,37 +169,67 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ---------- CTA ---------- */}
-      <section className="relative overflow-hidden bg-abyss">
-        <Photo
-          image="fishRows"
-          res={1600}
-          sizes="100vw"
-          className="object-cover opacity-30"
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,20,31,0.8),rgba(4,20,31,0.93))]" />
-        <div className="container-x relative flex flex-col items-start gap-10 py-24 lg:flex-row lg:items-center lg:justify-between">
+      {/* ---------- 04 · figures that are true by construction ---------- */}
+      <section className="border-y-2 border-tar bg-chalk py-20 lg:py-24">
+        <div className="container-x">
+          <SectionIntro
+            index="04"
+            eyebrow={t("range.eyebrow")}
+            title={t("range.title")}
+          />
+
+          <dl className="mt-12 grid gap-px border-y border-tar/15 bg-tar/15 sm:grid-cols-2 lg:grid-cols-4">
+            {range.map((r) => (
+              <div key={r.key} className="bg-chalk px-6 py-8">
+                <dd className="numeral text-[44px] leading-none text-tar">
+                  {r.value}
+                </dd>
+                <dt className="label mt-4 text-rope">{t(`range.${r.key}`)}</dt>
+              </div>
+            ))}
+          </dl>
+
+          <p className="mt-7 max-w-xl text-[13.5px] leading-relaxed text-rope">
+            {t("range.note")}
+          </p>
+        </div>
+      </section>
+
+      {/* ---------- close ---------- */}
+      <section className="bg-tar py-20 text-limewash lg:py-28">
+        <div className="container-x flex flex-col items-start gap-10 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <span className="label text-aqua">Come and see</span>
-            <h2 className="display-lg mt-5 max-w-[16ch] text-bone">
-              The counter is open every day of the week
+            <span className="label text-ochre">{t("cta.eyebrow")}</span>
+            <h2 className="display-lg mt-5 max-w-[18ch] text-limewash">
+              {t("cta.title")}
             </h2>
-            <p className="mt-5 max-w-lg text-[15.5px] text-bone/60">
-              Bring your questions — we like the ones about where the fish came
-              from.
+            <p className="mt-5 max-w-lg text-[15.5px] leading-relaxed text-limewash/70">
+              {t("cta.copy")}
             </p>
           </div>
-          <Magnetic>
+
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <Link
               href="/contact"
-              className="group inline-flex shrink-0 items-center gap-3 rounded-full bg-bone py-4 pl-7 pr-3 text-[15px] font-semibold text-abyss transition-colors hover:bg-white"
+              className="group inline-flex items-center gap-4 bg-oxide py-4 pe-4 ps-7 text-[15px] font-semibold text-limewash transition-colors hover:bg-oxide-lit focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ochre"
             >
-              Get in touch
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-abyss text-bone transition-transform duration-500 group-hover:rotate-45">
-                <ArrowUpRight className="h-4 w-4" />
-              </span>
+              {t("cta.primary")}
+              <ArrowUpRight
+                aria-hidden="true"
+                className="h-4 w-4 shrink-0 transition-transform duration-500 group-hover:rotate-45 rtl-flip"
+              />
             </Link>
-          </Magnetic>
+
+            <a
+              href={whatsappHref()}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="inline-flex items-center gap-3 border-b-2 border-limewash/35 pb-2 text-[15px] font-semibold text-limewash transition-colors hover:border-ochre hover:text-ochre focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ochre"
+            >
+              <MessageCircle aria-hidden="true" className="h-4 w-4 shrink-0" />
+              {t("cta.secondary")}
+            </a>
+          </div>
         </div>
       </section>
     </>

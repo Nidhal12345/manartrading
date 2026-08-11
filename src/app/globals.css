@@ -1,49 +1,80 @@
 @import "tailwindcss";
 
 @theme {
-  /* ---- brand ---- */
-  --color-abyss: #04141f;
-  --color-ink: #06202f;
-  --color-deep: #0a2e47;
-  --color-ocean: #0e6ba8;
-  --color-azure: #1e9bd7;
-  --color-aqua: #38cfe0;
-  --color-sand: #e8c39e;
-  --color-shell: #f7fbfd;
-  --color-bone: #f4f1ec;
+  /* ---- the boatyard ----
+     Sampled from marine paint, not from a colour picker: a hauled sambuk is
+     tar-black below the waterline, cobalt above it, red-lead at the seams, with
+     lime-wash and hand-painted ochre numerals on the bow.
 
-  --color-sea-50: #f2f9fd;
-  --color-sea-100: #e2f1f9;
-  --color-sea-200: #c0e2f2;
-  --color-sea-300: #8ecce8;
-  --color-sea-400: #55b0d9;
-  --color-sea-500: #2e93c4;
-  --color-sea-600: #1e76a6;
-  --color-sea-700: #1a5f87;
-  --color-sea-800: #16455f;
-  --color-sea-900: #0d3149;
+     These are field colours. A section commits to one of them wholesale — it is
+     never a neutral page with accents sprinkled over it. */
 
-  --font-display: var(--font-roboto-slab), Georgia, serif;
-  --font-sans: var(--font-montserrat), system-ui, sans-serif;
+  /* Warm black, deliberately not blue-black: below the waterline. */
+  --color-tar: #1a1410;
+  --color-tar-lit: #2b2219;
 
-  /* Arabic fallback — applied via html[dir="rtl"] overrides below.
-     Roboto Slab and Montserrat ship no Arabic subset, so Amiri still carries
-     every RTL glyph and must stay first in the stack. */
-  --font-arabic-stack: var(--font-arabic), var(--font-montserrat), system-ui,
-    sans-serif;
+  /* The cobalt band. The primary field colour, and the one that owns sections. */
+  --color-hull: #12457e;
+  --color-hull-lit: #1e62b0;
+  --color-hull-deep: #0c3060;
 
+  /* Page ground. Chalky and slightly cool — the deliberate opposite of the
+     warm cream every competitor in this category uses. */
+  --color-limewash: #efefe7;
+  --color-chalk: #f8f8f4;
 
-  --shadow-soft:
-    0 1px 2px rgba(10, 46, 71, 0.04), 0 8px 24px rgba(10, 46, 71, 0.06);
-  --shadow-lift:
-    0 2px 4px rgba(10, 46, 71, 0.05), 0 18px 40px rgba(10, 46, 71, 0.12);
+  /* Red-lead oxide. THE ONLY ACCENT. Primary action, WhatsApp, today markers.
+     If it appears anywhere that is not an action, that is a bug. */
+  --color-oxide: #9e3b23;
+  --color-oxide-lit: #b8492c;
+
+  /* Signwriter's ochre: bow numerals, draft marks, index figures.
+     Never a button, never body copy, never the sole carrier of meaning. */
+  --color-ochre: #d9a227;
+
+  /* Trim. Carries the trade path, so the two audiences are colour-coded.
+     `verdigris` is trim only — as a field behind limewash copy it measures
+     4.42:1, which is under AA for anything at body size. `verdigris-deep` is the
+     field cut, at 6.98:1, and it is what the trade door is painted in. */
+  --color-verdigris: #2e7a6b;
+  --color-verdigris-lit: #3a9686;
+  --color-verdigris-deep: #21594e;
+
+  /* Muted text and hairlines on a light ground. */
+  --color-rope: #8a8378;
+
+  /* ---- type ----
+     Two scripts, two pairs. Latin gets Big Shoulders over Archivo; Arabic gets
+     Reem Kufi over Zain. Arabic is set properly rather than pushed through a
+     Latin pairing that never considered it. */
+  --font-display: var(--font-big-shoulders), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-archivo), system-ui, sans-serif;
+
+  /* Arabic display — geometric kufic, to match the constructed Latin display. */
+  --font-arabic-display: var(--font-reem-kufi), system-ui, sans-serif;
+
+  /* Arabic text. `font-arabic` is applied as a utility on <html> by
+     app/[locale]/layout.tsx, so this token has to keep that name. */
+  --font-arabic: var(--font-zain), var(--font-archivo), system-ui, sans-serif;
+
+  /* Paint sits flat on timber; it does not float. Shadows are tight and warm,
+     used to lift a chalk card off the limewash by a millimetre — no more. */
+  --shadow-soft: 0 1px 2px rgba(26, 20, 16, 0.05), 0 6px 18px
+    rgba(26, 20, 16, 0.06);
+  --shadow-lift: 0 2px 4px rgba(26, 20, 16, 0.06), 0 14px 34px
+    rgba(26, 20, 16, 0.12);
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #06202f;
+  --background: var(--color-limewash);
+  --foreground: var(--color-tar);
+
+  /* The ragged underside of a hand-cut waterline, as a mask. The top edge is
+     flat so the rule above it stays crisp; only the paint below breaks up.
+     Held in a variable because both waterline directions reuse it. */
+  --waterline-drip: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 7' preserveAspectRatio='none'%3E%3Cpath d='M0 0H140V3.1C133 4.6 129 2.4 122 3.4C114 4.6 109 6.6 101 5.2C93 3.9 88 2.1 79 3.2C70 4.3 65 6.9 56 5.4C48 4.1 43 2 34 3.1C26 4.1 20 6.2 12 4.8C8 4.1 4 3.4 0 3.2Z' fill='%23fff'/%3E%3C/svg%3E");
 }
 
 html {
@@ -66,12 +97,18 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  font-weight: 300;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
 }
 
+/* Big Shoulders is condensed and industrial. The negative tracking a slab serif
+   needed would close its counters up — painted lettering is cut with generous
+   space between characters, so tracking sits at zero or just above.
+   `font-optical-sizing` is left at its default `auto`: the requested `opsz` axis
+   then thins strokes and opens counters as the size climbs, which is why the
+   hero does not read as a scaled-up subhead. */
 h1,
 h2,
 h3,
@@ -82,29 +119,47 @@ h6,
 .title {
   font-family: var(--font-display);
   font-weight: 700;
-  /* Roboto Slab's serifs are square and full-width; the -0.03em Fraunces was
-     tuned for would butt the slabs of adjacent letters together. */
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 ::selection {
-  background: #0e6ba8;
-  color: #fff;
+  background: var(--color-oxide);
+  color: var(--color-limewash);
+}
+
+/* The keyboard ring, painted once for everything — in `base`, deliberately.
+   Unlayered CSS beats anything in Tailwind's `utilities` layer regardless of
+   specificity, so writing this at the top level would have flattened every
+   designed ring on the site to ochre: the `focus-visible:outline-oxide` on light
+   fields, the offsets tuned per component, all of it. In `base` it loses to the
+   utilities layer, which is exactly the intent.
+   Most interactive elements on the site set their own offset ring, but 35 of the
+   55 focusables on a page were falling through to the user agent's default — a
+   thin dark ring, which is close to invisible on the `tar` and `hull` fields this
+   design uses for whole sections. This is the floor, not a replacement: any
+   element carrying its own `focus-visible:outline-*` utility still wins on
+   specificity. Ochre because it is the one colour that holds against tar, hull
+   and limewash alike, and because it reads as the signwriter's mark rather than
+   as a browser artefact. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-ochre);
+    outline-offset: 3px;
+  }
 }
 
 ::-webkit-scrollbar {
   width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #eaf4fa;
+  background: var(--color-limewash);
 }
 ::-webkit-scrollbar-thumb {
-  background: #9dc9de;
-  border-radius: 999px;
-  border: 3px solid #eaf4fa;
+  background: var(--color-rope);
+  border: 3px solid var(--color-limewash);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #6badcb;
+  background: var(--color-tar);
 }
 
 /* ---------- layout ---------- */
@@ -122,149 +177,173 @@ h6,
   }
 }
 
-/* ---------- editorial type ---------- */
+/* ---------- the waterline ---------- */
+
+/* The signature edge, and the one device no competitor has: the hard line where
+   tar meets cobalt on a hauled hull, straight because it is struck against
+   tape, ragged underneath because it is finished by hand.
+
+   Zero-height and drawn entirely in pseudo-elements, so it drops between any
+   two sections without taking part in layout. `--waterline` sets the paint. */
+.waterline {
+  --waterline: var(--color-tar);
+  position: relative;
+  height: 0;
+}
+
+.waterline::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--waterline);
+}
+
+/* The drips hang below the rule, so they must not be clipped by the parent. */
+.waterline::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -7px;
+  height: 7px;
+  background: var(--waterline);
+  -webkit-mask: var(--waterline-drip) repeat-x 0 0 / 140px 7px;
+  mask: var(--waterline-drip) repeat-x 0 0 / 140px 7px;
+}
+
+/* Same edge, inverted: for a dark field that sits *below* a light one, where the
+   paint runs up rather than down. */
+.waterline-up {
+  --waterline: var(--color-tar);
+  position: relative;
+  height: 0;
+}
+
+.waterline-up::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 2px;
+  background: var(--waterline);
+}
+
+.waterline-up::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: -7px;
+  height: 7px;
+  background: var(--waterline);
+  -webkit-mask: var(--waterline-drip) repeat-x 0 0 / 140px 7px;
+  mask: var(--waterline-drip) repeat-x 0 0 / 140px 7px;
+  transform: scaleY(-1);
+}
+
+/* The card-scale version of the same idea: a hard 2px painted rule, no drips.
+   Used as the footer rule on a product card, where a ragged edge at that size
+   would just read as noise. */
+.hull-rule {
+  height: 2px;
+  background: var(--color-tar);
+}
+
+/* ---------- painted type ---------- */
 
 .display-xl {
   font-family: var(--font-display);
-  font-size: clamp(3rem, 9.2vw, 8.5rem);
-  line-height: 0.92;
-  letter-spacing: -0.03em;
+  font-size: clamp(3.4rem, 10.5vw, 9rem);
+  line-height: 0.88;
+  letter-spacing: 0;
   font-weight: 700;
+  text-transform: uppercase;
 }
 
 .display-lg {
   font-family: var(--font-display);
-  font-size: clamp(2.4rem, 5.6vw, 4.6rem);
-  line-height: 1;
-  letter-spacing: -0.025em;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 0.94;
+  letter-spacing: 0;
   font-weight: 700;
 }
 
 .display-md {
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 3.2vw, 2.6rem);
-  line-height: 1.08;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.8rem, 3.4vw, 2.75rem);
+  line-height: 1.02;
+  letter-spacing: 0.005em;
   font-weight: 700;
 }
 
 /* ---------- hero headline ---------- */
 
-/* The hero needs its own scale. `.display-xl` is tuned for very short lines
-   ("Eat it tonight.") — its 3rem floor and 0.92 leading make a longer line like
-   "A name you trust." wrap mid-phrase and collide on a phone. This curve keeps
-   both hero lines intact down to ~360px and gives descenders room to breathe.
-   Roboto Slab 700 sets noticeably wider than the Fraunces 500 this was sized
-   for, so the cap and vw factor came down to hold the same line breaks. */
+/* The hero carries the wordmark at painted-signage scale. Big Shoulders is
+   condensed enough to hold two lines at this size without wrapping, which is the
+   reason it can be set this large at all. */
 .hero-display {
   font-family: var(--font-display);
-  font-size: clamp(2.2rem, 6.8vw, 6.25rem);
-  line-height: 1.06;
-  letter-spacing: -0.025em;
-  font-weight: 700;
-  text-wrap: balance;
-}
-
-/* Amiri sets on a larger body with taller ascenders and diacritics above the
-   line, so Arabic needs a smaller cap and noticeably looser leading. */
-html[dir="rtl"] .hero-display {
-  font-family: var(--font-arabic), Georgia, serif;
-  font-size: clamp(2.1rem, 6.8vw, 6rem);
-  line-height: 1.42;
+  font-size: clamp(3rem, 11.5vw, 9.5rem);
+  line-height: 0.86;
   letter-spacing: 0;
-}
-
-/* Holds contrast when the copy sits over a bright frame of the video. */
-.hero-legible {
-  text-shadow: 0 1px 28px rgba(4, 20, 31, 0.5);
-}
-
-.label {
-  font-family: var(--font-sans);
-  font-size: 11px;
-  font-weight: 300;
-  letter-spacing: 0.2em;
+  font-weight: 700;
   text-transform: uppercase;
 }
 
+/* Reem Kufi sets on a larger body than Big Shoulders and carries diacritics
+   above the line, so Arabic needs a smaller cap, looser leading, and no
+   uppercasing — a concept Arabic does not have. */
+html[dir="rtl"] .hero-display {
+  font-family: var(--font-arabic-display);
+  font-size: clamp(2.3rem, 7.6vw, 6.5rem);
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* ---------- stencil and draft marks ---------- */
+
+/* The stencilled label: Archivo pulled in on its `wdth` axis, which is the
+   reason this project loads Archivo at all — one family covers both running text
+   and this condensed cut, with no second download.
+   `font-stretch` is used rather than `font-variation-settings` on purpose:
+   setting the axis directly would reset `wght` alongside it. */
+.label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  font-stretch: 82%;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Signage numerals — bow numbers, section indices, counters. Big Shoulders,
+   tabular so a column of them lines up. */
 .numeral {
   font-family: var(--font-display);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
   font-weight: 700;
+  letter-spacing: 0;
 }
 
-/* Roboto Slab has no italic, but the color (text-sea-300) already separates
-   the hero's second line from the first. Drop the italic request and keep the
-   same slab voice; the line break and hue hold the visual hierarchy. */
-.italic-serif {
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+/* The painted depth scale on a hull, which is exactly the shape of a grade
+   ladder (U/15, 21/25) or a size table. Ochre, condensed, tabular.
+   Decorative colour: never the only thing distinguishing two values. */
+.draft-mark {
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-stretch: 75%;
+  letter-spacing: 0.08em;
+  color: var(--color-ochre);
 }
 
 /* ---------- surfaces ---------- */
 
-.glass {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: saturate(160%) blur(18px);
-  -webkit-backdrop-filter: saturate(160%) blur(18px);
-}
-
-.glass-light {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: saturate(180%) blur(16px);
-  -webkit-backdrop-filter: saturate(180%) blur(16px);
-}
-
 .rule {
   height: 1px;
   background: currentColor;
-  opacity: 0.14;
-}
-
-/* film grain over the whole page */
-.grain {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-.noise {
-  position: absolute;
-  inset: 0;
-  opacity: 0.035;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-/* soft moving light, used over dark photography */
-.caustics {
-  position: absolute;
-  inset: -20%;
-  pointer-events: none;
-  opacity: 0.5;
-  background:
-    radial-gradient(
-      45% 30% at 20% 10%,
-      rgba(120, 220, 240, 0.22),
-      transparent 70%
-    ),
-    radial-gradient(
-      35% 25% at 75% 25%,
-      rgba(80, 190, 230, 0.16),
-      transparent 70%
-    ),
-    radial-gradient(
-      40% 30% at 50% 80%,
-      rgba(30, 155, 215, 0.14),
-      transparent 70%
-    );
-  animation: caustics-drift 22s ease-in-out infinite alternate;
+  opacity: 0.16;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
@@ -277,94 +356,35 @@ html[dir="rtl"] .hero-display {
 
 /* ---------- animation ---------- */
 
-@keyframes caustics-drift {
-  0% {
-    transform: translate3d(-2%, -1%, 0) scale(1);
-  }
-  100% {
-    transform: translate3d(3%, 2%, 0) scale(1.08);
-  }
-}
+/* The world's motion is paint and water, not parallax. One idea only: the
+   waterline. Sections cross it, cards reveal from their painted edge. The
+   drifting caustics, film grain and hover sheen of the old underwater world are
+   gone rather than restyled. */
 
-@keyframes float-y {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-12px);
-  }
-}
-
-@keyframes marquee {
+@keyframes waterline-rise {
   from {
-    transform: translateX(0);
+    transform: scaleX(0);
   }
   to {
-    transform: translateX(-50%);
+    transform: scaleX(1);
   }
 }
 
-@keyframes wave-shift {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+.animate-waterline {
+  transform-origin: left;
+  animation: waterline-rise 1.1s var(--ease-out-expo) both;
 }
 
-@keyframes scroll-hint {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(100%);
-  }
-}
-
-@keyframes sheen {
-  from {
-    transform: translateX(-120%) skewX(-18deg);
-  }
-  to {
-    transform: translateX(320%) skewX(-18deg);
-  }
-}
-
-.animate-float {
-  animation: float-y 7s ease-in-out infinite;
-}
-.animate-marquee {
-  animation: marquee 46s linear infinite;
-}
-.animate-marquee-fast {
-  animation: marquee 26s linear infinite;
-}
-.animate-wave {
-  animation: wave-shift 20s linear infinite;
-}
-.animate-scroll-hint {
-  animation: scroll-hint 2.2s ease-in-out infinite;
-}
-.group:hover .animate-sheen {
-  animation: sheen 0.9s ease-out;
-}
-
-.marquee-pause:hover .animate-marquee,
-.marquee-pause:hover .animate-marquee-fast {
-  animation-play-state: paused;
+html[dir="rtl"] .animate-waterline {
+  transform-origin: right;
 }
 
 /* ---------- arabic / rtl ---------- */
 
-/* When Arabic is active the rigid italic serif headings don't translate well.
-   We swap the display face for Amiri, still an elegant serif with strong
-   calligraphic weight, and drop the tight negative tracking which breaks
-   Arabic letterforms. */
+/* Arabic runs on its own pair — Zain for text, Reem Kufi for display — so the
+   RTL rules swap families rather than patching a Latin face into service. */
 html[dir="rtl"] body {
-  font-family: var(--font-arabic-stack);
-  /* Amiri ships 400/700 only — 300 would be synthesised and look washed out. */
+  font-family: var(--font-arabic);
   font-weight: 400;
 }
 
@@ -378,32 +398,50 @@ html[dir="rtl"] .font-display,
 html[dir="rtl"] .title,
 html[dir="rtl"] .display-xl,
 html[dir="rtl"] .display-lg,
-html[dir="rtl"] .display-md,
-html[dir="rtl"] .italic-serif,
-html[dir="rtl"] .numeral {
-  font-family: var(--font-arabic), Georgia, serif;
+html[dir="rtl"] .display-md {
+  font-family: var(--font-arabic-display);
   letter-spacing: 0;
-}
-
-/* Amiri's lighter body needs the loose tracking dropped but keeps 700 to match
-   the weight jump Roboto Slab gives the Latin headings. */
-html[dir="rtl"] .label {
-  font-weight: 400;
-}
-
-/* Marquee/ticker run the opposite way in RTL so content reads right-to-left.
-   The `wave-shift` and `marquee` keyframes translateX(-50%); this flips them. */
-html[dir="rtl"] .animate-marquee,
-html[dir="rtl"] .animate-marquee-fast,
-html[dir="rtl"] .animate-wave {
-  animation-direction: reverse;
-}
-
-/* Wish the .label style (wide letter-spacing + uppercase) didn't apply to
-   connected Arabic script — it splits characters apart. Re-spaces them for RTL. */
-html[dir="rtl"] .label {
-  letter-spacing: 0.06em;
+  /* Arabic has no letter case; uppercasing is a no-op that only risks the
+     browser substituting metrics. */
   text-transform: none;
+}
+
+/* Numerals stay on the Latin display face even in RTL: the site uses Western
+   Arabic digits throughout, and Big Shoulders sets them tabular where Zain's are
+   proportional. Painted bow numerals are bilingual in Saudi ports precisely
+   because the digits themselves are shared. */
+html[dir="rtl"] .numeral {
+  font-family: var(--font-display);
+}
+
+/* The trade name on a bilingual name board. Whichever script the reader does not
+   read sits beside the display line as the trade name, so in Arabic that second
+   line is Latin and has to stay on the Latin display face. `.font-display` can't
+   be used for it: the RTL swap above outranks the utility and would set it in
+   Reem Kufi, which carries no Latin glyphs at all. Same reasoning as `.numeral`
+   directly above — some lettering is Latin by nature, not by locale. */
+.latin-plate {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+/* The wide tracking and uppercasing in `.label` split connected Arabic script
+   into disconnected glyphs. Both come off, and a trace of spacing goes back on
+   for rhythm. */
+html[dir="rtl"] .label {
+  font-family: var(--font-arabic);
+  font-weight: 700;
+  font-stretch: 100%;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+/* Same reasoning for the draft marks: the digits stay condensed and tabular,
+   but any Arabic label sharing the class loses the tracking. */
+html[dir="rtl"] .draft-mark {
+  letter-spacing: 0.04em;
 }
 
 /* Diagonal arrow icons read naturally pointing the opposite way in RTL. */
@@ -412,7 +450,6 @@ html[dir="rtl"] .rtl-flip {
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {

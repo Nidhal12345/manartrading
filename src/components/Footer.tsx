@@ -1,4 +1,3 @@
-import Photo from "./ui/Photo";
 import { Link } from "@/i18n/navigation";
 import { ArrowUpRight, Clock, Mail, MapPin, Phone, Send } from "lucide-react";
 import Logo from "./Logo";
@@ -24,43 +23,40 @@ const socials = [
   },
 ];
 
+/**
+ * The footer is the deepest tar field on the site — below the waterline, where
+ * the hull is tarred rather than painted. It carries no photograph: the dark
+ * water shot that used to sit here at 20% opacity was doing nothing except
+ * making the type harder to read.
+ */
 export default async function Footer() {
   const t = await getTranslations("Footer");
 
   return (
-    <footer className="relative overflow-hidden bg-abyss text-bone">
-      <Photo
-        image="darkWater"
-        res={1600}
-        sizes="100vw"
-        className="object-cover opacity-20"
-      />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,20,31,0.9),rgba(4,20,31,0.98))]" />
-      <div className="noise" />
-
+    <footer className="relative bg-tar text-limewash">
       {/* newsletter */}
-      <div className="relative border-b border-white/10">
+      <div className="border-b border-limewash/12">
         <div className="container-x grid gap-10 py-16 md:grid-cols-2 md:items-end">
           <div>
-            <span className="label text-aqua">{t("newsletterLabel")}</span>
-            <h3 className="display-md mt-5 max-w-[16ch] text-bone">
+            <span className="label text-ochre">{t("newsletterLabel")}</span>
+            <h3 className="display-md mt-5 max-w-[18ch] text-limewash">
               {t("newsletterTitle")}
             </h3>
           </div>
           <form className="flex w-full gap-3 md:justify-end">
             <div className="relative flex-1 md:max-w-sm">
-              <Mail className="pointer-events-none absolute start-0 top-1/2 h-4 w-4 -translate-y-1/2 text-bone/35" />
+              <Mail className="pointer-events-none absolute start-0 top-1/2 h-4 w-4 -translate-y-1/2 text-limewash/40" />
               <input
                 type="email"
                 required
                 placeholder={t("emailPlaceholder")}
                 aria-label={t("emailAria")}
-                className="w-full border-b border-white/20 bg-transparent py-4 ps-7 pe-4 text-[15px] text-bone outline-none transition placeholder:text-bone/30 focus:border-aqua"
+                className="w-full border-b border-limewash/25 bg-transparent py-4 pe-4 ps-7 text-[15px] text-limewash outline-none transition placeholder:text-limewash/35 focus:border-ochre"
               />
             </div>
             <button
               type="submit"
-              className="group grid h-[52px] w-[52px] shrink-0 place-items-center rounded-full bg-bone text-abyss transition-transform hover:scale-105"
+              className="group grid h-[52px] w-[52px] shrink-0 place-items-center bg-oxide text-limewash transition-colors hover:bg-oxide-lit"
               aria-label={t("subscribeAria")}
             >
               <Send className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5" />
@@ -70,10 +66,10 @@ export default async function Footer() {
       </div>
 
       {/* columns */}
-      <div className="container-x relative grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.3fr]">
+      <div className="container-x grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.3fr]">
         <div>
           <Logo variant="light" />
-          <p className="mt-6 max-w-xs text-[14.5px] leading-relaxed text-bone/55">
+          <p className="mt-6 max-w-xs text-[14.5px] leading-relaxed text-limewash/60">
             {t("companyTagline")}
           </p>
           <div className="mt-7 flex gap-2.5">
@@ -82,13 +78,9 @@ export default async function Footer() {
                 key={s.label}
                 href="#"
                 aria-label={t("socialAria", { network: s.label })}
-                className="grid h-10 w-10 place-items-center rounded-full border border-white/15 text-bone/70 transition-all hover:-translate-y-0.5 hover:border-aqua/60 hover:text-white"
+                className="grid h-10 w-10 place-items-center border border-limewash/20 text-limewash/70 transition-colors hover:border-limewash/60 hover:text-limewash"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="h-4 w-4"
-                >
+                <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
                   <path d={s.path} />
                 </svg>
               </a>
@@ -97,8 +89,8 @@ export default async function Footer() {
         </div>
 
         <div>
-          <h4 className="label text-bone/45">{t("companyColumn")}</h4>
-          <ul className="mt-6 space-y-3.5 text-[14.5px] text-bone/70">
+          <h4 className="label text-limewash/45">{t("companyColumn")}</h4>
+          <ul className="mt-6 space-y-3.5 text-[14.5px] text-limewash/75">
             {(
               [
                 { href: "/", key: "home" },
@@ -110,7 +102,7 @@ export default async function Footer() {
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  className="transition-colors hover:text-aqua"
+                  className="transition-colors hover:text-ochre"
                 >
                   {t(`links.${l.key}`)}
                 </Link>
@@ -120,13 +112,13 @@ export default async function Footer() {
         </div>
 
         <div>
-          <h4 className="label text-bone/45">{t("popularColumn")}</h4>
-          <ul className="mt-6 space-y-3.5 text-[14.5px] text-bone/70">
+          <h4 className="label text-limewash/45">{t("popularColumn")}</h4>
+          <ul className="mt-6 space-y-3.5 text-[14.5px] text-limewash/75">
             {products.slice(0, 5).map((p) => (
               <li key={p.slug}>
                 <Link
                   href={`/shop/${p.slug}`}
-                  className="transition-colors hover:text-aqua"
+                  className="transition-colors hover:text-ochre"
                 >
                   {p.name}
                 </Link>
@@ -136,10 +128,10 @@ export default async function Footer() {
         </div>
 
         <div>
-          <h4 className="label text-bone/45">{t("visitColumn")}</h4>
-          <ul className="mt-6 space-y-4 text-[14.5px] text-bone/70">
+          <h4 className="label text-limewash/45">{t("visitColumn")}</h4>
+          <ul className="mt-6 space-y-4 text-[14.5px] text-limewash/75">
             <li className="flex gap-3">
-              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-aqua" />
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-ochre" />
               <span>
                 {t("addressLine1")}
                 <br />
@@ -147,52 +139,50 @@ export default async function Footer() {
               </span>
             </li>
             <li className="flex gap-3">
-              <Phone className="mt-0.5 h-4 w-4 shrink-0 text-aqua" />
-              <a href={PHONE_HREF} className="hover:text-aqua">
+              <Phone className="mt-0.5 h-4 w-4 shrink-0 text-ochre" />
+              <a href={PHONE_HREF} className="hover:text-ochre">
                 <span dir="ltr">{PHONE}</span>
               </a>
             </li>
             <li className="flex gap-3">
-              <Mail className="mt-0.5 h-4 w-4 shrink-0 text-aqua" />
-              <a
-                href="mailto:hello@manartrading.sa"
-                className="hover:text-aqua"
-              >
+              <Mail className="mt-0.5 h-4 w-4 shrink-0 text-ochre" />
+              <a href="mailto:hello@manartrading.sa" className="hover:text-ochre">
                 hello@manartrading.sa
               </a>
             </li>
             <li className="flex gap-3">
-              <Clock className="mt-0.5 h-4 w-4 shrink-0 text-aqua" />
+              <Clock className="mt-0.5 h-4 w-4 shrink-0 text-ochre" />
               <span>{t("hours")}</span>
             </li>
           </ul>
         </div>
       </div>
 
-      {/* oversized wordmark */}
-      <div className="container-x relative">
+      {/* Oversized wordmark, set as hull lettering: the name painted across the
+          transom at the size it would actually be painted. */}
+      <div className="container-x">
         <Link
           href="/contact"
-          className="group flex items-center justify-between border-t border-white/10 py-10"
+          className="group flex items-center justify-between border-t border-limewash/12 py-10"
         >
-          <span className="font-display text-[13vw] leading-[0.85] tracking-[-0.05em] text-bone/10 transition-colors duration-700 group-hover:text-bone/20">
+          <span className="font-display text-[13vw] uppercase leading-[0.82] tracking-[0.01em] text-limewash/12 transition-colors duration-700 group-hover:text-limewash/25">
             {t("wordmark")}
           </span>
-          <ArrowUpRight className="hidden h-10 w-10 shrink-0 text-bone/25 transition-all duration-500 group-hover:rotate-45 group-hover:text-bone/60 sm:block rtl:-scale-x-100" />
+          <ArrowUpRight className="hidden h-10 w-10 shrink-0 text-limewash/25 transition-all duration-500 group-hover:rotate-45 group-hover:text-limewash/70 sm:block rtl:-scale-x-100" />
         </Link>
       </div>
 
-      <div className="relative border-t border-white/10">
-        <div className="container-x flex flex-col gap-3 py-6 text-[12.5px] text-bone/40 sm:flex-row sm:items-center sm:justify-between">
+      <div className="border-t border-limewash/12">
+        <div className="container-x flex flex-col gap-3 py-6 text-[12.5px] text-limewash/45 sm:flex-row sm:items-center sm:justify-between">
           <p>{t("rights", { year })}</p>
           <p className="flex gap-6">
-            <a href="#" className="hover:text-aqua">
+            <a href="#" className="hover:text-ochre">
               {t("privacy")}
             </a>
-            <a href="#" className="hover:text-aqua">
+            <a href="#" className="hover:text-ochre">
               {t("terms")}
             </a>
-            <a href="#" className="hover:text-aqua">
+            <a href="#" className="hover:text-ochre">
               {t("shipping")}
             </a>
           </p>

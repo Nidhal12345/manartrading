@@ -49,7 +49,7 @@ export async function generateMetadata({
 }
 
 export const viewport: Viewport = {
-  themeColor: "#06202f",
+  themeColor: "#1a1410",
   width: "device-width",
   initialScale: 1,
 };
@@ -80,10 +80,10 @@ export default async function LocaleLayout({
         isRtl ? "font-arabic" : ""
       } h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-white">
+      <body className="flex min-h-full flex-col bg-limewash">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ocean focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-white"
+          className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[100] focus:bg-oxide focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-limewash"
         >
           {t("skipToContent")}
         </a>
@@ -100,8 +100,6 @@ export default async function LocaleLayout({
             <Footer />
           </MotionProvider>
         </NextIntlClientProvider>
-
-        <div className="grain" aria-hidden="true" />
       </body>
     </html>
   );

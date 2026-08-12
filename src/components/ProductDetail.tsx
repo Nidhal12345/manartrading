@@ -61,7 +61,7 @@ export default function ProductDetail({ product: p }: { product: Product }) {
   const isRtl = useLocale() === "ar";
 
   const views: { key: ImageKey; label: string }[] = [
-    { key: p.image, label: t("views.onIce") },
+    { key: p.image, label: t("views.outOfWater") },
     { key: p.wild, label: t("views.inWater") },
     { key: p.cooked, label: t("views.onPlate") },
   ];
@@ -101,7 +101,7 @@ export default function ProductDetail({ product: p }: { product: Product }) {
     <div className="container-x py-14 lg:py-20">
       <div className="grid gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
         {/* ---------------- gallery ---------------- */}
-        <div className="lg:sticky lg:top-32 lg:h-fit">
+        <div className="lg:sticky lg:top-24 lg:h-fit">
           <div className="relative aspect-[4/5] overflow-hidden bg-tar">
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.div

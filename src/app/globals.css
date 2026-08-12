@@ -23,6 +23,18 @@
   --color-limewash: #efefe7;
   --color-chalk: #f8f8f4;
 
+  /* The ice pair, and the one light passage on a page of painted fields.
+     `tide` is meltwater running off a crate of flake ice — the coldest thing
+     on the site, and the only cool light ground. `salt` is the dry white of a
+     scrubbed counter plate standing on it.
+
+     They are a pair and are used as one: `tide` is the field, `salt` is what
+     sits on it. Neither replaces `limewash`, which is still the page ground —
+     these two exist so a single section can go cold and bright between two
+     dark fields without leaving the boatyard. */
+  --color-tide: #ebeff8;
+  --color-salt: #fafaf8;
+
   /* Red-lead oxide. THE ONLY ACCENT. Primary action, WhatsApp, today markers.
      If it appears anywhere that is not an action, that is a bug. */
   --color-oxide: #9e3b23;

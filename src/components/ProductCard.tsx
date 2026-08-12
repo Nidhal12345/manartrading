@@ -6,21 +6,25 @@ import { useLocale, useTranslations } from "next-intl";
 
 import Photo from "./ui/Photo";
 import { Link } from "@/i18n/navigation";
-import { CutDiagram } from "./ui/CutDiagram";
 import type { Product } from "@/data/products";
 
 /**
  * A line on the landing board.
  *
- * Chalk on limewash, with the name on a painted tar plate and the hard 2px
- * `hull-rule` under it — the card-scale version of the waterline, without the
- * drips, which at this size would read as noise.
+ * A salt plate on the tide field, with the name on a painted tar plate and the
+ * hard 2px `hull-rule` under it — the card-scale version of the waterline,
+ * without the drips, which at this size would read as noise.
  *
  * Removed from the old card: the two mix-blend gradient washes over the photo
  * (they were there to unify a mixed stock set, and they dulled every shot), the
- * rounded pill badge, and the rounded arrow button. The cut diagrams are new and
- * they are the useful part — a buyer scanning the grid can see which lines take
- * the cut they want without opening anything.
+ * rounded pill badge, and the rounded arrow button.
+ *
+ * The cut diagrams have gone too. They were five stencils under every one of
+ * sixteen cards, which at grid scale is static rather than information — nobody
+ * reads a legend sixteen times. The same drawings are a genuine control in the
+ * filter column, where clicking one narrows the board, and a genuine spec on the
+ * detail page, where the buyer is choosing. Neither of those is this card's job:
+ * here the fish, the water and the name are what a scan is for.
  *
  * The name board carries both scripts, the way a transom does, but the reader's
  * own script is the one set at display scale: an Arabic visitor scanning a grid
@@ -36,7 +40,6 @@ export default function ProductCard({
   index?: number;
 }) {
   const t = useTranslations("Shop");
-  const tc = useTranslations("Cuts");
   const isRtl = useLocale() === "ar";
 
   const primary = isRtl ? p.arabic : p.name;
@@ -56,7 +59,7 @@ export default function ProductCard({
     >
       <Link
         href={`/shop/${p.slug}`}
-        className="flex h-full flex-col bg-chalk transition-shadow duration-500 hover:shadow-lift focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide"
+        className="flex h-full flex-col bg-salt transition-shadow duration-500 hover:shadow-lift focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide"
       >
         {/* ---- the name board ---- */}
         <div className="relative bg-tar px-5 pb-5 pt-4">
@@ -114,21 +117,6 @@ export default function ProductCard({
         {/* ---- the spec ---- */}
         <div className="flex flex-1 flex-col p-5">
           <p className="text-[14px] leading-[1.6] text-tar/70">{p.tagline}</p>
-
-          {/* The cuts this line takes, drawn. The label is the accessible name;
-              the diagrams are decoration on top of it. */}
-          <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-tar/12 pt-4">
-            <span className="label text-rope">{t("prepLabel")}</span>
-            {p.preparation.map((cut) => (
-              <span
-                key={cut}
-                className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-tar/65"
-              >
-                <CutDiagram cut={cut} className="h-3.5 w-7 shrink-0" />
-                {tc(`${cut}.title`)}
-              </span>
-            ))}
-          </div>
 
           <div className="mt-auto pt-5">
             <div aria-hidden="true" className="hull-rule" />

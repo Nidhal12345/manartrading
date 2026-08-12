@@ -12,8 +12,9 @@ import { type ImageKey } from "@/lib/images";
  * The drifting caustics and film grain that used to sit on top are gone; the
  * ragged waterline at the base is the only edge treatment.
  *
- * Top padding clears the fixed header, which is now 112px: a 36px cutoff strip,
- * a 74px nav row, and the 2px scroll rule.
+ * Top padding clears the fixed header, which is 76px: a 74px nav row and the 2px
+ * scroll rule. The rest of the padding is the breathing room above the
+ * breadcrumb — 72px, and 112px once there is room for it.
  */
 export default function PageHero({
   eyebrow,
@@ -29,7 +30,7 @@ export default function PageHero({
   image: ImageKey;
 }) {
   return (
-    <section className="relative bg-tar pb-20 pt-[184px] text-limewash md:pb-28 md:pt-[224px]">
+    <section className="relative bg-tar pb-20 pt-[148px] text-limewash md:pb-28 md:pt-[188px]">
       <Photo
         image={image}
         res={1800}

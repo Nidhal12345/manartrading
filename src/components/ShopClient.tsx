@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { motion } from "motion/react";
-import { Search, SlidersHorizontal, X } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { PanelLeftClose, Search, SlidersHorizontal, X } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 
 import ProductCard from "./ProductCard";
 import { CutDiagram } from "./ui/CutDiagram";
@@ -26,17 +26,24 @@ import {
  * filter answers it, and a line that will not take a cut is genuinely absent
  * from that filter rather than shown and disappointing later.
  *
- * Two things came off the old rail:
+ * The rail used to run horizontally: three rows of chips across the top of the
+ * page, each row overflowing sideways into a scroller. It hid its own options —
+ * the fifth cut and the third water sat off-screen at most widths — and on
+ * desktop it spent the top of every scroll position while leaving the entire
+ * left margin empty. It is a left column now, and the options are simply all
+ * visible at once.
  *
- *   - **Sort by rating.** Ratings in `products.ts` are derived from a hash of
- *     the slug. Sorting by them ranked the catalogue on invented numbers, which
- *     is worse than not offering the sort at all.
- *   - **Hardcoded English.** Every string here was a literal, so the Arabic shop
- *     rendered an English filter rail. All of it is in `messages/*.json` now.
+ * The column closes, on both axes and for different reasons. On desktop that is
+ * a choice about the board: with the filters away the grid takes a fourth
+ * column, so a buyer who has finished narrowing sees more fish. On mobile it is
+ * a drawer, because PRODUCT.md records usage as mobile-skewed and a permanent
+ * column would leave no page.
  *
- * On mobile the rail collapses behind a sticky summary that always states the
- * result count, because `PRODUCT.md` records usage as mobile-skewed and three
- * filter rows ate the first screen. On desktop it is simply open.
+ * Every option carries the count it would yield. That is the substance behind a
+ * vertical list — a column of bare labels is thinner than the chips it replaced,
+ * and a count that reads zero tells a buyer the combination is empty *before*
+ * they spend a click on it. Counts exclude their own axis, which is why picking
+ * "Red Sea" does not zero out the other two waters.
  */
 
 const WATERS: Waters[] = ["Red Sea", "Arabian Gulf", "Imported"];
@@ -50,37 +57,119 @@ type Filters = {
 
 const EMPTY: Filters = { category: null, water: null, prep: null };
 
+type Counts = {
+  category: Record<Category, number>;
+  water: Record<Waters, number>;
+  prep: Record<Preparation, number>;
+  /** What each axis yields with only the *other* axes applied. */
+  allCategory: number;
+  allWater: number;
+  allPrep: number;
+};
+
+/**
+ * The nav's own height, not counting its 1px bottom rule.
+ *
+ * The utility bar sticks here rather than at 75, so it tucks a pixel *under* the
+ * header instead of risking a hairline of moving content between the two at
+ * fractional zoom. The header outranks it on z-index, so the overlap is invisible.
+ */
+const HEADER = 74;
+/**
+ * Where the filter column comes to rest: header, plus the bar beneath it, plus
+ * air. Measured rather than derived — there is no CSS expression for "stick
+ * below the thing that is already stuck".
+ */
+const RAIL_TOP = 142;
+
 export default function ShopClient({ products }: { products: Product[] }) {
   const t = useTranslations("Shop");
-  const tc = useTranslations("Cuts");
+  const isRtl = useLocale() === "ar";
 
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<Filters>(EMPTY);
-  const [railOpen, setRailOpen] = useState(false);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return products.filter((p) => {
-      const matchesQuery =
-        !q ||
-        p.name.toLowerCase().includes(q) ||
-        p.arabic.includes(q) ||
-        p.scientific.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q) ||
-        p.origin.toLowerCase().includes(q) ||
-        p.tagline.toLowerCase().includes(q);
+  /**
+   * Two booleans rather than one, because the two surfaces have opposite
+   * resting states: the desktop column is open until closed, the mobile drawer
+   * is shut until opened. A single shared flag would have to guess the
+   * breakpoint at render time, which is the usual source of a hydration
+   * mismatch here — and a mount effect that corrects it flashes.
+   */
+  const [railClosed, setRailClosed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-      return (
-        matchesQuery &&
-        (!filters.category || p.category === filters.category) &&
-        (!filters.water || p.waters === filters.water) &&
-        (!filters.prep || p.preparation.includes(filters.prep))
-      );
-    });
-  }, [products, query, filters]);
+  const q = query.trim().toLowerCase();
+
+  /** Text match, factored out so the facet counts and the board agree on it. */
+  const matchesQuery = useCallback(
+    (p: Product) =>
+      !q ||
+      p.name.toLowerCase().includes(q) ||
+      p.arabic.includes(q) ||
+      p.scientific.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q) ||
+      p.origin.toLowerCase().includes(q) ||
+      p.tagline.toLowerCase().includes(q),
+    [q],
+  );
+
+  const filtered = useMemo(
+    () =>
+      products.filter(
+        (p) =>
+          matchesQuery(p) &&
+          (!filters.category || p.category === filters.category) &&
+          (!filters.water || p.waters === filters.water) &&
+          (!filters.prep || p.preparation.includes(filters.prep)),
+      ),
+    [products, matchesQuery, filters],
+  );
+
+  /**
+   * What each option would yield, counted against the *other* axes only.
+   *
+   * Excluding an option's own axis is what makes the numbers useful: with
+   * "Red Sea" picked, the Gulf still shows what switching to it would give,
+   * rather than the zero it scores against a filter it contradicts.
+   */
+  const counts = useMemo<Counts>(() => {
+    const base = products.filter(matchesQuery);
+
+    const byCategory = (p: Product) =>
+      !filters.category || p.category === filters.category;
+    const byWater = (p: Product) => !filters.water || p.waters === filters.water;
+    const byPrep = (p: Product) =>
+      !filters.prep || p.preparation.includes(filters.prep);
+
+    const otherThanCategory = base.filter((p) => byWater(p) && byPrep(p));
+    const otherThanWater = base.filter((p) => byCategory(p) && byPrep(p));
+    const otherThanPrep = base.filter((p) => byCategory(p) && byWater(p));
+
+    return {
+      category: Object.fromEntries(
+        categoryNames.map((c) => [
+          c,
+          otherThanCategory.filter((p) => p.category === c).length,
+        ]),
+      ) as Record<Category, number>,
+      water: Object.fromEntries(
+        WATERS.map((w) => [w, otherThanWater.filter((p) => p.waters === w).length]),
+      ) as Record<Waters, number>,
+      prep: Object.fromEntries(
+        PREPARATIONS.map((k) => [
+          k,
+          otherThanPrep.filter((p) => p.preparation.includes(k)).length,
+        ]),
+      ) as Record<Preparation, number>,
+      allCategory: otherThanCategory.length,
+      allWater: otherThanWater.length,
+      allPrep: otherThanPrep.length,
+    };
+  }, [products, matchesQuery, filters]);
 
   const activeCount =
-    (query.trim() ? 1 : 0) +
+    (q ? 1 : 0) +
     (filters.category ? 1 : 0) +
     (filters.water ? 1 : 0) +
     (filters.prep ? 1 : 0);
@@ -95,37 +184,109 @@ export default function ShopClient({ products }: { products: Product[] }) {
     total: products.length,
   });
 
+  /* The drawer is a modal surface: it locks the page behind it, closes on
+     Escape, and takes focus when it opens.
+
+     That last part is the one that matters. Without it, focus stays on the
+     trigger — now behind the scrim — and the next Tab walks the whole card grid
+     before arriving at the filters the visitor just asked for, because the
+     drawer is last in the DOM. This places focus and gives it back on close; it
+     is not a full trap, and the nav drawer still has the same gap. */
+  const drawerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+
+    const opener = document.activeElement as HTMLElement | null;
+    drawerRef.current?.focus();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDrawerOpen(false);
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+      opener?.focus?.();
+    };
+  }, [drawerOpen]);
+
+  /* One panel description, mounted in two places. Each mount is its own
+     component instance, so the `useId` inside it gives each a distinct set of
+     heading ids rather than duplicating them across the document. */
+  const panel = (
+    <FilterPanel
+      query={query}
+      onQuery={setQuery}
+      filters={filters}
+      onFilters={setFilters}
+      counts={counts}
+    />
+  );
+
+  /* Badge digits are decoration; the count reaches assistive tech as a sentence
+     through the sibling `sr-only` line instead. */
+  const badge =
+    activeCount > 0 ? (
+      <>
+        <span
+          aria-hidden="true"
+          className="numeral grid h-5 w-5 place-items-center bg-oxide text-[12px] leading-none text-limewash"
+        >
+          {activeCount}
+        </span>
+        <span className="sr-only">{t("activeFilters", { count: activeCount })}</span>
+      </>
+    ) : null;
+
   return (
-    <div className="bg-limewash pb-20 lg:pb-28">
-      {/* ---------- the rail ----------
-          Sticky as a whole, so the summary bar stays reachable on a long scroll
-          and the rows below it come along on desktop where there is room. */}
-      <div className="sticky top-0 z-30 border-b-2 border-tar bg-limewash">
+    <div className="bg-tide pb-20 lg:pb-28">
+      {/* ---------- the utility bar ----------
+          Sticky under the header, and the only thing on screen at every scroll
+          position: how much is left, the way back into the filters, the way
+          out of them. */}
+      <div
+        className="sticky z-30 border-y-2 border-tar bg-tide/92 backdrop-blur-sm"
+        style={{ top: HEADER }}
+      >
         <div className="container-x">
-          {/* Summary line: always visible, at every width. It carries the result
-              count, which is the one thing worth keeping on screen. */}
-          <div className="flex items-center gap-4 py-4">
+          <div className="flex items-center gap-4 py-3.5">
+            {/* mobile: opens the drawer */}
             <button
               type="button"
-              onClick={() => setRailOpen((v) => !v)}
-              aria-expanded={railOpen}
-              aria-controls="shop-filters"
-              className="inline-flex items-center gap-2.5 border-2 border-tar px-4 py-2.5 text-[13px] font-semibold text-tar transition-colors hover:bg-tar hover:text-limewash focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide md:hidden"
+              onClick={() => setDrawerOpen(true)}
+              className="inline-flex shrink-0 items-center gap-2.5 border-2 border-tar px-4 py-2.5 text-[13px] font-semibold text-tar transition-colors hover:bg-tar hover:text-limewash focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide lg:hidden"
             >
               <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
-              {railOpen ? t("filtersClose") : t("filtersOpen")}
-              {activeCount > 0 && !railOpen && (
-                <span className="numeral grid h-5 w-5 place-items-center bg-oxide text-[12px] leading-none text-limewash">
-                  {activeCount}
-                </span>
-              )}
+              {t("filtersOpen")}
+              {badge}
             </button>
+
+            {/* desktop: exists only while the column is away */}
+            {railClosed && (
+              <button
+                type="button"
+                onClick={() => setRailClosed(false)}
+                className="hidden shrink-0 items-center gap-2.5 border-2 border-tar px-4 py-2.5 text-[13px] font-semibold text-tar transition-colors hover:bg-tar hover:text-limewash focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide lg:inline-flex"
+              >
+                <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
+                {t("showFilters")}
+                {badge}
+              </button>
+            )}
 
             {/* The count is the filter's only feedback, so it announces rather
                 than changing silently. Live on the visible element instead of a
                 second sr-only copy: one string, one announcement, no drift
                 between what is read out and what is on screen. */}
-            <p className="draft-mark text-[13px]" aria-live="polite" aria-atomic="true">
+            <p
+              className="draft-mark text-[13px]"
+              aria-live="polite"
+              aria-atomic="true"
+            >
               {count}
             </p>
 
@@ -133,134 +294,157 @@ export default function ShopClient({ products }: { products: Product[] }) {
               <button
                 type="button"
                 onClick={reset}
-                className="ms-auto inline-flex items-center gap-1.5 text-[13px] font-semibold text-oxide underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide"
+                className="ms-auto inline-flex shrink-0 items-center gap-1.5 text-[13px] font-semibold text-oxide underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide"
               >
                 <X aria-hidden="true" className="h-3.5 w-3.5" />
                 {t("clear")}
               </button>
             )}
           </div>
+        </div>
+      </div>
 
-          <div
-            id="shop-filters"
-            className={`${railOpen ? "block" : "hidden"} pb-6 md:block`}
+      <div className="container-x pt-10 lg:pt-14">
+        <div
+          className={`grid gap-x-10 gap-y-10 ${
+            railClosed ? "lg:grid-cols-1" : "lg:grid-cols-[286px_minmax(0,1fr)]"
+          }`}
+        >
+          {/* ---------- the column ----------
+              Hidden outright when closed, so it leaves the tab order rather
+              than sitting off-canvas and still reachable. Below `lg` it is
+              never this element that shows the filters — the drawer is — so it
+              resolves to a single display class at every width instead of two
+              competing ones whose winner would depend on stylesheet order. */}
+          <aside
+            aria-label={t("filtersTitle")}
+            className={
+              railClosed
+                ? "hidden"
+                : "hidden self-start lg:sticky lg:block lg:overflow-y-auto lg:overscroll-contain lg:pb-6 lg:pe-1"
+            }
+            style={
+              railClosed
+                ? undefined
+                : { top: RAIL_TOP, maxHeight: `calc(100svh - ${RAIL_TOP + 20}px)` }
+            }
           >
-            {/* search */}
-            <div className="relative border-b-2 border-tar/20 focus-within:border-tar">
-              <Search
-                aria-hidden="true"
-                className="pointer-events-none absolute start-0 top-1/2 h-4 w-4 -translate-y-1/2 text-rope"
-              />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={t("searchPlaceholder")}
-                aria-label={t("searchLabel")}
-                className="w-full bg-transparent py-3 pe-2 ps-7 text-[15px] text-tar outline-none placeholder:text-rope"
-              />
+            <div className="flex items-center justify-between gap-4 pb-4">
+              <h2 className="label text-tar/55">{t("filtersTitle")}</h2>
+              <button
+                type="button"
+                onClick={() => setRailClosed(true)}
+                className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-tar/60 transition-colors hover:text-oxide focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide"
+              >
+                <PanelLeftClose aria-hidden="true" className="rtl-flip h-4 w-4" />
+                {t("hideFilters")}
+              </button>
             </div>
 
-            {/* heading */}
-            <FilterRow label={t("categoryLabel")}>
-              <Chip
-                active={filters.category === null}
-                onClick={() => setFilters((f) => ({ ...f, category: null }))}
-              >
-                {t("allCategories")}
-              </Chip>
-              {categoryNames.map((c) => (
-                <Chip
-                  key={c}
-                  active={filters.category === c}
-                  onClick={() =>
-                    setFilters((f) => ({
-                      ...f,
-                      category: f.category === c ? null : c,
-                    }))
-                  }
-                >
-                  {t(`categories.${c}`)}
-                </Chip>
-              ))}
-            </FilterRow>
+            {panel}
+          </aside>
 
-            {/* water */}
-            <FilterRow label={t("waterLabel")}>
-              <Chip
-                active={filters.water === null}
-                onClick={() => setFilters((f) => ({ ...f, water: null }))}
+          {/* ---------- the board ---------- */}
+          <div>
+            {filtered.length > 0 ? (
+              <motion.div
+                layout
+                className={`grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 ${
+                  railClosed ? "xl:grid-cols-4" : ""
+                }`}
               >
-                {t("allWaters")}
-              </Chip>
-              {WATERS.map((w) => (
-                <Chip
-                  key={w}
-                  active={filters.water === w}
-                  onClick={() =>
-                    setFilters((f) => ({ ...f, water: f.water === w ? null : w }))
-                  }
+                {filtered.map((p, i) => (
+                  <ProductCard key={p.slug} product={p} index={i} />
+                ))}
+              </motion.div>
+            ) : (
+              <div className="border-2 border-tar/15 bg-salt px-6 py-24 text-center">
+                <h3 className="display-md text-tar">{t("empty.title")}</h3>
+                <p className="mx-auto mt-4 max-w-sm text-[14.5px] leading-relaxed text-rope">
+                  {t("empty.copy")}
+                </p>
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="mt-8 bg-oxide px-7 py-3.5 text-[14px] font-semibold text-limewash transition-colors hover:bg-oxide-lit focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tar"
                 >
-                  {t(`waters.${w}`)}
-                </Chip>
-              ))}
-            </FilterRow>
+                  {t("empty.cta")}
+                </button>
+              </div>
+            )}
 
-            {/* cut — the new axis, and the one that gets the diagrams */}
-            <FilterRow label={t("prepLabel")}>
-              <Chip
-                active={filters.prep === null}
-                onClick={() => setFilters((f) => ({ ...f, prep: null }))}
-              >
-                {t("allPreps")}
-              </Chip>
-              {PREPARATIONS.map((p) => (
-                <Chip
-                  key={p}
-                  active={filters.prep === p}
-                  onClick={() =>
-                    setFilters((f) => ({ ...f, prep: f.prep === p ? null : p }))
-                  }
-                >
-                  <CutDiagram cut={p} className="h-4 w-9 shrink-0" />
-                  {tc(`${p}.title`)}
-                </Chip>
-              ))}
-            </FilterRow>
-
-            <p className="mt-5 max-w-2xl text-[13px] leading-relaxed text-rope">
+            <p className="mt-12 max-w-2xl text-[13px] leading-relaxed text-rope">
               {t("note")}
             </p>
           </div>
         </div>
       </div>
 
-      {/* ---------- the board ---------- */}
-      <div className="container-x pt-12 lg:pt-16">
-        {filtered.length > 0 ? (
-          <motion.div
-            layout
-            className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {filtered.map((p, i) => (
-              <ProductCard key={p.slug} product={p} index={i} />
-            ))}
-          </motion.div>
-        ) : (
-          <div className="border-2 border-tar/20 px-6 py-24 text-center">
-            <h3 className="display-md text-tar">{t("empty.title")}</h3>
-            <p className="mx-auto mt-4 max-w-sm text-[14.5px] leading-relaxed text-rope">
-              {t("empty.copy")}
-            </p>
-            <button
+      {/* ---------- the drawer ----------
+          Mounted only while open, so nothing behind the page edge is tabbable
+          when it is shut. It comes in from the reading edge, which flips with
+          the locale. */}
+      <AnimatePresence>
+        {drawerOpen && (
+          <div className="fixed inset-0 z-60 lg:hidden">
+            <motion.button
               type="button"
-              onClick={reset}
-              className="mt-8 bg-oxide px-7 py-3.5 text-[14px] font-semibold text-limewash transition-colors hover:bg-oxide-lit focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tar"
+              aria-label={t("filtersClose")}
+              onClick={() => setDrawerOpen(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="absolute inset-0 w-full cursor-default bg-tar/55"
+            />
+
+            <motion.div
+              ref={drawerRef}
+              tabIndex={-1}
+              role="dialog"
+              aria-modal="true"
+              aria-label={t("filtersTitle")}
+              initial={{ x: isRtl ? "100%" : "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: isRtl ? "100%" : "-100%" }}
+              transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute inset-y-0 start-0 flex w-[min(21rem,88vw)] flex-col bg-tide shadow-lift outline-none"
             >
-              {t("empty.cta")}
-            </button>
+              <div className="flex items-center justify-between gap-4 border-b-2 border-tar px-5 py-4">
+                <h2 className="font-display text-[20px] leading-none uppercase text-tar">
+                  {t("filtersTitle")}
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setDrawerOpen(false)}
+                  aria-label={t("filtersClose")}
+                  className="grid h-10 w-10 shrink-0 place-items-center border-2 border-tar/20 text-tar transition-colors hover:border-tar focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide"
+                >
+                  <X aria-hidden="true" className="h-4.5 w-4.5" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-5">
+                {panel}
+              </div>
+
+              {/* The count repeats here because the live copy in the bar is
+                  behind an `aria-modal` surface while this is open. Not a
+                  second live region — one announcement is enough. */}
+              <div className="border-t-2 border-tar px-5 py-4">
+                <p className="draft-mark text-[12.5px]">{count}</p>
+                <button
+                  type="button"
+                  onClick={() => setDrawerOpen(false)}
+                  className="mt-3 w-full bg-oxide py-3.5 text-[14px] font-semibold text-limewash transition-colors hover:bg-oxide-lit focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tar"
+                >
+                  {t("filtersClose")}
+                </button>
+              </div>
+            </motion.div>
           </div>
         )}
-      </div>
+      </AnimatePresence>
     </div>
   );
 }
@@ -268,44 +452,163 @@ export default function ShopClient({ products }: { products: Product[] }) {
 /* ------------------------------------------------------------------ */
 
 /**
- * One axis of the rail. The label is a real `<h2>`-less group label rather than
- * decoration, so the buttons underneath are announced as belonging to it.
+ * The three axes, written out in full.
+ *
+ * A `salt` plate on the `tide` field — the same relationship the cards and the
+ * hero print have with the ground, so the column reads as another object on the
+ * counter rather than a chrome panel bolted to the side.
  */
-function FilterRow({
-  label,
-  children,
+function FilterPanel({
+  query,
+  onQuery,
+  filters,
+  onFilters,
+  counts,
 }: {
-  label: string;
-  children: React.ReactNode;
+  query: string;
+  onQuery: (v: string) => void;
+  filters: Filters;
+  onFilters: (fn: (f: Filters) => Filters) => void;
+  counts: Counts;
 }) {
+  const t = useTranslations("Shop");
+  const tc = useTranslations("Cuts");
+  const uid = useId();
+
   return (
-    <div
-      role="group"
-      aria-label={label}
-      className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-5"
-    >
-      <span className="label w-20 shrink-0 text-rope">{label}</span>
-      {/* Bleeds to the container edge so a chip clipped at the right reads as
-          "there is more this way" rather than as a broken row. */}
-      <div className="hide-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 py-0.5 md:-mx-10 md:px-10">
-        {children}
+    <div className="bg-salt">
+      {/* search */}
+      <div className="relative border-b-2 border-tar/15 focus-within:border-tar">
+        <Search
+          aria-hidden="true"
+          className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-rope"
+        />
+        <input
+          value={query}
+          onChange={(e) => onQuery(e.target.value)}
+          placeholder={t("searchPlaceholder")}
+          aria-label={t("searchLabel")}
+          className="w-full bg-transparent py-4 pe-4 ps-11 text-[14.5px] text-tar outline-none placeholder:text-rope"
+        />
       </div>
+
+      {/* heading */}
+      <FilterGroup id={`${uid}-cat`} label={t("categoryLabel")}>
+        <Option
+          active={filters.category === null}
+          count={counts.allCategory}
+          onClick={() => onFilters((f) => ({ ...f, category: null }))}
+        >
+          {t("allCategories")}
+        </Option>
+        {categoryNames.map((c) => (
+          <Option
+            key={c}
+            active={filters.category === c}
+            count={counts.category[c]}
+            onClick={() =>
+              onFilters((f) => ({ ...f, category: f.category === c ? null : c }))
+            }
+          >
+            {t(`categories.${c}`)}
+          </Option>
+        ))}
+      </FilterGroup>
+
+      {/* water */}
+      <FilterGroup id={`${uid}-water`} label={t("waterLabel")}>
+        <Option
+          active={filters.water === null}
+          count={counts.allWater}
+          onClick={() => onFilters((f) => ({ ...f, water: null }))}
+        >
+          {t("allWaters")}
+        </Option>
+        {WATERS.map((w) => (
+          <Option
+            key={w}
+            active={filters.water === w}
+            count={counts.water[w]}
+            onClick={() =>
+              onFilters((f) => ({ ...f, water: f.water === w ? null : w }))
+            }
+          >
+            {t(`waters.${w}`)}
+          </Option>
+        ))}
+      </FilterGroup>
+
+      {/* cut — the axis none of the competitors offer, and the diagrams stay
+          here because at this size they are a control, not decoration. */}
+      <FilterGroup id={`${uid}-cut`} label={t("prepLabel")}>
+        <Option
+          active={filters.prep === null}
+          count={counts.allPrep}
+          onClick={() => onFilters((f) => ({ ...f, prep: null }))}
+        >
+          {t("allPreps")}
+        </Option>
+        {PREPARATIONS.map((k) => (
+          <Option
+            key={k}
+            active={filters.prep === k}
+            count={counts.prep[k]}
+            onClick={() =>
+              onFilters((f) => ({ ...f, prep: f.prep === k ? null : k }))
+            }
+            icon={<CutDiagram cut={k} className="h-3.5 w-7 shrink-0" />}
+          >
+            {tc(`${k}.title`)}
+          </Option>
+        ))}
+      </FilterGroup>
     </div>
   );
 }
 
+function FilterGroup({
+  id,
+  label,
+  children,
+}: {
+  id: string;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      role="group"
+      aria-labelledby={id}
+      className="border-b border-tar/12 px-4 py-5 last:border-b-0"
+    >
+      <h3 id={id} className="label px-1 text-rope">
+        {label}
+      </h3>
+      <div className="mt-3">{children}</div>
+    </section>
+  );
+}
+
 /**
- * A painted chip: square, hard-edged, tar on limewash. `aria-pressed` rather
- * than a fake radio group, because the axes are independently clearable and a
- * pressed toggle is what these actually are.
+ * One option, one line, and the number it would leave on the board.
+ *
+ * Selected rows are filled tar plates — the same treatment the active chip had,
+ * kept because it is the strongest state the palette has and the only one that
+ * survives at 13px. Zero-count rows are dimmed rather than disabled: a buyer
+ * mid-narrowing sometimes wants to jump to the empty combination and back out
+ * through the empty state, and a disabled row makes that a dead end.
  */
-function Chip({
+function Option({
   active,
+  count,
   onClick,
+  icon,
   children,
 }: {
   active: boolean;
+  count: number;
   onClick: () => void;
+  icon?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
@@ -313,13 +616,22 @@ function Chip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`inline-flex shrink-0 items-center gap-2 whitespace-nowrap border-2 px-3.5 py-2 text-[13px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxide ${
+      className={`flex w-full items-center gap-2.5 px-3 py-2.5 text-start text-[13.5px] font-semibold transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-oxide ${
         active
-          ? "border-tar bg-tar text-limewash"
-          : "border-tar/20 text-tar/70 hover:border-tar hover:text-tar"
+          ? "bg-tar text-limewash"
+          : `text-tar/85 hover:bg-tar/6 ${count === 0 ? "opacity-45" : ""}`
       }`}
     >
-      {children}
+      {icon}
+      <span className="min-w-0 flex-1 truncate">{children}</span>
+      <span
+        aria-hidden="true"
+        className={`numeral shrink-0 text-[12px] tabular-nums ${
+          active ? "text-limewash/55" : "text-tar/40"
+        }`}
+      >
+        {count}
+      </span>
     </button>
   );
 }

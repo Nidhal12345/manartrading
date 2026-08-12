@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import PageHero from "@/components/PageHero";
+import ShopHero from "@/components/ShopHero";
 import ShopClient from "@/components/ShopClient";
 import Reveal from "@/components/Reveal";
 import { SectionIntro } from "@/components/Decor";
-import { products } from "@/data/products";
+import { PREPARATIONS, categoryNames, products } from "@/data/products";
 
 export const metadata: Metadata = {
   title: "Shop the catch",
@@ -24,22 +24,36 @@ export const metadata: Metadata = {
  * unverified — "around 60% of our volume goes to kitchens" and a 20 kg trade
  * minimum. The trade answer now says the terms are set per kitchen, which is
  * true and is what the client can stand behind on the first call.
+ *
+ * The page runs light from the hero down through the board — one continuous
+ * `tide` field — and the boatyard's paint returns underneath it at "before you
+ * order", so it still closes on a dark ground with a waterline struck under it.
  */
 const BEFORE = ["prep", "size", "trade"] as const;
 
+/**
+ * The four figures in the hero, counted rather than written.
+ *
+ * Read off `products.ts` at build time so they cannot drift from what the
+ * counter actually carries — and so none of them is a claim. Waters is derived
+ * from the shelf rather than from the `Waters` union, because a water the
+ * catalogue no longer stocks should not be counted as one it offers.
+ */
+function shopStats() {
+  return {
+    lines: products.length,
+    headings: categoryNames.length,
+    waters: new Set(products.map((p) => p.waters)).size,
+    cuts: PREPARATIONS.length,
+  };
+}
+
 export default async function ShopPage() {
   const t = await getTranslations("Shop");
-  const nav = await getTranslations("Nav");
 
   return (
     <>
-      <PageHero
-        image="fishRows"
-        eyebrow={t("eyebrow")}
-        title={t("title")}
-        copy={t("copy")}
-        crumbs={[{ href: "/", label: nav("home") }, { label: t("crumb") }]}
-      />
+      <ShopHero stats={shopStats()} />
 
       <ShopClient products={products} />
 

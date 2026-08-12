@@ -1,14 +1,15 @@
 /**
  * Every photograph on the site is registered here.
  *
- * Images are served locally from /public/images/<key>.jpg — they were originally
+ * Images are served locally from /public/images/<key>.jpg — most were originally
  * sourced from the Unsplash CDN (free licence, commercial use, no attribution
  * required) and then downloaded into the repo so the site no longer hotlinks a
  * third-party CDN on every request and works fully offline.
 
- * To swap in Manar's own photography, drop a file in /public/images and set the
- * matching `id` to "/images/your-file.jpg" — `src()` passes anything that starts
- * with "/" straight through.
+ * To swap in Manar's own photography, drop the file in /public/images named
+ * after the key — `src()` builds its path from the key, not from `id`, so
+ * `grouperSpecimen` is served from /images/grouperSpecimen.jpg and nothing else.
+ * `id` is kept as the provenance note for the shots that came off Unsplash.
  *
  * `tone` is the photo's dominant colour. It is only used to build a tiny inline
  * blur-up placeholder so there is no flash of empty box while the photo loads.
@@ -100,6 +101,53 @@ export const registry = {
     "Spotted grouper laid out on a landing table beside crab and tuna",
     "#767279",
   ),
+  /* The one specimen plate in an otherwise documentary set, and the only shot on
+     the site that names its species exactly: this is Epinephelus coioides, the
+     Grouper line's own fish, where every other frame is whatever the market had
+     out that morning. Kept as a plate rather than cropped in tight so the sold
+     shape — head, spines, tail — is all legible at card scale.
+
+     Reframed on the way into the repo: the supplied file was a 2K square with
+     the fish across the middle third, which any object-cover slot on the site
+     would have clipped at the snout and the tail. It is now 4:5 (the aspect of
+     the card well and the detail lead), fish full width, and its studio white
+     multiplied down onto `limewash` so the ground is the page's own white
+     instead of a raw #ffffff hole in the palette. */
+  grouperSpecimen: e(
+    "manar-epinephelus-coioides",
+    "A whole orange-spotted grouper laid out side-on against a plain pale ground",
+    "#ece9e0",
+  ),
+  /* The Grouper line's card shot, and the one frame on the site cut to the crop
+     spec rather than to the frame it arrived in. `grouperSpecimen` above is the
+     same species on white and stays as the reference plate; this is the one that
+     ships, because it survives every slot and that one does not.
+
+     Framed against the four slots `product.image` lands in, which between them
+     leave a narrower safe box than any single one implies:
+
+       shop grid card + detail lead   aspect-[4/5], and 4:5 is why the file is
+       detail thumbnail              aspect-[4/3] — keeps 60% of the height
+       best-sellers carousel         the parallax layer hangs 14% past its
+                                     window each side, so only the middle 78.1%
+                                     of the width is ever on screen
+
+     So: 4:5, fish 76.7% of the width and 23% of the height, centred on both
+     axes to within 0.7%. The supplied file was already 4:5 but sat the fish at
+     55.6% of the width — its tail reached 91.4%, well outside the carousel's
+     78.1% window — so it is recentred here, not just rescaled. Sharpening is
+     masked to the animal: the ground is a soft marble that carries nothing, and
+     sharpening it cost 226 KB in grain no one reads.
+
+     Its ground is `tide`, not `limewash`. That is a real difference from every
+     other card in the grid and it is the reason this shot works — meltwater off
+     a crate of flake ice is the coldest ground in the palette, and the fish is
+     the warmest thing on the page against it. */
+  grouperStudio: e(
+    "manar-epinephelus-coioides-studio",
+    "A whole orange-spotted grouper laid side-on on pale blue ice",
+    "#c3ced7",
+  ),
   spinyLobster: e(
     "unsplash-OJPBfUqgsRU",
     "Whole spiny lobsters piled on a quayside table",
@@ -109,6 +157,46 @@ export const registry = {
     "unsplash-h80T-wumakg",
     "Fresh whole squid on ice with lime and coriander",
     "#78735c",
+  ),
+  parrotfishStudio: e(
+    "manar-parrotfish",
+    "A whole vivid blue-and-orange parrotfish laid side-on on pale blue ice",
+    "#b8ccd8",
+  ),
+  shareefiStudio: e(
+    "manar-shareefi",
+    "A whole grey-spotted shareefi laid side-on on pale blue ice",
+    "#b4c5cf",
+  ),
+  emperorStudio: e(
+    "manar-emperor",
+    "A whole orange-gold emperor fish laid side-on on pale blue ice",
+    "#c4cdd4",
+  ),
+  seaBreamStudio: e(
+    "manar-sea-bream",
+    "A whole silver-striped sea bream laid side-on on pale blue ice",
+    "#bac8d2",
+  ),
+  seaBassStudio: e(
+    "manar-sea-bass",
+    "A whole silver sea bass laid side-on on pale blue ice",
+    "#b6c8d4",
+  ),
+  rabbitfishStudio: e(
+    "manar-rabbitfish",
+    "A whole grey rabbitfish with prominent spines on pale blue ice",
+    "#c0cdd5",
+  ),
+  octopusStudio: e(
+    "manar-octopus",
+    "A whole octopus with curled tentacles on pale blue ice",
+    "#bdc9d0",
+  ),
+  crabStudio: e(
+    "manar-crab",
+    "A blue swimmer crab displayed from above on pale blue ice",
+    "#b8c6d0",
   ),
   tunaPile: e(
     "photo-1766998112558-c8632e66cc49",
@@ -190,6 +278,14 @@ export const registry = {
     "photo-1661939252817-ebb73304f4c7",
     "A scored grilled fish plated on a green leaf",
     "#8a8a4e",
+  ),
+  /* The counter's own photograph. Chosen for its ground as much as its subject:
+     the slate it is shot on is within a few points of `tar`, so the frame meets
+     the section's field without a seam where the two halves join. */
+  platedFillet: e(
+    "photo-1519708227418-c8fd9a32b7a2",
+    "A seared fish fillet plated on ribboned vegetables with a wedge of lime",
+    "#443f35",
   ),
 } satisfies Record<string, Entry>;
 

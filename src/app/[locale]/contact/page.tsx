@@ -231,7 +231,7 @@ export default async function ContactPage() {
             </Reveal>
 
             <Reveal delay={0.18}>
-              <figure id="map" className="scroll-mt-[128px]">
+              <figure id="map" className="scroll-mt-24">
                 <h3 className="display-md flex items-center gap-3 text-[22px] text-tar">
                   <MapPin aria-hidden="true" className="h-5 w-5 shrink-0 text-oxide" />
                   {t("visit.title")}

@@ -23,7 +23,6 @@
     "closeMenu": "Close menu",
     "switchLanguage": "Change language",
     "switchLanguageEn": "English",
-    "cutoff": "Landed today · same-day delivery — message us for today's cutoff",
     "whatsapp": "WhatsApp us",
     "addressLine1": "Hijrah Road, Medina",
     "addressLine2": "Saudi Arabia"
@@ -70,91 +69,52 @@
     }
   },
   "Fork": {
-    "eyebrow": "Two ways to buy",
-    "title": "Buying for a table, or for a kitchen?",
-    "copy": "They are not the same order, and this site has stopped pretending they are. Pick the one that is you — the rest of the page follows it.",
+    "title": "Three waters in. Two doors out.",
+    "copy": "Red Sea, Arabian Gulf, and what we bring in from further out. It all crosses the same ice and the same block. The only thing that changes is where it goes next — a house cooking tonight, or a kitchen with a service at seven.",
+    "watersLabel": "Where it comes from",
+    "waters": {
+      "Red Sea": "The west coast, and the shortest road in.",
+      "Arabian Gulf": "The east coast, for the lines the Red Sea does not carry.",
+      "Imported": "Further water, for what is out of season here."
+    },
     "table": {
-      "title": "Buying for the table",
+      "title": "For the table",
       "arabic": "للمنزل",
       "latin": "For the table",
-      "copy": "One box, this week, for your own kitchen. Pick the fish, say how you want it cut, and we quote it by the kilo before anything is prepared.",
-      "p1": "Order by the piece or by the kilo, for one meal or a week",
-      "p2": "Cleaned, scaled and cut how you cook it, at no charge",
-      "p3": "Quoted and confirmed on WhatsApp before we cut",
-      "cta": "See the range"
+      "copy": "One box, this week, for the house. Say you are grilling it whole, say it is going into a sayadiyah, say the kids will not touch bones — it leaves the block cut that way.",
+      "p1": "By the piece or by the kilo — one dinner or a full week",
+      "p2": "Scaled, gutted and cut the way you cook it, at no charge",
+      "p3": "Priced on WhatsApp before a knife goes near it",
+      "cta": "Pick your fish"
     },
     "kitchen": {
-      "title": "Buying for a kitchen",
+      "title": "For the kitchen",
       "arabic": "للمطاعم",
       "latin": "For the kitchen",
-      "copy": "A standing list, a delivery window you can build a service around, and one person who knows what your kitchen takes. Restaurants, hotels and caterers.",
+      "copy": "Restaurants, hotels and catering kitchens. One list, agreed once. One delivery window you can build a service around. And one person on the other end who already knows what you take on a Thursday.",
       "p1": "A fixed daily or weekly list, agreed once",
-      "p2": "The same delivery window every day",
-      "p3": "One contact who knows your kitchen, not a call centre",
+      "p2": "The same delivery window, every day",
+      "p3": "One person who knows your kitchen, not a call centre",
       "cta": "Set up a standing order"
     }
   },
   "Offerings": {
     "eyebrow": "Today's counter",
     "title": "What the counter carries",
-    "copy": "Three ways in: the fish counter, the shellfish season, and a standing order for a kitchen.",
-    "caveat": "This is the range we carry, not a live landing report. What is actually on ice on any given morning depends on the boats, the weather and the season — message us and we will tell you what is there today.",
-    "fish": {
-      "title": "Fish",
-      "arabic": "الأسماك",
-      "latin": "Fish",
-      "copy": "Hamour, Kanad, Shaour, Najil, Sea Bass and Sea Bream — landed on the Red Sea and Gulf coasts, or flown in overnight.",
-      "unit": "lines carried"
-    },
-    "shellfish": {
-      "title": "Crustaceans & seafood",
-      "arabic": "القشريات والمأكولات البحرية",
-      "latin": "Crustaceans & seafood",
-      "copy": "Gulf shrimp head-on and still snapping, crayfish, lobster, crab, octopus and squid — sold on the day they land.",
-      "unit": "lines, in season"
-    },
-    "orders": {
-      "title": "Standing kitchen orders",
-      "arabic": "طلبات المطاعم",
-      "latin": "Standing kitchen orders",
-      "copy": "A fixed list, the same delivery window every day, and one contact who knows your kitchen.",
-      "unit": "By arrangement"
-    }
-  },
-  "Seas": {
-    "eyebrow": "Two coastlines",
-    "title": "A country with two very different seas",
-    "copy": "Reef species off the Red Sea shelves, pelagics from the offshore fleet, and Gulf shellfish inside their licensed seasons. The counter never looks the same two weeks running.",
-    "portsLabel": "Ports",
-    "linesLabel": "On the spec sheet",
-    "linesUnit": "lines",
-    "red": {
-      "name": "Red Sea",
-      "arabic": "البحر الأحمر",
-      "latin": "Red Sea",
-      "copy": "Warm, deep and reef-built. This is where the fish the Saudi table asks for by name comes from — Hamour off the Farasan Banks, Shaour and Najil from the southern shelves.",
-      "ports": "Jeddah · Yanbu · Al Lith · Qunfudhah · Jazan · Farasan",
-      "season": "Fishes year-round; the reef species peak October to March."
-    },
-    "gulf": {
-      "name": "Arabian Gulf",
-      "arabic": "الخليج العربي",
-      "latin": "Arabian Gulf",
-      "copy": "Shallower, silted, and far more seasonal. The Gulf is where the shrimp season is set by licence, and where the Kanad this whole country grills comes off the boats.",
-      "ports": "Dammam · Qatif · Jubail · Ras Tanura",
-      "season": "Shrimp only inside the licensed season, which is set fresh each year."
-    },
-    "imported": {
-      "label": "The third water",
-      "copy": "Farmed bream and bass, North Atlantic lobster, Nile perch — imported, and labelled as imported."
-    }
+    "copy": "Whole fish landed on the Red Sea and Gulf coasts, shellfish inside their season, and a standing list for kitchens that order the same thing every day. Tell us how you are cooking it and it is cut that way before it leaves us.",
+    "fishLabel": "Whole fish",
+    "fishUnit": "lines carried",
+    "shellfishLabel": "Crustaceans & seafood",
+    "shellfishUnit": "lines, in season",
+    "cta": "Browse the counter",
+    "orders": "Standing orders for kitchens",
+    "caveat": "This is the range we carry, not a live landing report. What is actually on ice on any given morning depends on the boats, the weather and the season — message us and we will tell you what is there today."
   },
   "Range": {
     "eyebrow": "The range",
     "title": "Everything we carry, named",
     "copy": "Two headings on the spec sheet. Every line is quoted by the kilo at the time of the order, against that morning's landing — which is why there is no price printed anywhere on this site.",
-    "linesLabel": "lines carried",
-    "cta": "Shop the range"
+    "all": "Shop all"
   },
   "HowItWorks": {
     "eyebrow": "How we buy",
@@ -174,10 +134,6 @@
     }
   },
   "Cuts": {
-    "eyebrow": "Cuts & handling",
-    "title": "Tell us how you cook it",
-    "copy": "The second question at any counter, and the one most sites never ask. Every line we carry can be prepared five ways, cut to order just before dispatch.",
-    "note": "None of this costs extra, and nothing is cut in advance. Say which one you want in the order notes or on WhatsApp — and if you are not sure, tell us the dish and we will pick for you.",
     "whole": {
       "title": "Whole",
       "arabic": "كامل",
@@ -267,7 +223,16 @@
     "countLabel": "{shown} of {total} lines",
     "filtersOpen": "Filters",
     "filtersClose": "Done",
+    "filtersTitle": "Narrow the counter",
+    "hideFilters": "Hide filters",
+    "showFilters": "Show filters",
     "activeFilters": "{count} active",
+    "stats": {
+      "lines": "Lines on the ice",
+      "headings": "Headings",
+      "waters": "Waters",
+      "cuts": "Ways to cut it"
+    },
     "empty": {
       "title": "Nothing matches that",
       "copy": "Try another heading, another water, or a different cut. The counter carries sixteen lines in all — clearing the filters shows every one of them.",
@@ -307,7 +272,7 @@
   },
   "Product": {
     "views": {
-      "onIce": "On ice",
+      "outOfWater": "Out of the water",
       "inWater": "In the water",
       "onPlate": "On the plate"
     },

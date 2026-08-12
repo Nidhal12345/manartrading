@@ -27,7 +27,7 @@ export default async function HowItWorks() {
       <div className="container-x">
         <SectionIntro
           light
-          index="05"
+          index="02"
           eyebrow={t("eyebrow")}
           title={t("title")}
         />

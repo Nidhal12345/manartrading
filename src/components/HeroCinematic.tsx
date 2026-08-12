@@ -35,8 +35,8 @@ import { whatsappHref } from "@/lib/contact";
  * and it was the category default this site exists to refuse. The surface is
  * the subject here, read from the quay, and the paint above it is unchanged.
  *
- * `pt-[112px]` clears the fixed header: a 36px cutoff strip, a 74px nav row and
- * the 2px scroll rule.
+ * `pt-[76px]` clears the fixed header, which is a 74px nav row and the 2px
+ * scroll rule.
  */
 export default function HeroCinematic() {
   const t = useTranslations("Hero");
@@ -73,7 +73,7 @@ export default function HeroCinematic() {
     >
       {/* Topsides. A plain band of cobalt above the waterline — it carries no
           copy, so the paint and the drip line are the whole statement. */}
-      <div className="relative z-10 bg-hull pt-[112px]">
+      <div className="relative z-10 bg-hull pt-[76px]">
         {/* Cobalt is taped over tar, so the drips that escape the line are
             cobalt and they run down into the dark field below. */}
         <div

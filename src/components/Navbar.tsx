@@ -50,9 +50,12 @@ export default function Navbar() {
     };
   }, [open]);
 
-  // every page except a product detail opens on a dark painted hero
-  const overHero = !pathname.startsWith("/shop/");
-  const light = overHero && !scrolled;
+  /* Which heroes are dark paint, and therefore want light nav ink before the
+     first scroll. Home, about and contact open on a painted field; the counter
+     opens on the tide field and a product detail opens on a breadcrumb strip,
+     so everything under /shop needs tar ink from the first pixel. */
+  const overDarkHero = !pathname.startsWith("/shop");
+  const light = overDarkHero && !scrolled;
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -60,34 +63,6 @@ export default function Navbar() {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50">
-        {/* ---------- cutoff strip ----------
-            Section 0. The single most useful thing a fish counter can say above
-            the fold, and the thing every competitor buries: when to order by to
-            eat it tonight.
-
-            Deliberately static. The rotating trust bars on the competitor sites
-            cycle the same claim three or four ways, which trains people to
-            ignore the strip entirely. One message, always readable. */}
-        <div className="bg-tar text-limewash">
-          <div className="container-x flex h-9 items-center justify-between gap-4">
-            <p className="flex min-w-0 items-center gap-2.5 text-[12px]">
-              <span
-                aria-hidden="true"
-                className="h-1.5 w-1.5 shrink-0 bg-oxide"
-              />
-              <span className="truncate">{t("cutoff")}</span>
-            </p>
-            <a
-              href={whatsappHref()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="label shrink-0 text-limewash/70 underline-offset-4 transition-colors hover:text-limewash hover:underline"
-            >
-              {t("whatsapp")}
-            </a>
-          </div>
-        </div>
-
         <div
           className={`transition-colors duration-500 ${
             scrolled
@@ -184,7 +159,7 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-[55] overflow-y-auto bg-tar lg:hidden"
           >
-            <div className="container-x flex h-[74px] items-center justify-between pt-9">
+            <div className="container-x flex h-[74px] items-center justify-between">
               <Logo variant="light" />
               <div className="flex items-center gap-3">
                 <LangSwitch light />

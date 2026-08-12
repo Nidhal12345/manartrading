@@ -214,6 +214,7 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Red Sea",
       origin: "Al Lith & Qunfudhah",
       tagline: "Smaller, leaner, and a favourite off the charcoal.",
+      image: "shareefiStudio",
       // Comes in too small to cross-cut into steaks that hold together.
       preparation: ["whole", "cleaned", "filleted", "butterflied"],
     },
@@ -225,7 +226,14 @@ const CATALOGUE: Record<Category, Spec[]> = {
       origin: "Jazan & Farasan Banks",
       tagline: "The undisputed king of the Saudi table.",
       badge: "bestSeller",
-      image: "grouperLanding",
+      // The one line whose photograph is the species on its own row —
+      // `grouperStudio` is Epinephelus coioides, not a market frame that
+      // happens to have a grouper in it. Worth pinning here: this is the
+      // best-sellers lead plate, so it is the shot the home page opens with,
+      // and it is cut to clear the carousel's parallax window — the earlier
+      // `grouperSpecimen` ran to 94% of the frame width and lost its snout and
+      // tail there. See the note on the key in src/lib/images.ts.
+      image: "grouperStudio",
     },
     {
       name: "Parrotfish",
@@ -234,6 +242,7 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Red Sea",
       origin: "Farasan Islands",
       tagline: "Bright as a coral reef, mild as they come.",
+      image: "parrotfishStudio",
       preparation: ["whole", "cleaned", "filleted", "butterflied"],
     },
     {
@@ -243,6 +252,7 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Red Sea",
       origin: "Al Lith & Qunfudhah",
       tagline: "The everyday fish that never disappoints.",
+      image: "emperorStudio",
     },
     {
       name: "Kingfish (Spanish Mackerel)",
@@ -264,6 +274,7 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Imported",
       origin: "Greece & Turkey",
       tagline: "Salt-baked or grilled whole, nothing else needed.",
+      image: "seaBreamStudio",
       preparation: ["whole", "cleaned", "filleted", "butterflied"],
     },
     {
@@ -273,6 +284,7 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Imported",
       origin: "Greece & Turkey",
       tagline: "Plate-sized, whole, and impossible to get wrong.",
+      image: "seaBassStudio",
       preparation: ["whole", "cleaned", "filleted", "butterflied"],
     },
     {
@@ -282,6 +294,7 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Arabian Gulf",
       origin: "Qatif & Tarout Bay",
       tagline: "Small, sweet, and eaten whole with your hands.",
+      image: "rabbitfishStudio",
       // A 300 g fish. Steaking or filleting it would leave nothing on the plate.
       preparation: ["whole", "cleaned", "butterflied"],
     },
@@ -341,6 +354,7 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Arabian Gulf",
       origin: "Qatif & Tarout Bay",
       tagline: "Blue swimmer crab, straight from the trap.",
+      image: "crabStudio",
     },
     {
       name: "Octopus",
@@ -349,6 +363,7 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Red Sea",
       origin: "Jeddah coastline",
       tagline: "Gutted, cleaned, and ready for a long slow braise.",
+      image: "octopusStudio",
     },
     {
       name: "Squid",

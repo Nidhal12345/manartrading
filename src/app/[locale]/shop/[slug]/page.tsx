@@ -41,10 +41,10 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <>
-      {/* The breadcrumb rail clears the 112px fixed header and sits on the
+      {/* The breadcrumb rail clears the 76px fixed header and sits on the
           site's 2px rule rather than a hairline, so it reads as the top edge of
           a painted plate. */}
-      <div className="border-b-2 border-tar/15 pt-[112px]">
+      <div className="border-b-2 border-tar/15 pt-[76px]">
         <nav
           aria-label="Breadcrumb"
           className="container-x label flex flex-wrap items-center gap-2.5 py-4 text-rope"
@@ -67,7 +67,7 @@ export default async function ProductPage({ params }: Props) {
 
       <ProductDetail product={product} />
 
-      <section className="border-t-2 border-tar bg-chalk py-20 lg:py-28">
+      <section className="border-t-2 border-tar bg-tide py-20 lg:py-28">
         <div className="container-x">
           <SectionIntro
             eyebrow={t("related.eyebrow")}

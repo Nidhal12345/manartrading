@@ -6,12 +6,10 @@ import HeroCinematic from "@/components/HeroCinematic";
 import BestSellers, { type BestSellerLine } from "@/components/BestSellers";
 import AudienceFork from "@/components/AudienceFork";
 import Offerings, { type OfferingStats } from "@/components/Offerings";
-import TwoSeas from "@/components/TwoSeas";
 import CategoryShowcase, {
   type ShowcaseCard,
 } from "@/components/CategoryShowcase";
 import HowItWorks from "@/components/HowItWorks";
-import CutsAndHandling from "@/components/CutsAndHandling";
 import Faq from "@/components/Faq";
 import Reveal from "@/components/Reveal";
 import { SectionIntro } from "@/components/Decor";
@@ -22,9 +20,9 @@ import { PHONE, PHONE_HREF, whatsappHref } from "@/lib/contact";
 /**
  * The home page.
  *
- * Ten sections, in the order a buyer needs them: the world, then the shelf, then
- * the fork, then the range, then how it works, then the questions, then one
- * conversation.
+ * Eight sections, in the order a buyer needs them: the world, then the shelf,
+ * then the range, then how it works, then the fork, then today's counter, then
+ * the questions, then one conversation.
  *
  * The best sellers sit second on purpose. The hero states the world and names no
  * fish — its top band is empty cobalt — so the first concrete answer the page
@@ -32,7 +30,27 @@ import { PHONE, PHONE_HREF, whatsappHref } from "@/lib/contact";
  * the first species on the page was five viewports down.
  *
  * It carries no section index of its own: it is the shelf, not a numbered step
- * in the argument, so the numbered run starts at the audience fork below it.
+ * in the argument, so the numbered run starts at the range below it.
+ *
+ * The range and how-it-works were moved up above the fork. The shelf now hands
+ * straight to the two doors into the catalogue and then to how the fish is
+ * bought, which is the commercial spine of the page; the fork reads as the case
+ * behind it. The consequence is that the household / trade split no longer
+ * happens before anyone has been asked to browse, which is a trade-off
+ * PRODUCT.md has an opinion about — see the note on AudienceFork.
+ *
+ * The section indices are hardcoded per component, so reordering these means
+ * renumbering: the run is range 01, how it works 02, counter 03, questions 04.
+ *
+ * The fork is not in that run and carries no index. It is a branch off the
+ * argument rather than a step in it — the same reasoning that keeps the shelf
+ * out of the numbering — so it opens on its headline alone, and it is the only
+ * section on the page that does.
+ *
+ * The fields still alternate with no two adjacent the same — hull, chalk, hull,
+ * tide, tar, limewash, tar — and every waterline drip still lands on a light
+ * ground where it can be seen. The fork is the page's one cold light passage:
+ * `tide` between the cobalt above it and the tar below.
  *
  * Three blocks came off this page rather than being restyled, all for the same
  * reason — PRODUCT.md records them as invented, and a redesign that restyles
@@ -43,15 +61,16 @@ import { PHONE, PHONE_HREF, whatsappHref } from "@/lib/contact";
  *   - four counters: 17 years, 60+ partner boats, 2.4 t landed daily, 9 sites.
  *
  * The FAQ in their place is proof of a kind this business can actually give.
- * When real attributable quotes exist, they belong between sections 9 and 10.
+ * When real attributable quotes exist, they belong between the questions and the
+ * close.
  */
 
 /** Whole fish only — the shellfish lines are their own board on the counter. */
 const WHOLE_FISH: Category = "Fish";
 
 /**
- * Derived on the server so the whole product array is never serialised into the
- * client bundle just for two numbers.
+ * Counted off the catalogue at build time rather than written into the copy, so
+ * the two figures the counter prints cannot drift from what the shop carries.
  */
 function offeringStats(): OfferingStats {
   return {
@@ -61,27 +80,21 @@ function offeringStats(): OfferingStats {
 }
 
 /**
- * The range, joined from `@/data/categories` to the lines the counter actually
- * sells. The two files share their category names, which is what joins them.
+ * The range, straight off `@/data/categories`.
  *
- * The card names its lines, so it carries the catalogue's own list rather than a
- * rating rolled up from placeholder review counts.
+ * The section is a row of doors now, so a card needs its heading, its
+ * photograph and where it goes — nothing rolled up from the catalogue. The line
+ * count and the named species that used to be printed here came off with it:
+ * the shop lists them, and it lists the ones that are actually on ice.
  */
 function showcaseCards(): ShowcaseCard[] {
-  return productCategories.map((c) => {
-    const lines = products.filter((p) => p.category === c.name);
-    return {
-      slug: c.slug,
-      name: c.name,
-      arabic: c.arabic,
-      href: c.href,
-      image: c.image,
-      count: lines.length,
-      // Trimmed of the parenthetical alternates the catalogue carries for
-      // search — "Emperor (Spangled Emperor)" is one name on a painted board.
-      lines: lines.map((p) => p.name.replace(/\s*\(.*?\)/g, "")),
-    };
-  });
+  return productCategories.map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    arabic: c.arabic,
+    href: c.href,
+    image: c.image,
+  }));
 }
 
 /**
@@ -115,23 +128,19 @@ export default async function HomePage() {
 
       <BestSellers lines={bestSellerLines()} total={products.length} />
 
-      <AudienceFork />
-
-      <Offerings stats={offeringStats()} />
-
-      <TwoSeas />
-
       <CategoryShowcase cards={showcaseCards()} />
 
       <HowItWorks />
 
-      <CutsAndHandling />
+      <AudienceFork />
+
+      <Offerings stats={offeringStats()} />
 
       {/* ---------- questions ---------- */}
       <section className="bg-limewash py-24 md:py-32">
         <div className="container-x">
           <SectionIntro
-            index="07"
+            index="04"
             eyebrow={t("faq.eyebrow")}
             title={t("faq.title")}
             copy={t("faq.copy")}

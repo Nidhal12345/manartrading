@@ -101,7 +101,10 @@ export type Product = {
  * ------------------------------------------------------------------ */
 
 type CategoryDefaults = {
-  images: { image: ImageKey; wild: ImageKey; cooked: ImageKey };
+  /**
+   * Gallery shots only. The product photograph is never defaulted — see `Spec.image`.
+   */
+  images: { wild: ImageKey; cooked: ImageKey };
   palette: [string, string, string];
   season: string;
   method: string;
@@ -120,7 +123,7 @@ type CategoryDefaults = {
 
 const DEFAULTS: Record<Category, CategoryDefaults> = {
   Fish: {
-    images: { image: "mackerelBlue", wild: "wildSpotted", cooked: "charcoalGrill" },
+    images: { wild: "wildSpotted", cooked: "charcoalGrill" },
     palette: ["#123C63", "#2A6E9E", "#7FC5D9"],
     season: "Year-round, peak Oct – Mar",
     method: "Hand line & net",
@@ -144,7 +147,7 @@ const DEFAULTS: Record<Category, CategoryDefaults> = {
   },
 
   "Crustaceans & Seafood": {
-    images: { image: "prawnsOnIce", wild: "wildReef", cooked: "grilledPlate" },
+    images: { wild: "wildReef", cooked: "grilledPlate" },
     palette: ["#C1443C", "#F0785C", "#FBC0A4"],
     season: "Year-round, peak Oct – Apr",
     method: "Trap, trawl & net caught",
@@ -185,14 +188,17 @@ type Spec = {
   /** Overrides the category default where this line cuts differently. */
   preparation?: Preparation[];
   /**
-   * Overrides the category default photo where a species-specific shot exists.
+   * This line's own studio photograph, from the counter's set in
+   * `src/lib/images.ts`.
    *
-   * Without it every Fish line shares one mackerel photograph and every
-   * shellfish line shares one bowl of prawns — invisible while the two shots
-   * only ever appear on separate pages, and obvious the moment six lines are
-   * shown side by side.
+   * Required, deliberately. It used to be optional with a per-category
+   * fallback, and the two lines that never got their own frame — Bayadh and
+   * Lobster — silently showed a different species: Bayadh a kingfish, Lobster a
+   * bowl of prawns. Nothing failed, nothing warned, and the shop grid displayed
+   * the wrong animal under the right name. Making it required moves that class
+   * of bug to compile time: a new line cannot ship without its photograph.
    */
-  image?: ImageKey;
+  image: ImageKey;
 };
 
 const CATALOGUE: Record<Category, Spec[]> = {
@@ -205,7 +211,10 @@ const CATALOGUE: Record<Category, Spec[]> = {
       origin: "Farasan Banks",
       tagline: "The one the Jeddah counters sell out of first.",
       badge: "premium",
-      image: "blueTableFish",
+      // The frame is the coral trout `scientific` names, not a trevally — the
+      // English name on this row is the client's and does not match its own
+      // species. Flagged on the photo's `alt` too; theirs to reconcile.
+      image: "trevallyStudio",
     },
     {
       name: "Shareefi",
@@ -226,13 +235,6 @@ const CATALOGUE: Record<Category, Spec[]> = {
       origin: "Jazan & Farasan Banks",
       tagline: "The undisputed king of the Saudi table.",
       badge: "bestSeller",
-      // The one line whose photograph is the species on its own row —
-      // `grouperStudio` is Epinephelus coioides, not a market frame that
-      // happens to have a grouper in it. Worth pinning here: this is the
-      // best-sellers lead plate, so it is the shot the home page opens with,
-      // and it is cut to clear the carousel's parallax window — the earlier
-      // `grouperSpecimen` ran to 94% of the frame width and lost its snout and
-      // tail there. See the note on the key in src/lib/images.ts.
       image: "grouperStudio",
     },
     {
@@ -262,10 +264,7 @@ const CATALOGUE: Record<Category, Spec[]> = {
       origin: "Dammam & Qatif landings",
       tagline: "The grill fish this country runs on.",
       badge: "bestSeller",
-      // The category default already *is* the spotted mackerel shot, but it is
-      // stated here so a change to the Fish default cannot silently take the
-      // one photograph that names this line correctly.
-      image: "mackerelBlue",
+      image: "kingfishStudio",
     },
     {
       name: "Sea Bream",
@@ -305,6 +304,7 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Imported",
       origin: "Lake Victoria",
       tagline: "Thick white loins that hold their shape.",
+      image: "bayadhStudio",
       // Arrives as loins, not as a whole fish, so the head-on cuts do not apply.
       preparation: ["steaked", "filleted"],
     },
@@ -319,9 +319,7 @@ const CATALOGUE: Record<Category, Spec[]> = {
       origin: "Gulf trawl grounds",
       tagline: "Heads on, because that is where the flavour hides.",
       badge: "bestSeller",
-      // Same reasoning as Kingfish: this is the category default today, pinned
-      // so a change to the shellfish default cannot take it away.
-      image: "prawnsOnIce",
+      image: "prawnStudio",
       // Peeled and deveined is "cleaned"; split down the back for a skewer is
       // "butterflied" — the same two words the fish counter uses.
       preparation: ["whole", "cleaned", "butterflied"],
@@ -334,7 +332,7 @@ const CATALOGUE: Record<Category, Spec[]> = {
       origin: "Farasan Banks",
       tagline: "The whole animal, presented as it came out of the trap.",
       badge: "premium",
-      image: "spinyLobster",
+      image: "crayfishStudio",
       // Halved lengthways for the grill, which is the butterfly cut here.
       preparation: ["whole", "cleaned", "butterflied"],
     },
@@ -345,6 +343,9 @@ const CATALOGUE: Record<Category, Spec[]> = {
       waters: "Imported",
       origin: "Nova Scotia, Canada",
       tagline: "Cold-water claws, the ones people photograph.",
+      // The one frame in the set that arrives cooked rather than raw — the
+      // client's own shot, noted on the photo's `alt` as well.
+      image: "lobsterStudio",
       preparation: ["whole", "cleaned", "butterflied"],
     },
     {
@@ -373,7 +374,7 @@ const CATALOGUE: Record<Category, Spec[]> = {
       origin: "Gulf trawl grounds",
       tagline: "Whole, tubed or ringed — say the word.",
       badge: "chefsPick",
-      image: "squidOnIce",
+      image: "squidStudio",
       // Rings are a cross-cut through the tube, which is this line's steaking.
       preparation: ["whole", "cleaned", "steaked"],
     },
@@ -438,7 +439,7 @@ function build(category: Category, spec: Spec): Product {
     rating,
     reviews,
     ...(spec.badge ? { badge: spec.badge } : {}),
-    image: spec.image ?? d.images.image,
+    image: spec.image,
     wild: d.images.wild,
     cooked: d.images.cooked,
     palette: d.palette,

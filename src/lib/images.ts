@@ -91,62 +91,15 @@ export const registry = {
     "Prawns resting in a bowl of crushed ice",
     "#b4726a",
   ),
-  /* The three below were added for the best-sellers section: the registry had
-     nothing for spiny lobster or squid, and every Fish line was sharing one
-     mackerel photograph. `alt` names what is actually in the frame — a caption
-     that claimed the species the line is sold under would be a caption that
-     lies. */
+  /* Documentary frames — whatever the market had out that morning. These are
+     not product photography: `alt` names what is actually in the shot, because
+     a caption claiming the species a line is sold under would be a caption that
+     lies. Two of them still carry the home page's category cards; the rest are
+     library. */
   grouperLanding: e(
     "unsplash-rYwqoxleZbU",
     "Spotted grouper laid out on a landing table beside crab and tuna",
     "#767279",
-  ),
-  /* The one specimen plate in an otherwise documentary set, and the only shot on
-     the site that names its species exactly: this is Epinephelus coioides, the
-     Grouper line's own fish, where every other frame is whatever the market had
-     out that morning. Kept as a plate rather than cropped in tight so the sold
-     shape — head, spines, tail — is all legible at card scale.
-
-     Reframed on the way into the repo: the supplied file was a 2K square with
-     the fish across the middle third, which any object-cover slot on the site
-     would have clipped at the snout and the tail. It is now 4:5 (the aspect of
-     the card well and the detail lead), fish full width, and its studio white
-     multiplied down onto `limewash` so the ground is the page's own white
-     instead of a raw #ffffff hole in the palette. */
-  grouperSpecimen: e(
-    "manar-epinephelus-coioides",
-    "A whole orange-spotted grouper laid out side-on against a plain pale ground",
-    "#ece9e0",
-  ),
-  /* The Grouper line's card shot, and the one frame on the site cut to the crop
-     spec rather than to the frame it arrived in. `grouperSpecimen` above is the
-     same species on white and stays as the reference plate; this is the one that
-     ships, because it survives every slot and that one does not.
-
-     Framed against the four slots `product.image` lands in, which between them
-     leave a narrower safe box than any single one implies:
-
-       shop grid card + detail lead   aspect-[4/5], and 4:5 is why the file is
-       detail thumbnail              aspect-[4/3] — keeps 60% of the height
-       best-sellers carousel         the parallax layer hangs 14% past its
-                                     window each side, so only the middle 78.1%
-                                     of the width is ever on screen
-
-     So: 4:5, fish 76.7% of the width and 23% of the height, centred on both
-     axes to within 0.7%. The supplied file was already 4:5 but sat the fish at
-     55.6% of the width — its tail reached 91.4%, well outside the carousel's
-     78.1% window — so it is recentred here, not just rescaled. Sharpening is
-     masked to the animal: the ground is a soft marble that carries nothing, and
-     sharpening it cost 226 KB in grain no one reads.
-
-     Its ground is `tide`, not `limewash`. That is a real difference from every
-     other card in the grid and it is the reason this shot works — meltwater off
-     a crate of flake ice is the coldest ground in the palette, and the fish is
-     the warmest thing on the page against it. */
-  grouperStudio: e(
-    "manar-epinephelus-coioides-studio",
-    "A whole orange-spotted grouper laid side-on on pale blue ice",
-    "#c3ced7",
   ),
   spinyLobster: e(
     "unsplash-OJPBfUqgsRU",
@@ -158,50 +111,137 @@ export const registry = {
     "Fresh whole squid on ice with lime and coriander",
     "#78735c",
   ),
-  parrotfishStudio: e(
-    "manar-parrotfish",
-    "A whole vivid blue-and-orange parrotfish laid side-on on pale blue ice",
-    "#b8ccd8",
-  ),
-  shareefiStudio: e(
-    "manar-shareefi",
-    "A whole grey-spotted shareefi laid side-on on pale blue ice",
-    "#b4c5cf",
-  ),
-  emperorStudio: e(
-    "manar-emperor",
-    "A whole orange-gold emperor fish laid side-on on pale blue ice",
-    "#c4cdd4",
-  ),
-  seaBreamStudio: e(
-    "manar-sea-bream",
-    "A whole silver-striped sea bream laid side-on on pale blue ice",
-    "#bac8d2",
-  ),
-  seaBassStudio: e(
-    "manar-sea-bass",
-    "A whole silver sea bass laid side-on on pale blue ice",
-    "#b6c8d4",
-  ),
-  rabbitfishStudio: e(
-    "manar-rabbitfish",
-    "A whole grey rabbitfish with prominent spines on pale blue ice",
-    "#c0cdd5",
-  ),
-  octopusStudio: e(
-    "manar-octopus",
-    "A whole octopus with curled tentacles on pale blue ice",
-    "#bdc9d0",
-  ),
-  crabStudio: e(
-    "manar-crab",
-    "A blue swimmer crab displayed from above on pale blue ice",
-    "#b8c6d0",
+  /* The first specimen plate the client supplied, shot on studio white, and now
+     superseded by the set below — kept as the reference frame for the Grouper
+     line because it is the one shot whose species is documented exactly
+     (Epinephelus coioides). Its studio white is multiplied down onto `limewash`
+     so the ground is the page's own white rather than a raw #ffffff hole in the
+     palette. Nothing renders it. */
+  grouperSpecimen: e(
+    "manar-epinephelus-coioides",
+    "A whole orange-spotted grouper laid out side-on against a plain pale ground",
+    "#ece9e0",
   ),
   tunaPile: e(
     "photo-1766998112558-c8632e66cc49",
     "Freshly landed tuna stacked at the quay",
     "#4c5a63",
+  ),
+
+  /* ---------- the counter's studio set ---------- */
+  /**
+   * One frame per line on the spec sheet — sixteen of them, and the reason the
+   * shop grid can be frameless: every shot is a single specimen on the same
+   * mottled pale ice, so the photographs tile into a grid on their own without
+   * a plate drawn round each one.
+   *
+   * Imported by scripts/import-studio-photos.mjs, which maps the client's
+   * Arabic filenames onto these keys, encodes the supplied PNGs to the JPEGs
+   * `src()` serves, and prints the `tone` values below — each one is the frame's
+   * measured average colour, not a guess, so the blur-up placeholder resolves
+   * into the photograph rather than flashing a different blue first.
+   *
+   * Geometry is the client's: 1122x1402, which is 4:5 exactly, and 4:5 is the
+   * aspect of both slots that show the whole frame (the shop grid card and the
+   * detail lead). Nothing is re-cropped on the way in.
+   *
+   * KNOWN CLIP — the best-sellers carousel hangs its parallax layer 14% past
+   * its window each side, so it only ever shows the middle 78.1% of the width,
+   * and this set frames its specimens out to 92 - 98%. Measured with
+   * `node scripts/import-studio-photos.mjs --verify`: of the six lines on that
+   * shelf, Grouper (92.7%), Kingfish (97.9%), Trevally (92.1%) and Squid
+   * (94.1%) lose a tail tip, Prawn sits on the line at 88.8%, and only Crayfish
+   * (76.8%) clears it comfortably. Nothing else on the site crops the width —
+   * the shop card and the detail lead are both 4:5 and show the whole frame.
+   * Fixing it means either recomposing the frames or reducing that overhang —
+   * an open decision, not an oversight.
+   *
+   * `alt` describes the animal as photographed, which is not always the name the
+   * line is sold under: the Trevally line's frame is the coral trout its own
+   * `scientific` field names, and the Lobster arrives cooked while every other
+   * frame in the set is raw.
+   */
+  /* Fish, in catalogue order */
+  trevallyStudio: e(
+    "manar-trevally",
+    "A whole red-orange spotted coral trout laid side-on on pale blue ice",
+    "#d0d2da",
+  ),
+  shareefiStudio: e(
+    "manar-shareefi",
+    "A whole deep-red shareefi laid side-on on pale blue ice",
+    "#cbced4",
+  ),
+  grouperStudio: e(
+    "manar-grouper",
+    "A whole brown-spotted grouper laid side-on on pale blue ice",
+    "#cfdae4",
+  ),
+  parrotfishStudio: e(
+    "manar-parrotfish",
+    "A whole vivid blue-and-orange parrotfish laid side-on on pale blue ice",
+    "#c7d1d8",
+  ),
+  emperorStudio: e(
+    "manar-emperor",
+    "A whole rose-pink emperor with a gold tail laid side-on on pale blue ice",
+    "#d1d9e1",
+  ),
+  kingfishStudio: e(
+    "manar-kingfish",
+    "A whole silver-blue kingfish with barred flanks laid side-on on pale blue ice",
+    "#c6d6df",
+  ),
+  seaBreamStudio: e(
+    "manar-sea-bream",
+    "A whole silver sea bream laid side-on on pale blue ice",
+    "#c0d0de",
+  ),
+  seaBassStudio: e(
+    "manar-sea-bass",
+    "A whole slender silver sea bass laid side-on on pale blue ice",
+    "#c0cedb",
+  ),
+  rabbitfishStudio: e(
+    "manar-rabbitfish",
+    "A whole olive-grey rabbitfish laid side-on on pale blue ice",
+    "#c6cfd4",
+  ),
+  bayadhStudio: e(
+    "manar-bayadh",
+    "A whole silver-grey Nile perch with a yellow tail laid side-on on pale blue ice",
+    "#c4d1da",
+  ),
+  /* Crustaceans & Seafood, in catalogue order */
+  prawnStudio: e(
+    "manar-prawn",
+    "A single whole tiger prawn, head on, curled on pale blue ice",
+    "#c3d0d8",
+  ),
+  crayfishStudio: e(
+    "manar-crayfish",
+    "A whole spiny lobster seen from above with its antennae fanned out on pale blue ice",
+    "#cdd4d4",
+  ),
+  lobsterStudio: e(
+    "manar-lobster",
+    "A whole cooked red lobster seen from above with its claws forward on pale blue ice",
+    "#c4c0c4",
+  ),
+  crabStudio: e(
+    "manar-crab",
+    "A blue swimmer crab seen from above on pale blue ice",
+    "#c9d0d4",
+  ),
+  octopusStudio: e(
+    "manar-octopus",
+    "A whole octopus with curled tentacles on pale blue ice",
+    "#c8d0d6",
+  ),
+  squidStudio: e(
+    "manar-squid",
+    "A whole squid with its mantle and tentacles laid out on pale blue ice",
+    "#cfd6de",
   ),
 
   /* ---------- in the water ---------- */

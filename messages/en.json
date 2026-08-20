@@ -21,6 +21,7 @@
     "orderNow": "Order now",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
+    "breadcrumb": "Breadcrumb",
     "switchLanguage": "Change language",
     "switchLanguageEn": "English",
     "whatsapp": "WhatsApp us",
@@ -207,11 +208,18 @@
     }
   },
   "Shop": {
-    "eyebrow": "The counter",
     "title": "Everything on the ice today",
-    "copy": "Two headings, five ways of cutting them, three waters. Availability moves with the boats, so the list is rebuilt as the fish lands — and every line is quoted by the kilo when you order.",
+    "copy": "Availability moves with the boats, so the board is rebuilt as the fish lands. Every line is cut the way you ask for it, and quoted by the kilo when you order.",
     "crumb": "Shop",
+    "meta": {
+      "title": "Shop the catch",
+      "description": "Every line on the counter — {lines} of them, from the Red Sea, the Arabian Gulf and imported. Filter by heading, by water and by cut: whole, cleaned, steaked, filleted or butterflied. Cut to order, quoted by the kilo."
+    },
+    "manifest": {
+      "title": "What the counter carries"
+    },
     "searchLabel": "Search the counter",
+    "searchClear": "Clear the search",
     "searchPlaceholder": "Grouper, Kanad, shrimp…",
     "categoryLabel": "Heading",
     "waterLabel": "Water",
@@ -221,12 +229,24 @@
     "allPreps": "Any cut",
     "clear": "Clear filters",
     "countLabel": "{shown} of {total} lines",
+    "ratingLabel": "Rated {rating} out of 5",
+    "reviewCount": "({count, plural, one {# review} other {# reviews}})",
     "filtersOpen": "Filters",
     "filtersClose": "Done",
     "filtersTitle": "Narrow the counter",
     "hideFilters": "Hide filters",
     "showFilters": "Show filters",
     "activeFilters": "{count} active",
+    "applied": {
+      "title": "Showing",
+      "remove": "Remove {term}",
+      "search": "Search: {term}"
+    },
+    "board": {
+      "lot": "Lot {n}",
+      "tally": "{count, plural, one {# line} other {# lines}}",
+      "cuts": "Cut: {list}"
+    },
     "stats": {
       "lines": "Lines on the ice",
       "headings": "Headings",
@@ -235,7 +255,7 @@
     },
     "empty": {
       "title": "Nothing matches that",
-      "copy": "Try another heading, another water, or a different cut. The counter carries sixteen lines in all — clearing the filters shows every one of them.",
+      "copy": "Drop one of the terms above, or clear them all. The counter carries {total} lines in this catalogue and every one of them is one click away.",
       "cta": "Clear all filters"
     },
     "waters": {
@@ -254,7 +274,6 @@
     },
     "note": "Cut to order, free of charge, right before dispatch — never in advance. If a line will not take the cut you want, it does not appear under that filter.",
     "before": {
-      "eyebrow": "Good to know",
       "title": "Before you order",
       "prep": {
         "q": "How is the fish prepared?",

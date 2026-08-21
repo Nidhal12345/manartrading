@@ -63,13 +63,7 @@ export default async function Offerings({ stats }: { stats: OfferingStats }) {
             which keeps it exact when a scrollbar is taking width off the page. */}
         <div className="flex flex-col justify-center px-5 py-20 md:px-10 lg:py-24 lg:pe-14 lg:ps-[max(2.5rem,calc(100%-39.5rem))] xl:pe-20">
           <div className="w-full">
-            <SectionIntro
-              light
-              index="03"
-              eyebrow={t("eyebrow")}
-              title={t("title")}
-              copy={t("copy")}
-            />
+            <SectionIntro light title={t("title")} copy={t("copy")} />
 
             {/* The chalked figures, ruled rather than carded. `numeral` keeps
                 Latin digits in both locales, so the pair lines up whichever way

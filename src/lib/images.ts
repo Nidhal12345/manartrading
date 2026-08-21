@@ -94,8 +94,8 @@ export const registry = {
   /* Documentary frames — whatever the market had out that morning. These are
      not product photography: `alt` names what is actually in the shot, because
      a caption claiming the species a line is sold under would be a caption that
-     lies. Two of them still carry the home page's category cards; the rest are
-     library. */
+     lies. All three are library now; the home page's category cards moved to the
+     purpose-shot set further down this file. */
   grouperLanding: e(
     "unsplash-rYwqoxleZbU",
     "Spotted grouper laid out on a landing table beside crab and tuna",
@@ -242,6 +242,44 @@ export const registry = {
     "manar-squid",
     "A whole squid with its mantle and tentacles laid out on pale blue ice",
     "#cfd6de",
+  ),
+
+  /* ---------- the home page's three doors ---------- */
+  /**
+   * One frame per tile in `CategoryShowcase` — the whole counter, the fish, the
+   * shellfish — supplied by the client as `category-*.png` and imported by
+   * scripts/import-category-photos.mjs, which measured the tones below.
+   *
+   * These are the darkest photographs on the site by a wide margin: the three
+   * frames they replaced averaged `#5f6660`, `#4a7c9b` and `#b4726a`, and this
+   * set is lit as a low-key still life on wet near-black slate, close enough to
+   * `tar` that the band now meets its own ground almost without a seam.
+   *
+   * Square, 1024 x 1024, and the tiles crop hard — a phone shows a 100vw x 400px
+   * band that keeps 98% of the width, a desktop column keeps 75%. The two
+   * heading frames take that without losing their subject because both are
+   * composed as a ring: the catch is massed around the edges and the middle of
+   * the frame is bare slate, which is exactly where the tile's centred name plate
+   * lands. That is the composition to match if these are ever reshot — a frame
+   * with its subject in the middle would put a fish behind the lettering.
+   *
+   * And as with `lobsterStudio`, `alt` says cooked where the shot is cooked: the
+   * shellfish frame is a cooked arrangement, while the counter sells raw.
+   */
+  categoryAll: e(
+    "manar-category-all",
+    "Whole red and silver fish stacked on crushed ice with head-on prawns and a crab in front, on dark slate",
+    "#352b1f",
+  ),
+  categoryFish: e(
+    "manar-category-fish",
+    "Whole silver sea bream ringed around wet dark slate with scattered crushed ice",
+    "#423a34",
+  ),
+  categoryCrustaceans: e(
+    "manar-category-crustaceans",
+    "Cooked crabs and large prawns ringed on crushed ice with wedges of lemon",
+    "#6b412b",
   ),
 
   /* ---------- in the water ---------- */

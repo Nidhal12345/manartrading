@@ -46,7 +46,7 @@
     "prev": "Previous lines",
     "next": "Next lines",
     "allCta": "Shop all {total} lines",
-    "askCta": "Ask what is on ice today",
+    "askCta": "Ask our team",
     "whatsappMessage": "Hello — what do you have on ice today?",
     "lines": {
       "fish-grouper": {
@@ -100,7 +100,6 @@
     }
   },
   "Offerings": {
-    "eyebrow": "Today's counter",
     "title": "What the counter carries",
     "copy": "Whole fish landed on the Red Sea and Gulf coasts, shellfish inside their season, and a standing list for kitchens that order the same thing every day. Tell us how you are cooking it and it is cut that way before it leaves us.",
     "fishLabel": "Whole fish",
@@ -112,13 +111,11 @@
     "caveat": "This is the range we carry, not a live landing report. What is actually on ice on any given morning depends on the boats, the weather and the season — message us and we will tell you what is there today."
   },
   "Range": {
-    "eyebrow": "The range",
     "title": "Everything we carry, named",
     "copy": "Two headings on the spec sheet. Every line is quoted by the kilo at the time of the order, against that morning's landing — which is why there is no price printed anywhere on this site.",
     "all": "Shop all"
   },
   "HowItWorks": {
-    "eyebrow": "How we buy",
     "title": "How it works",
     "cta": "Shop now",
     "source": {
@@ -194,12 +191,10 @@
   },
   "Home": {
     "faq": {
-      "eyebrow": "Questions",
       "title": "What people ask before the first order",
       "copy": "Answered plainly. Where something is not settled yet, this says so rather than inventing a figure."
     },
     "close": {
-      "eyebrow": "One conversation",
       "title": "Eat it tonight.",
       "copy": "Tell us the species, the weight and how you want it cut. We confirm the quote and the delivery window on WhatsApp, and nothing is cut until you say yes.",
       "whatsapp": "Message the counter",
@@ -208,55 +203,18 @@
     }
   },
   "Shop": {
-    "title": "Everything on the ice today",
-    "copy": "Availability moves with the boats, so the board is rebuilt as the fish lands. Every line is cut the way you ask for it, and quoted by the kilo when you order.",
+    "title": "Fish, crustaceans & seafood",
     "crumb": "Shop",
     "meta": {
       "title": "Shop the catch",
-      "description": "Every line on the counter — {lines} of them, from the Red Sea, the Arabian Gulf and imported. Filter by heading, by water and by cut: whole, cleaned, steaked, filleted or butterflied. Cut to order, quoted by the kilo."
+      "description": "Every line on the counter — {lines} of them, fish, crustaceans and seafood, graded fresh every day. Open a line to see how it is cut, or send the order straight through on WhatsApp. Quoted by the kilo when you order."
     },
-    "manifest": {
-      "title": "What the counter carries"
-    },
-    "searchLabel": "Search the counter",
-    "searchClear": "Clear the search",
-    "searchPlaceholder": "Grouper, Kanad, shrimp…",
-    "categoryLabel": "Heading",
-    "waterLabel": "Water",
-    "prepLabel": "Cut",
-    "allCategories": "Everything",
-    "allWaters": "All waters",
-    "allPreps": "Any cut",
-    "clear": "Clear filters",
-    "countLabel": "{shown} of {total} lines",
-    "ratingLabel": "Rated {rating} out of 5",
-    "reviewCount": "({count, plural, one {# review} other {# reviews}})",
-    "filtersOpen": "Filters",
-    "filtersClose": "Done",
-    "filtersTitle": "Narrow the counter",
-    "hideFilters": "Hide filters",
-    "showFilters": "Show filters",
-    "activeFilters": "{count} active",
-    "applied": {
-      "title": "Showing",
-      "remove": "Remove {term}",
-      "search": "Search: {term}"
-    },
+    "orderCta": "Order on WhatsApp",
+    "orderLabel": "Order on WhatsApp — {name}",
+    "orderMessage": "Hello Manar. I would like to order {name}. What is the rate by the kilo today?",
     "board": {
       "lot": "Lot {n}",
-      "tally": "{count, plural, one {# line} other {# lines}}",
-      "cuts": "Cut: {list}"
-    },
-    "stats": {
-      "lines": "Lines on the ice",
-      "headings": "Headings",
-      "waters": "Waters",
-      "cuts": "Ways to cut it"
-    },
-    "empty": {
-      "title": "Nothing matches that",
-      "copy": "Drop one of the terms above, or clear them all. The counter carries {total} lines in this catalogue and every one of them is one click away.",
-      "cta": "Clear all filters"
+      "tally": "{count, plural, one {# line} other {# lines}}"
     },
     "waters": {
       "Red Sea": "Red Sea",
@@ -272,7 +230,7 @@
       "premium": "Premium",
       "chefsPick": "Chef's pick"
     },
-    "note": "Cut to order, free of charge, right before dispatch — never in advance. If a line will not take the cut you want, it does not appear under that filter.",
+    "note": "Cut to order, free of charge, right before dispatch — never in advance. Open a line to see which cuts it takes, then send the order through on WhatsApp.",
     "before": {
       "title": "Before you order",
       "prep": {
@@ -409,9 +367,7 @@
       "title": "What the counter carries",
       "lines": "Lines on the spec sheet",
       "categories": "Categories",
-      "waters": "Waters we buy from",
-      "cuts": "Cuts to order",
-      "note": "These four figures are counted from the catalogue itself, so they cannot drift out of step with what is actually listed."
+      "note": "Both figures are counted from the catalogue itself, so they cannot drift out of step with what is actually listed."
     },
     "cta": {
       "eyebrow": "Talk to us",

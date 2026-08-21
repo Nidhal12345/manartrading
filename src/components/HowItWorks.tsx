@@ -25,12 +25,7 @@ export default async function HowItWorks() {
   return (
     <section className="relative bg-hull py-24 text-limewash md:py-32">
       <div className="container-x">
-        <SectionIntro
-          light
-          index="02"
-          eyebrow={t("eyebrow")}
-          title={t("title")}
-        />
+        <SectionIntro light title={t("title")} />
 
         <div className="mt-14 grid gap-px bg-limewash/20 md:grid-cols-3 lg:mt-16">
           {steps.map((step, i) => (

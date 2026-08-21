@@ -3,7 +3,7 @@
 import Photo from "./ui/Photo";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   motion,
   useReducedMotion,
@@ -42,6 +42,7 @@ export default function HeroCinematic() {
   const t = useTranslations("Hero");
   const nav = useTranslations("Nav");
   const ref = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const reduceMotion = useReducedMotion();
 
   /**
@@ -51,6 +52,51 @@ export default function HeroCinematic() {
    * `onCanPlay`: the latter fires while the first frame is still nothing.
    */
   const [videoPlaying, setVideoPlaying] = useState(false);
+
+  /**
+   * `autoPlay` is a request, and on a phone it is routinely refused. iOS declines
+   * it outright in Low Power Mode, Android declines it under Data Saver, and both
+   * decline it when the decode is not ready at the moment the attribute is read.
+   * The attribute is evaluated once and never retried, so a refusal is permanent
+   * and silent — which is exactly the reported symptom: the hero sits on the
+   * still on a phone and plays on a desktop.
+   *
+   * So play is asked for explicitly, and asked again on the first thing the
+   * visitor does. A muted inline video is allowed to start on any user
+   * activation, and a tap or a scroll anywhere on the page is one — so nothing is
+   * ever presented for them to press. This is background, not content: there is
+   * no control to add, only a request to repeat.
+   */
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+
+    const EVENTS = ["pointerdown", "touchstart", "keydown", "scroll"] as const;
+    let live = true;
+
+    /* Declared as statements rather than consts so the two can refer to each
+       other without an ordering problem. */
+    function detach() {
+      for (const ev of EVENTS) window.removeEventListener(ev, attempt);
+    }
+
+    function attempt() {
+      if (!live || !el.paused) return;
+      /* A rejection here is the browser's policy answer, not a fault, and the
+         still underneath is already the answer to it. Swallowed on purpose. */
+      void el.play().then(detach, () => {});
+    }
+
+    attempt();
+    for (const ev of EVENTS) {
+      window.addEventListener(ev, attempt, { passive: true });
+    }
+
+    return () => {
+      live = false;
+      detach();
+    };
+  }, [reduceMotion]);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -108,6 +154,7 @@ export default function HeroCinematic() {
               fetched either. */}
           {!reduceMotion && (
             <video
+              ref={videoRef}
               autoPlay
               muted
               loop

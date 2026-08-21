@@ -29,9 +29,6 @@ import { PHONE, PHONE_HREF, whatsappHref } from "@/lib/contact";
  * gives is the six lines the counter is asked for by name. Before it existed,
  * the first species on the page was five viewports down.
  *
- * It carries no section index of its own: it is the shelf, not a numbered step
- * in the argument, so the numbered run starts at the range below it.
- *
  * The range and how-it-works were moved up above the fork. The shelf now hands
  * straight to the two doors into the catalogue and then to how the fish is
  * bought, which is the commercial spine of the page; the fork reads as the case
@@ -39,18 +36,28 @@ import { PHONE, PHONE_HREF, whatsappHref } from "@/lib/contact";
  * happens before anyone has been asked to browse, which is a trade-off
  * PRODUCT.md has an opinion about — see the note on AudienceFork.
  *
- * The section indices are hardcoded per component, so reordering these means
- * renumbering: the run is range 01, how it works 02, counter 03, questions 04.
+ * EVERY SECTION OPENS ON ITS HEADLINE. There was a numbered run down this page —
+ * `01 The range`, `02 How we buy`, `03 Today's counter`, `04 Questions`, each a
+ * draft-mark numeral and a small-caps label on a hairline above the heading, plus
+ * an ochre `One conversation` over the close. All of it is gone, and the pattern
+ * is gone with it rather than being restyled.
  *
- * The fork is not in that run and carries no index. It is a branch off the
- * argument rather than a step in it — the same reasoning that keeps the shelf
- * out of the numbering — so it opens on its headline alone, and it is the only
- * section on the page that does.
+ * Two reasons, and the second is the one that settles it. The labels were saying
+ * in two words what the headline underneath said properly in five — "The range"
+ * over "Everything we carry, named" — so the first line a visitor read was a worse
+ * draft of the second, set smaller and pushing the real one further down a phone
+ * screen. And the numerals implied a sequence: eight sections in a counted
+ * argument, to be read in order, when this is a home page that people enter
+ * halfway down from a search result and leave from whichever section answers
+ * them. `about` still carries its numbered run, because that page genuinely is
+ * one argument read front to back.
  *
- * The fields still alternate with no two adjacent the same — hull, chalk, hull,
- * tide, tar, limewash, tar — and every waterline drip still lands on a light
- * ground where it can be seen. The fork is the page's one cold light passage:
- * `tide` between the cobalt above it and the tar below.
+ * What separates the sections now is what was always doing the work: the fields
+ * alternate with no two adjacent the same — hull, chalk, hull, tide, tar,
+ * limewash, tar — and every waterline drip lands on a light ground where it can
+ * be seen. The fork is the page's one cold light passage: `tide` between the
+ * cobalt above it and the tar below. `SectionIntro` drops its whole top row when
+ * given neither an index nor an eyebrow, so there is no leftover hairline.
  *
  * Three blocks came off this page rather than being restyled, all for the same
  * reason — PRODUCT.md records them as invented, and a redesign that restyles
@@ -114,7 +121,6 @@ function bestSellerLines(): BestSellerLine[] {
     name: p.name.replace(/\s*\(.*?\)/g, ""),
     arabic: p.arabic,
     image: p.image,
-    waters: p.waters,
     ...(p.badge ? { badge: p.badge } : {}),
   }));
 }
@@ -139,12 +145,7 @@ export default async function HomePage() {
       {/* ---------- questions ---------- */}
       <section className="bg-limewash py-24 md:py-32">
         <div className="container-x">
-          <SectionIntro
-            index="04"
-            eyebrow={t("faq.eyebrow")}
-            title={t("faq.title")}
-            copy={t("faq.copy")}
-          />
+          <SectionIntro title={t("faq.title")} copy={t("faq.copy")} />
           <div className="mt-14 lg:mt-16">
             <Faq />
           </div>
@@ -157,10 +158,7 @@ export default async function HomePage() {
           <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:items-end lg:gap-16">
             <div>
               <Reveal blur={false}>
-                <span className="label text-ochre">{t("close.eyebrow")}</span>
-              </Reveal>
-              <Reveal blur={false} delay={0.08}>
-                <h2 className="display-xl mt-6 max-w-[12ch] text-limewash">
+                <h2 className="display-xl max-w-[12ch] text-limewash">
                   {t("close.title")}
                 </h2>
               </Reveal>

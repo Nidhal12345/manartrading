@@ -43,7 +43,7 @@ export const productCategories: ProductCategory[] = [
       "Bayadh",
     ],
     href: "/shop",
-    image: "mackerelBlue",
+    image: "categoryFish",
     palette: ["#123C63", "#2A6E9E", "#7FC5D9"],
   },
   {
@@ -59,7 +59,7 @@ export const productCategories: ProductCategory[] = [
       "Squid",
     ],
     href: "/shop",
-    image: "prawnsOnIce",
+    image: "categoryCrustaceans",
     palette: ["#C1443C", "#F0785C", "#FBC0A4"],
   },
 ];

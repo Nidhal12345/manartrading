@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
+import { Analytics } from "@vercel/analytics/next"
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MotionProvider from "@/components/MotionProvider";
@@ -76,9 +77,8 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       dir={isRtl ? "rtl" : "ltr"}
-      className={`${fontVariables} ${
-        isRtl ? "font-arabic" : ""
-      } h-full antialiased`}
+      className={`${fontVariables} ${isRtl ? "font-arabic" : ""
+        } h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-limewash">
         <a
@@ -100,6 +100,7 @@ export default async function LocaleLayout({
             <Footer />
           </MotionProvider>
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );

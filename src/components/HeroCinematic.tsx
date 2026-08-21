@@ -71,31 +71,31 @@ export default function HeroCinematic() {
     const el = videoRef.current;
     if (!el) return;
 
-    const EVENTS = ["pointerdown", "touchstart", "keydown", "scroll"] as const;
-    let live = true;
+    /* One controller does both jobs: it drops the listeners the moment play
+       succeeds, and it drops them again if the hero unmounts first. That is
+       what removes the need for a `detach` and an `attempt` that refer to each
+       other — a pair of hoisted `function` declarations, which is also what
+       loses the narrowing on `el` and fails the build, since a hoisted function
+       could in principle run before the null check above it. An arrow declared
+       after the check keeps it. */
+    const controller = new AbortController();
 
-    /* Declared as statements rather than consts so the two can refer to each
-       other without an ordering problem. */
-    function detach() {
-      for (const ev of EVENTS) window.removeEventListener(ev, attempt);
-    }
-
-    function attempt() {
-      if (!live || !el.paused) return;
+    const attempt = () => {
+      if (!el.paused) return;
       /* A rejection here is the browser's policy answer, not a fault, and the
          still underneath is already the answer to it. Swallowed on purpose. */
-      void el.play().then(detach, () => {});
-    }
+      void el.play().then(() => controller.abort(), () => {});
+    };
 
     attempt();
-    for (const ev of EVENTS) {
-      window.addEventListener(ev, attempt, { passive: true });
+    for (const ev of ["pointerdown", "touchstart", "keydown", "scroll"]) {
+      window.addEventListener(ev, attempt, {
+        passive: true,
+        signal: controller.signal,
+      });
     }
 
-    return () => {
-      live = false;
-      detach();
-    };
+    return () => controller.abort();
   }, [reduceMotion]);
 
   const { scrollYProgress } = useScroll({

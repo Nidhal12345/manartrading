@@ -39,3 +39,41 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local scratch
+# .tmp is where scripts/import-category-photos.mjs --preview writes its contact
+# sheets; .tmp-thumbs is the same idea from the studio import. Both are things
+# to look at once and throw away.
+/.tmp/
+/.tmp-thumbs/
+
+# tool state, local to one machine
+/.impeccable/
+
+# windows + cygwin junk
+Thumbs.db
+ehthumbs.db
+desktop.ini
+*.stackdump
+
+# photo source material
+# The originals the client sends, and the reference frames the studio set was
+# matched against. scripts/import-*.mjs read from public/new-photo/newone and
+# write the encoded, shipped JPEGs into public/images — that folder stays
+# tracked, because it is what the site actually serves. These two are 78 MB and
+# 3 MB of input that nothing on the site renders, so they have no business in a
+# checkout or a deploy. Keep your own backup of them: once they are untracked,
+# git is not one.
+/public/new-photo/
+/public/ref-photo/
+
+# dead media in the public root
+# hero3.mp4 is the film the hero plays and stays. These are earlier cuts —
+# 12.4 MB and 6.1 MB — referenced by nothing.
+/public/hero2.mp4
+/public/hero-section.mp4
+
+# scratch renders in the public root, referenced by nothing
+/public/2.png
+/public/back3.png
+/public/Firefly_gpt-image_*.png

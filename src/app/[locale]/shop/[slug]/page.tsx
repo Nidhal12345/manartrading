@@ -73,9 +73,14 @@ export default async function ProductPage({ params }: Props) {
             eyebrow={t("related.eyebrow")}
             title={t("related.title")}
           />
-          <div className="mt-14 grid gap-x-6 gap-y-14 sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-3">
+          <div className="mt-14 grid auto-rows-fr gap-x-6 gap-y-14 sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-3">
             {related.map((p, i) => (
-              <ProductCard key={p.slug} product={p} index={i} />
+              <ProductCard
+                key={p.slug}
+                product={p}
+                index={i}
+                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 30vw"
+              />
             ))}
           </div>
         </div>

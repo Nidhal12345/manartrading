@@ -220,7 +220,14 @@ export default function BestSellerCarousel({
 
       {paged && (
         <div className="mt-7 flex shrink-0 items-center gap-5">
-          <div className="flex items-center gap-2">
+          {/* Off on a phone. A touch rail is dragged, not clicked through, so a
+              pair of 44px tiles there is a control for a gesture the visitor is
+              already making — and it is the widest thing in the closing row on
+              the narrowest screen. The dots stay at every width: they are what
+              tells anyone where they are in the shelf, and being real buttons
+              they are also what lets a keyboard jump it in one move, which is
+              the reason hiding the arrows costs nothing. */}
+          <div className="hidden items-center gap-2 sm:flex">
             <RailButton
               onClick={() => embla?.scrollPrev()}
               disabled={!canPrev}
@@ -379,13 +386,14 @@ function LineCard({ line: p }: { line: BestSellerLine }) {
             className="mt-1.5 block text-[13.5px] leading-none text-tar/60"
           />
 
-          <p className="mt-3.5 flex items-baseline gap-2.5">
-            <span className="label text-tar/70">
-              {tShop(`waters.${p.waters}`)}
-            </span>
-          </p>
-
-          <span className="mt-5 flex items-center justify-between gap-3 bg-oxide px-5 py-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-limewash transition-colors duration-500 group-hover:bg-oxide-lit">
+          {/* The water the line came out of used to sit here. It is a fact about
+              a single line rather than a reason to open one, and it was printed
+              on all six cards; it now appears once, on the product's own spec
+              sheet. The home page still argues the three waters in the fork
+              section further down, so the shelf lost a repetition, not the
+              argument. The photograph takes the height back — this column is
+              `shrink-0` and the frame above it is `flex-1`. */}
+          <span className="mt-6 flex items-center justify-between gap-3 bg-oxide px-5 py-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-limewash transition-colors duration-500 group-hover:bg-oxide-lit">
             {t("cardCta")}
             <ArrowUpRight
               aria-hidden="true"

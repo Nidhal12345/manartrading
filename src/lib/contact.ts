@@ -11,13 +11,13 @@
  */
 
 /** As printed. */
-export const PHONE = "+966 56 161 4454";
+export const PHONE = "+966 53 562 7417";
 
 /** `tel:` wants no spaces. */
-export const PHONE_HREF = "tel:+966561614454";
+export const PHONE_HREF = "tel:+966535627417";
 
 /** wa.me wants the international number with no `+` and no separators. */
-const WHATSAPP_NUMBER = "966561614454";
+const WHATSAPP_NUMBER = "966535627417";
 
 /**
  * Ordering happens on WhatsApp — the site quotes no prices, so the message is

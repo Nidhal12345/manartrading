@@ -62,6 +62,16 @@ export type Badge = (typeof BADGES)[number];
 
 export type Product = {
   slug: string;
+  /**
+   * Position on the spec sheet, 1-based, across the whole catalogue rather than
+   * within the heading.
+   *
+   * Assigned at build time from catalogue order, so it is stable under
+   * filtering: a narrowed shop reads 03 / 06 / 11 with gaps, which is what a
+   * crossed-off day sheet looks like. The shop prints it; nothing depends on it
+   * being contiguous.
+   */
+  lot: number;
   name: string;
   arabic: string;
   scientific: string;
@@ -412,7 +422,7 @@ function hash(s: string): number {
   return Math.abs(h);
 }
 
-function build(category: Category, spec: Spec): Product {
+function build(category: Category, spec: Spec, lot: number): Product {
   const d = DEFAULTS[category];
   const slug = toSlug(category, spec.name);
   const h = hash(slug);
@@ -427,6 +437,7 @@ function build(category: Category, spec: Spec): Product {
 
   return {
     slug,
+    lot,
     name: spec.name,
     arabic: spec.arabic,
     scientific: spec.scientific,
@@ -462,9 +473,16 @@ function build(category: Category, spec: Spec): Product {
 
 export const categoryNames = Object.keys(CATALOGUE) as Category[];
 
-export const products: Product[] = categoryNames.flatMap((c) =>
-  CATALOGUE[c].map((spec) => build(c, spec)),
-);
+/**
+ * The shelf, flattened in heading order.
+ *
+ * Flattened to `[heading, spec]` pairs first so the lot number can be handed to
+ * `build` from the line's position in the whole catalogue rather than its
+ * position under its own heading — the shop numbers one sheet, not two.
+ */
+export const products: Product[] = categoryNames
+  .flatMap((c) => CATALOGUE[c].map((spec) => [c, spec] as const))
+  .map(([c, spec], i) => build(c, spec, i + 1));
 
 export const categories = ["All", ...categoryNames] as const;
 

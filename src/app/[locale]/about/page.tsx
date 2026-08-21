@@ -8,11 +8,7 @@ import PageHero from "@/components/PageHero";
 import Reveal, { StaggerGroup, StaggerItem } from "@/components/Reveal";
 import { SectionIntro } from "@/components/Decor";
 import { whatsappHref } from "@/lib/contact";
-import {
-  PREPARATIONS,
-  categoryNames,
-  products,
-} from "@/data/products";
+import { categoryNames, products } from "@/data/products";
 
 export async function generateMetadata({
   params,
@@ -41,8 +37,11 @@ export async function generateMetadata({
  * from the FAQ). The four rules that stand now are policy commitments, which the
  * business can keep from day one, rather than history it has not evidenced.
  *
- * Section 04 is the counterweight: four figures that are true by construction
- * because they are counted off the catalogue at build time.
+ * Section 04 is the counterweight: figures that are true by construction because
+ * they are counted off the catalogue at build time. There were four of them; the
+ * waters and the cuts came out when both left the shop, since a page arguing what
+ * the business will stand behind should not advertise the two attributes it now
+ * states only on an individual product.
  */
 export default async function AboutPage() {
   const t = await getTranslations("About");
@@ -53,8 +52,6 @@ export default async function AboutPage() {
   const range = [
     { key: "lines", value: products.length },
     { key: "categories", value: categoryNames.length },
-    { key: "waters", value: new Set(products.map((p) => p.waters)).size },
-    { key: "cuts", value: PREPARATIONS.length },
   ] as const;
 
   return (
@@ -178,7 +175,7 @@ export default async function AboutPage() {
             title={t("range.title")}
           />
 
-          <dl className="mt-12 grid gap-px border-y border-tar/15 bg-tar/15 sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="mt-12 grid gap-px border-y border-tar/15 bg-tar/15 sm:grid-cols-2">
             {range.map((r) => (
               <div key={r.key} className="bg-chalk px-6 py-8">
                 <dd className="numeral text-[44px] leading-none text-tar">

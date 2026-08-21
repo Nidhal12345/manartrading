@@ -51,10 +51,13 @@ export default function Navbar() {
   }, [open]);
 
   /* Which heroes are dark paint, and therefore want light nav ink before the
-     first scroll. Home, about and contact open on a painted field; the counter
-     opens on the tide field and a product detail opens on a breadcrumb strip,
-     so everything under /shop needs tar ink from the first pixel. */
-  const overDarkHero = !pathname.startsWith("/shop");
+     first scroll. Almost all of them: home, about, contact and the counter each
+     open on a painted field. The one exception is a product detail, which opens
+     on a breadcrumb strip over `limewash` and needs tar ink from the first pixel
+     — hence the trailing slash, which matches `/shop/hamour` but not `/shop`
+     itself. Keep this in step with `ShopHero`, which paints the counter's
+     masthead on the navy hull. */
+  const overDarkHero = !pathname.startsWith("/shop/");
   const light = overDarkHero && !scrolled;
 
   const isActive = (href: string) =>

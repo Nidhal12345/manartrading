@@ -19,11 +19,14 @@ export type ShowcaseCard = {
 
 /**
  * The tile that opens the whole counter rather than one heading of it. It is not
- * a category, so it has no row in `@/data/categories` — its photograph is the
- * one shot in the registry that shows the range as a whole rather than a
- * species.
+ * a category, so it has no row in `@/data/categories` — the other two take their
+ * frames from there, and this one is named here.
+ *
+ * It is also the only frame in the set that carries both halves of the range in
+ * a single shot: whole fish stacked on the ice with head-on prawns and a crab in
+ * front of them. A door marked "all" has to show what is behind all of it.
  */
-const ALL_IMAGE: ImageKey = "fishRows";
+const ALL_IMAGE: ImageKey = "categoryAll";
 
 /**
  * The range, as a full-bleed row of doors.
@@ -42,12 +45,30 @@ const ALL_IMAGE: ImageKey = "fishRows";
  *
  * The plate is square, in limewash on tar. It is the one place this section
  * departs from the reference it was built against, which sets the same label in
- * a rounded white pill — nothing on this site carries a corner radius, and a
- * pill here would be the only one on the page. Same silhouette, painted.
+ * a rounded white pill. The only radius on the site is the 5% softening on the
+ * shop card's photograph, and that is a frame around an image rather than a shape
+ * cut for a label — a pill here would still be the only pill on the page. Same
+ * silhouette, painted.
  *
  * The plate is lettered in the reader's own script alone. A door needs one word
  * on it, and an Arabic visitor should be reading Arabic at size rather than
  * skimming a Latin transliteration beside it.
+ *
+ * MOTION — one gesture on approach, at three depths. The three frames are now
+ * purpose-shot for these tiles (see `categoryAll` and its neighbours in
+ * `@/lib/images`) and they are low-key stills on near-black slate, so the door
+ * needs an edge to open on rather than a highlight to catch. It gets the site's
+ * own motion idea: a 2px rule struck from the reading edge across the foot of the
+ * tile, which is where a hull meets the water. It shares the photograph's easing
+ * curve and sits between the photograph's push and the plate's inversion in
+ * duration, so ground, line and sign resolve as one movement inward instead of
+ * three effects that happen to share a trigger.
+ *
+ * NOTE, not a change — the wash was set at `tar/15` to hold the plate against
+ * frames that were considerably brighter than these (`#5f6660`, `#4a7c9b`,
+ * `#b4726a` against the new set's `#352b1f`, `#423a34`, `#6b412b`). It may now be
+ * doing nothing the photographs are not already doing. Worth a look with fresh
+ * eyes before it is either dropped or left alone deliberately.
  */
 export default async function CategoryShowcase({
   cards,
@@ -70,12 +91,7 @@ export default async function CategoryShowcase({
   return (
     <section className="bg-chalk py-24 md:py-32">
       <div className="container-x">
-        <SectionIntro
-          index="01"
-          eyebrow={t("eyebrow")}
-          title={t("title")}
-          copy={t("copy")}
-        />
+        <SectionIntro title={t("title")} copy={t("copy")} />
       </div>
 
       <div className="mt-14 grid gap-2 sm:grid-cols-3 sm:gap-2.5 lg:mt-16">
@@ -97,6 +113,16 @@ export default async function CategoryShowcase({
               <span
                 aria-hidden="true"
                 className="absolute inset-0 bg-tar/15 transition-colors duration-500 group-hover:bg-tar/30"
+              />
+
+              {/* The waterline. `origin-left` with an `rtl:origin-right` flip so
+                  the rule always draws from the reading edge, the way
+                  `animate-waterline` does in globals.css. The global
+                  `prefers-reduced-motion` rule zeroes the duration, which leaves
+                  the rule simply present on approach rather than absent. */}
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 bottom-0 h-[2px] origin-left scale-x-0 bg-limewash transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 group-focus-visible:scale-x-100 rtl:origin-right"
               />
 
               <span className="absolute inset-0 flex items-center justify-center p-5">

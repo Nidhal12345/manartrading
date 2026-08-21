@@ -5,7 +5,7 @@ import Reveal from "./Reveal";
 import BestSellerCarousel from "./BestSellerCarousel";
 import { Link } from "@/i18n/navigation";
 import { whatsappHref } from "@/lib/contact";
-import type { Badge, Waters } from "@/data/products";
+import type { Badge } from "@/data/products";
 import type { ImageKey } from "@/lib/images";
 
 /**
@@ -22,7 +22,6 @@ export type BestSellerLine = {
   name: string;
   arabic: string;
   image: ImageKey;
-  waters: Waters;
   /** Translated through `Shop.badges.*`; absent where the line carries none. */
   badge?: Badge;
 };
@@ -51,7 +50,12 @@ export type BestSellerLine = {
  *     manufactured credibility, and the catalogue's review figures are
  *     hash-generated placeholders.
  *   - no price. There is no cart here and the counter quotes by the kilo on the
- *     day, so each card carries the waters the line comes from instead.
+ *     day, so a card carries the name in both scripts and the photograph, and
+ *     nothing that would need a figure behind it.
+ *   - no water. It used to print the sea each line came out of; that is a fact
+ *     about a single line rather than a reason to open one, and it was repeated on
+ *     all six cards. The waters are argued once on this page — in the fork
+ *     section further down — and stated per line on the product page.
  */
 export default async function BestSellers({
   lines,

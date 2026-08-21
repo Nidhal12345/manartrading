@@ -25,13 +25,12 @@ import { products, type Waters } from "@/data/products";
  * in pale blue rather than on warm limewash, which is the better landing for
  * them.
  *
- * It opens without an index numeral or an eyebrow, and it is the only section
- * on the page that does. Both are deliberate. A fork is a branch off the
- * argument the numbered run is making, not the next step in it — the same
- * reasoning that already keeps the best-seller shelf out of the numbering — and
- * the section that asks the reader to choose is the wrong one to introduce with
- * the same three-part opener as the five around it. The numbered run closes up
- * behind it: the counter is 03 and the questions are 04.
+ * It opens on its headline, with no index numeral and no eyebrow. So does every
+ * other section on this page now — the numbered run came off the whole home page
+ * — but this was the first section to lose them, and for a reason of its own that
+ * still holds: a fork is a branch off an argument rather than the next step in
+ * one, and the section that asks the reader to choose is the wrong one to
+ * introduce by counting it.
  *
  * The doors are not numbered either, for the same reason they are the same
  * width. 01 and 02 read as an order.
